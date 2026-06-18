@@ -14,7 +14,7 @@ export default function Footer({ data }: { data: SchoolData }) {
             <div className="lg:col-span-4">
               <Link href="/" className="block mb-6">
                 <Image
-                  src="/assets/kcs/images/header/kcs.webp"
+                  src={data.logo || '/assets/demo/placeholder.png'}
                   alt={data.name}
                   width={60}
                   height={60}

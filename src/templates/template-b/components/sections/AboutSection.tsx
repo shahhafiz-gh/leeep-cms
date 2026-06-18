@@ -18,7 +18,7 @@ export default function AboutSection({ data }: { data: SchoolData }) {
               {/* Top-left image */}
               <div className="absolute top-0 left-0 w-full sm:w-[90%] h-[400px] z-0">
                 <Image
-                  src={about.image ?? '/assets/kcs/images/about/kc-building.webp'}
+                  src={about.image || '/assets/demo/placeholder.png'}
                   alt={about.title}
                   fill
                   className="object-cover "
@@ -29,7 +29,7 @@ export default function AboutSection({ data }: { data: SchoolData }) {
               {/* Bottom-right secondary image */}
               <div className="  absolute  border-t-20 hidden md:block border-l-20 border-tb-background bottom-30 right-0 w-[60%] h-[230px] z-10">
                 <Image
-                  src="/assets/kcs/images/about/kc-building-2.webp"
+                  src={data.gallery?.images?.[1]?.src || about.image || '/assets/demo/placeholder.png'}
                   alt="Campus"
                   fill
                   className="object-cover"

@@ -80,7 +80,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
 
           {/* Right: Hero Image */}
           <motion.div
-            className="md:col-span-6 relative w-full h-auto mt-8 md:mt-0 px-4 md:px-0"
+            className="md:col-span-6 relative w-full h-auto rounded-3xl overflow-hidden mt-8 md:mt-0 px-4 md:px-0"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}

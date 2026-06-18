@@ -13,7 +13,7 @@ const REQUIREMENTS = [
 ]
 
 export default function AdmissionRequirements({ data }: { data: SchoolData }) {
-  const image = data.about.image ?? '/assets/kcs/images/about/kc-building.webp'
+  const image = data.about.image || '/assets/demo/placeholder.png'
 
   return (
     <section className="py-16 md:py-24 bg-white">
