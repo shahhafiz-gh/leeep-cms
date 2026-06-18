@@ -39,8 +39,16 @@ export async function getSchoolData(subdomain: string): Promise<SchoolData | nul
     // If API succeeds but returns no data, throw to trigger fallback
     throw new Error('No data returned from API')
   } catch {
-    if (process.env.NODE_ENV !== 'development') return null
-    if (subdomain === 'kcgs' || subdomain === 'kcs') return mockKcgsData
+    // Serve mock data in local dev, or on preview/demo deployments
+    // (e.g. *.vercel.app) where DEMO_FALLBACK is enabled. Real production
+    // multi-tenant hosting leaves this unset so unknown schools 404.
+    const allowFallback =
+      process.env.NODE_ENV !== 'production' || process.env.DEMO_FALLBACK === 'true'
+    if (!allowFallback) return null
+    // DEMO_SUBDOMAIN lets a preview deploy force which mock school to show,
+    // regardless of the host (the bare *.vercel.app URL has no real subdomain).
+    const effective = process.env.DEMO_SUBDOMAIN ?? subdomain
+    if (effective === 'kcgs' || effective === 'kcs') return mockKcgsData
     return placeholderTemplateAData
   }
 }
