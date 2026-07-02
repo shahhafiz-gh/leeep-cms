@@ -100,6 +100,43 @@ export function isEditPreview(searchParams?: RouteSearchParams): boolean {
   return wantsPreview && !!secret && token === secret
 }
 
+// ── Editor navigation (editor preview only) ──
+
+/** Canonical site pages, in the order they should appear in the editor nav. */
+const EDITOR_NAV: { label: string; href: string }[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Updates', href: '/updates' },
+  { label: 'About', href: '/about' },
+  { label: 'Academics', href: '/academics' },
+  { label: 'Admissions', href: '/admissions' },
+  { label: 'Contact', href: '/contact' },
+]
+
+/**
+ * Ensure the navigation exposes EVERY standard page in the inline editor, so the
+ * admin can reach (and edit) each page from the header — even if the school's
+ * own navigation omits some (e.g. Updates / Admissions are missing from this
+ * school's Frappe nav, so they never appear in the menu).
+ *
+ * The school's own entries win for label/children/order; canonical pages it is
+ * missing are inserted in the standard order, and any extra custom links the
+ * school added are kept after them.
+ *
+ * ONLY call this when `isEditPreview` is true — the live site keeps exactly the
+ * navigation the school configured.
+ */
+export function withEditorNavigation(data: SchoolData): SchoolData {
+  const existing = data.navigation ?? []
+  const norm = (href: string) => href.replace(/\/+$/, '') || '/'
+  const byHref = new Map(existing.map((item) => [norm(item.href), item]))
+  // Canonical pages first — reuse the school's own entry when it has one.
+  const ordered = EDITOR_NAV.map((page) => byHref.get(norm(page.href)) ?? page)
+  // Keep any non-standard custom links the school added, after the canonical set.
+  const canonical = new Set(EDITOR_NAV.map((page) => norm(page.href)))
+  const extras = existing.filter((item) => !canonical.has(norm(item.href)))
+  return { ...data, navigation: [...ordered, ...extras] }
+}
+
 // ── Frappe asset URL resolution ──
 
 /**

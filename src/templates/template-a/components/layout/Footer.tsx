@@ -46,7 +46,7 @@ export default function Footer({ data }: { data: SchoolData }) {
                   width={80}
                   height={80}
                   alt={`${data.name} Logo`}
-                  className="w-16 h-16 rounded-full"
+                  className="w-16 h-16 max-h-16  rounded-full"
                   data-edit-img="logo"
                 />
               ) : (

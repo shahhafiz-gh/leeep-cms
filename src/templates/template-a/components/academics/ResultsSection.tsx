@@ -17,11 +17,11 @@ export default function ResultsSection({ data }: { data: SchoolData }) {
             <div className="absolute -inset-3 bg-ta-secondary-container rounded-[40px] opacity-40 -z-10" />
             {results.image ? (
               <div className="relative w-full aspect-[4/3] rounded-[32px] overflow-hidden border-8 border-white shadow-lg">
-                <Image src={results.image} alt={`${data.name} results`} fill className="object-cover" />
+                <Image src={results.image} alt={`${data.name} results`} fill className="object-cover" data-edit-img="academics.results.image" />
               </div>
             ) : (
               <div className="relative w-full aspect-[4/3] rounded-[32px] overflow-hidden">
-                <ImagePlaceholder label="Add results image" icon="lucide:trophy" />
+                <ImagePlaceholder label="Add results image" icon="lucide:trophy" editPath="academics.results.image" />
               </div>
             )}
           </ScrollReveal>

@@ -4,6 +4,8 @@ import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { useScrollCarousel } from '@/hooks/useScrollCarousel'
 import ScrollReveal from '@/shared/animations/scroll-reveal'
+import { useLiveList } from '@/shared/hooks/useLiveList'
+import AddItemButton from '@/shared/AddItemButton'
 
 interface TestimonialCardProps {
   name: string
@@ -24,8 +26,8 @@ export function TestimonialCard({ name, role, content, rating = 5, path }: Testi
         ))}
       </div>
 
-      <p data-edit={path ? `${path}.content` : undefined} className="font-(family-name:--font-ta-body-md) italic text-ta-on-surface mb-8 grow leading-relaxed">
-        &ldquo;{content}&rdquo;
+      <p className="font-(family-name:--font-ta-body-md) italic text-ta-on-surface mb-8 grow leading-relaxed">
+        &ldquo;<span data-edit={path ? `${path}.content` : undefined}>{content}</span>&rdquo;
       </p>
 
       <div className="flex items-center gap-4 mt-auto pt-4 border-t border-ta-outline-variant/30">
@@ -64,10 +66,12 @@ export function TestimonialHeader() {
 }
 
 export default function TestimonialsSection({ data }: { data: SchoolData }) {
-  const { testimonials } = data
-  const { scrollRef, prev, next, canScrollPrev, canScrollNext } = useScrollCarousel<HTMLDivElement>(testimonials?.length || 0)
+  // Own the array so an added testimonial (a new index the demo scaffold lacks)
+  // appears live — index-based DOM overlays can only patch existing cards.
+  const testimonials = useLiveList('testimonials', data.testimonials ?? [])
+  const { scrollRef, prev, next, canScrollPrev, canScrollNext } = useScrollCarousel<HTMLDivElement>(testimonials.length)
 
-  if (!testimonials || testimonials.length === 0) return null
+  if (testimonials.length === 0) return null
 
   return (
     <section className="bg-ta-surface">
@@ -112,7 +116,7 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
           >
             {testimonials.map((t, i) => (
               <div
-                key={t.id}
+                key={t.id ?? i}
                 data-slide
                 data-slide-idx={i}
                 className="snap-start shrink-0 w-[85vw] md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]"
@@ -128,6 +132,8 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
             ))}
           </div>
         </div>
+
+        <AddItemButton path="testimonials" label="Add testimonial" />
       </div>
     </section>
   )

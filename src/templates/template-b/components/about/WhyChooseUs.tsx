@@ -25,7 +25,6 @@ export default function WhyChooseUs({ data }: { data: SchoolData }) {
                 <Icon
                   icon={item.icon ?? 'lucide:star'}
                   className="w-8 h-8 text-tb-primary-400 group-hover:text-white transition-colors duration-300"
-                  data-edit-icon={usingWhyChoose ? `about.whyChooseUs.${i}.icon` : undefined}
                 />
               </div>
               <h5 data-edit={usingWhyChoose ? `about.whyChooseUs.${i}.title` : undefined} className="text-lg font-semibold text-tb-heading mb-3">{item.title}</h5>

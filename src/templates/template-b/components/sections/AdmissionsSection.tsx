@@ -33,7 +33,7 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
                     key={highlight.label}
                     className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white"
                   >
-                    <Icon icon={highlight.icon ?? 'lucide:check'} className="w-4 h-4 shrink-0" data-edit-icon={`admissions.highlights.${hi}.icon`} />
+                    <Icon icon={highlight.icon ?? 'lucide:check'} className="w-4 h-4 shrink-0" />
                     <span data-edit={`admissions.highlights.${hi}.label`}>{highlight.label}</span>
                   </span>
                 ))}
@@ -54,19 +54,19 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
             {admissions.callout ? (
               <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-sm w-full">
                 <div className="w-14 h-14 rounded-2xl bg-tb-primary-400/15 flex items-center justify-center mb-5">
-                  <Icon icon={admissions.callout.icon ?? 'lucide:sparkles'} className="w-7 h-7 text-tb-primary-400" data-edit-icon="admissions.callout.icon" />
+                  <Icon icon={admissions.callout.icon ?? 'lucide:sparkles'} className="w-7 h-7 text-tb-primary-400" />
                 </div>
                 <h3 data-edit="admissions.callout.label" className="text-xl font-bold text-tb-heading mb-2">{admissions.callout.label}</h3>
                 {admissions.callout.sublabel && (
                   <p data-edit="admissions.callout.sublabel" className="text-tb-body text-sm leading-relaxed">{admissions.callout.sublabel}</p>
                 )}
               </div>
-            ) : admissions.image ? (
+            ) : admissions.homeImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={admissions.image}
+                src={admissions.homeImage}
                 alt="Admissions"
-                data-edit-img="admissions.image"
+                data-edit-img="admissions.homeImage"
                 className="rounded-3xl shadow-2xl w-full max-w-sm object-cover aspect-[4/5]"
               />
             ) : null}

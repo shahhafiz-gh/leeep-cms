@@ -75,7 +75,7 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
                     key={highlight.label}
                     className="inline-flex items-center gap-2 bg-white/15 text-white px-4 py-2 rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md backdrop-blur-sm border border-white/20"
                   >
-                    <Icon icon={highlight.icon ?? 'lucide:check'} className="w-4 h-4 shrink-0" data-edit-icon={`admissions.highlights.${hi}.icon`} />
+                    <Icon icon={highlight.icon ?? 'lucide:check'} className="w-4 h-4 shrink-0" />
                     <span data-edit={`admissions.highlights.${hi}.label`}>{highlight.label}</span>
                   </span>
                 ))}
@@ -106,17 +106,17 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <div className="relative w-full h-full rounded-full overflow-hidden z-10 border-4 border-white/50 shadow-2xl bg-ta-surface">
-                {admissions.image ? (
-                  <Image src={admissions.image} alt="Admissions" fill className="object-cover" data-edit-img="admissions.image" />
+                {admissions.homeImage ? (
+                  <Image src={admissions.homeImage} alt="Admissions" fill className="object-cover" data-edit-img="admissions.homeImage" />
                 ) : (
-                  <ImagePlaceholder label="Add admissions image" icon="lucide:graduation-cap" editPath="admissions.image" />
+                  <ImagePlaceholder label="Add admissions image" icon="lucide:graduation-cap" editPath="admissions.homeImage" />
                 )}
               </div>
 
               {/* Floating card */}
               {admissions.callout && (
                 <div className="absolute -left-6 top-12 bg-white rounded-lg p-3 shadow-lg z-20 flex items-center gap-2 -rotate-3">
-                  <Icon icon={admissions.callout.icon ?? 'lucide:star'} className="text-amber-400 fill-amber-400 w-5 h-5" data-edit-icon="admissions.callout.icon" />
+                  <Icon icon={admissions.callout.icon ?? 'lucide:star'} className="text-amber-400 fill-amber-400 w-5 h-5" />
                   <span className="font-bold text-ta-label-md text-ta-on-surface whitespace-nowrap" data-edit="admissions.callout.label">{admissions.callout.label}</span>
                 </div>
               )}

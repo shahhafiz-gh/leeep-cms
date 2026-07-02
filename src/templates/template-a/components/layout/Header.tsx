@@ -30,7 +30,7 @@ export default function Header({ data }: { data: SchoolData }) {
               alt={`${data.name} Logo`}
               width={60}
               height={60}
-              className="w-14 h-14 rounded-full object-contain shrink-0"
+              className="w-14 h-14 max-w-14 rounded-full object-contain shrink-0"
               data-edit-img="logo"
             />
           ) : (
@@ -82,12 +82,7 @@ export default function Header({ data }: { data: SchoolData }) {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-2">
-          <Link
-            href="/admissions"
-            className="inline-flex items-center justify-center gap-2 cursor-pointer bg-ta-primary-container text-ta-on-primary font-(family-name:--font-ta-label-md) text-(length:--text-ta-label-md) rounded-full shadow-[0_8px_16px_rgba(0,107,32,0.2)] hover:scale-105 active:scale-95 transition-all duration-200 px-6 py-3"
-          >
-            Apply Now
-          </Link>
+        
           <Link
             href="/login"
             className="inline-flex items-center justify-center gap-2 cursor-pointer bg-ta-primary-container text-ta-on-primary font-(family-name:--font-ta-label-md) text-(length:--text-ta-label-md) rounded-full shadow-[0_8px_16px_rgba(0,107,32,0.2)] hover:scale-105 active:scale-95 transition-all duration-200 px-6 py-3"

@@ -24,7 +24,12 @@ export default function WhyChooseUsSection({ data }: { data: SchoolData }) {
   if (!features || features.length === 0) return null
 
   return (
-    <section className="py-10 md:py-0 mb-20">
+    <section
+      className="py-10 md:py-0 mb-20"
+      data-section-note="“Why choose us” is shared with the About page. Editing these points here updates them on the About page too."
+      data-note-action="Open the About page →"
+      data-note-target="about.whyChooseUs.0.title"
+    >
       <div className="container my-10 mx-auto px-4 md:px-6">
         {/* Header */}
         <div className="text-center mb-12">
@@ -55,7 +60,7 @@ export default function WhyChooseUsSection({ data }: { data: SchoolData }) {
               <div
                 className={`w-16 h-16 ${colorClasses[index % colorClasses.length]} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 ${blobClasses[index % blobClasses.length]}`}
               >
-                <Icon icon={feature.icon || 'lucide:star'} className="w-8 h-8" data-edit-icon={`about.whyChooseUs.${index}.icon`} />
+                <Icon icon={feature.icon || 'lucide:star'} className="w-8 h-8" />
               </div>
               <h3 data-edit={`about.whyChooseUs.${index}.title`} className="font-(family-name:--font-ta-h3) text-(length:--text-ta-h3) text-ta-on-surface mb-2">
                 {feature.title}

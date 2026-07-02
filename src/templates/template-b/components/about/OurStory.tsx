@@ -21,9 +21,10 @@ export default function OurStory({ data }: { data: SchoolData }) {
                 width={600}
                 height={400}
                 className="w-full h-full object-cover"
+                data-edit-img="about.image"
               />
             ) : (
-              <div className="w-full h-full bg-tb-primary-50 flex items-center justify-center">
+              <div className="w-full h-full bg-tb-primary-50 flex items-center justify-center" data-edit-img="about.image">
                 <Icon icon="lucide:image" className="w-16 h-16 text-tb-primary-400 opacity-30" />
               </div>
             )}
@@ -37,32 +38,34 @@ export default function OurStory({ data }: { data: SchoolData }) {
                 Our Story
               </span>
             </div>
-            <h2 className="text-3xl font-bold text-tb-heading mb-6 leading-tight">
+            <h2 data-edit="about.subtitle" className="text-3xl font-bold text-tb-heading mb-6 leading-tight">
               {data.about.subtitle ?? 'A Legacy of Excellence in Education'}
             </h2>
-            {paragraphs.length > 0 ? (
-              paragraphs.map((para, i) => (
-                <p key={i} className="text-tb-body text-lg leading-relaxed mb-4">
-                  {para}
+            <div data-edit="about.story">
+              {paragraphs.length > 0 ? (
+                paragraphs.map((para, i) => (
+                  <p key={i} className="text-tb-body text-lg leading-relaxed mb-4">
+                    {para}
+                  </p>
+                ))
+              ) : (
+                <p className="text-tb-body text-lg leading-relaxed mb-4">
+                  {data.about.description}
                 </p>
-              ))
-            ) : (
-              <p className="text-tb-body text-lg leading-relaxed mb-4">
-                {data.about.description}
-              </p>
-            )}
+              )}
+            </div>
           </ScrollReveal>
         </div>
 
         {/* Stats Row */}
         {data.stats.length > 0 && (
           <StaggerChildren className="grid grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 pt-16 pb-12 md:pt-24 md:pb-20 divide-y-2 lg:divide-y-0 items-start">
-            {data.stats.slice(0, 4).map((stat) => (
+            {data.stats.slice(0, 4).map((stat, i) => (
               <div key={stat.label} className="flex flex-col items-center text-center pt-8 lg:pt-0">
                 <h2 className="text-5xl md:text-6xl font-bold text-tb-primary-400 tracking-tight mb-3">
-                  {stat.value}{stat.suffix ?? ''}
+                  <span data-edit={`stats.${i}.value`}>{stat.value}</span>{stat.suffix ?? ''}
                 </h2>
-                <p className="text-base md:text-lg text-slate-700 font-medium uppercase tracking-wider">
+                <p data-edit={`stats.${i}.label`} className="text-base md:text-lg text-slate-700 font-medium uppercase tracking-wider">
                   {stat.label}
                 </p>
               </div>

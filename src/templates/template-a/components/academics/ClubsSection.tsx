@@ -40,9 +40,9 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
             >
               <div className="relative h-40 w-full overflow-hidden bg-ta-surface-container">
                 {club.image ? (
-                  <Image src={club.image} alt={club.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <Image src={club.image} alt={club.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" data-edit-img={`academics.clubs.${index}.image`} />
                 ) : (
-                  <ImagePlaceholder label="Add image" icon={ICONS[index % ICONS.length]} />
+                  <ImagePlaceholder label="Add image" icon={ICONS[index % ICONS.length]} editPath={`academics.clubs.${index}.image`} />
                 )}
                 <div className="absolute bottom-3 left-3 w-11 h-11 rounded-full bg-ta-surface/90 backdrop-blur flex items-center justify-center shadow-sm">
                   <Icon icon={ICONS[index % ICONS.length]} className="text-xl text-ta-primary" />

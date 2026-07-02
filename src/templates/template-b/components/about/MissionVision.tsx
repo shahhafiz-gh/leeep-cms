@@ -5,11 +5,11 @@ import StaggerChildren from '@/shared/animations/stagger-children'
 
 /** Template B — Our Mission & Vision */
 export default function MissionVision({ data }: { data: SchoolData }) {
-  const pillars = data.about.mission ?? []
+  const mission = data.about.missionStatement
   const vision = data.about.vision
   const values = data.about.values ?? []
 
-  if (pillars.length === 0 && !vision) return null
+  if (!mission && !vision) return null
 
   return (
     <div className="py-16 md:py-24 bg-tb-primary-50/40">
@@ -23,30 +23,13 @@ export default function MissionVision({ data }: { data: SchoolData }) {
 
         <StaggerChildren className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           {/* Mission Card — white */}
-          {pillars.length > 0 && (
-            <div className="bg-white rounded-xl border border-tb-border p-8 h-full hover:shadow-lg transition-shadow duration-300">
+          {mission && (
+            <div className="bg-white rounded-xl border border-tb-border p-8 h-full hover:shadow-lg transition-shadow duration-300 flex flex-col">
               <div className="w-16 h-16 rounded-full bg-tb-primary-400/10 flex items-center justify-center mb-6">
                 <Icon icon="lucide:target" className="w-8 h-8 text-tb-primary-500" />
               </div>
               <h4 className="text-2xl font-bold text-tb-heading mb-4">Our Mission</h4>
-              <p className="text-tb-body text-lg leading-relaxed mb-6">
-                To deliver an education that nurtures every student through these guiding commitments:
-              </p>
-              <div className="space-y-4">
-                {pillars.map((p) => (
-                  <div key={p.title} className="flex items-start gap-3">
-                    <Icon
-                      icon={p.icon ?? 'lucide:check-circle'}
-                      className="w-5 h-5 text-tb-primary-500 mt-1 shrink-0"
-                    />
-                    <span className="text-tb-body">
-                      <span className="font-semibold text-tb-heading">{p.title}</span>
-                      {' — '}
-                      {p.description}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <p data-edit="about.missionStatement" className="text-tb-body text-lg leading-relaxed">{mission}</p>
             </div>
           )}
 
@@ -57,29 +40,31 @@ export default function MissionVision({ data }: { data: SchoolData }) {
                 <Icon icon="lucide:eye" className="w-8 h-8 text-white" />
               </div>
               <h4 className="text-2xl font-bold text-white mb-4">Our Vision</h4>
-              <p className="text-white text-lg leading-relaxed mb-8">{vision}</p>
-
-              {values.length > 0 && (
-                <div className="mt-auto">
-                  <p className="text-white/80 font-semibold uppercase tracking-wider text-xs mb-3">
-                    Our Core Values
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {values.map((v) => (
-                      <span
-                        key={v}
-                        className="inline-flex items-center gap-1.5 bg-white/15 text-white text-sm rounded-full px-3 py-1.5"
-                      >
-                        <Icon icon="lucide:star" className="w-3.5 h-3.5 text-white/80" />
-                        {v}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <p data-edit="about.vision" className="text-white text-lg leading-relaxed">{vision}</p>
             </div>
           )}
         </StaggerChildren>
+
+        {/* Core Values — full-width band below both cards, so neither card is
+            left with an empty gap and the two stay balanced. */}
+        {values.length > 0 && (
+          <div className="mt-10 text-center">
+            <p className="text-tb-primary-500 font-semibold uppercase tracking-wider text-xs mb-4">
+              Our Core Values
+            </p>
+            <div className="flex flex-wrap justify-center gap-2.5">
+              {values.map((v, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1.5 bg-white border border-tb-border text-tb-heading text-sm rounded-full px-4 py-2 shadow-sm"
+                >
+                  <Icon icon="lucide:star" className="w-3.5 h-3.5 text-tb-primary-400" />
+                  <span data-edit={`about.values.${i}`}>{v}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

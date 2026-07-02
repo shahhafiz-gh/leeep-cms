@@ -4,9 +4,12 @@ import Image from 'next/image'
 import type { SchoolData } from '@/types/school.types'
 import ScrollReveal from '@/shared/animations/scroll-reveal'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
+import { useGalleryImages } from '@/shared/hooks/useGalleryImages'
 
 export default function GallerySection({ data }: { data: SchoolData }) {
-  const images = data.gallery?.images ?? []
+  // Own the array (shared with Template B's GalleryGrid) so the Gallery panel's
+  // add / remove / reorder reflect live in the preview, not just per-image src.
+  const images = useGalleryImages(data.gallery?.images ?? [])
   if (images.length === 0) return null
 
   return (
@@ -52,11 +55,6 @@ export default function GallerySection({ data }: { data: SchoolData }) {
                 <ImagePlaceholder label="Add photo" editPath={`gallery.images.${i}.src`} />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              {image.category && (
-                <div className="absolute bottom-3 left-3 text-white text-xs font-bold bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {image.category}
-                </div>
-              )}
             </div>
           ))}
         </ScrollReveal>

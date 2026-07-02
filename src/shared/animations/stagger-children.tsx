@@ -1,7 +1,7 @@
 'use client'
 
 import { Children, isValidElement, type ReactNode } from 'react'
-import { motion, type Variants } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { cn } from '@/shared/utils/cn'
 
 interface StaggerChildrenProps {
@@ -26,32 +26,29 @@ export default function StaggerChildren({
   duration = 0.5,
   delay = 0,
 }: StaggerChildrenProps) {
-  const container: Variants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
-  }
-  const item: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration, ease: 'easeOut' } },
-  }
-
+  // Each child reveals on its OWN in-view trigger (rather than being orchestrated
+  // by a one-time parent `whileInView`). That keeps the staggered entrance on
+  // first load AND — crucially for the editor — reveals cards ADDED later: a
+  // parent-orchestrated `once` reveal fires before the new card exists, leaving it
+  // pinned at opacity 0 ("a space but nothing in it"). A self-triggering child in
+  // view animates in immediately.
   return (
-    <motion.div
-      className={cn(className)}
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-    >
+    <div className={cn(className)}>
       {Children.map(children, (child, i) =>
         isValidElement(child) ? (
-          <motion.div key={i} variants={item}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration, ease: 'easeOut', delay: delay + i * stagger }}
+          >
             {child}
           </motion.div>
         ) : (
           child
         ),
       )}
-    </motion.div>
+    </div>
   )
 }

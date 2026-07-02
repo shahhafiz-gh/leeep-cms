@@ -42,16 +42,10 @@ export default function AboutHero({ data }: { data: SchoolData }) {
         <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
           {/* Left: Content */}
           <div className="w-full md:w-[55%] flex flex-col items-start gap-6">
-            <motion.div
-              className="px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-            >
-              Our Story
-            </motion.div>
+            
 
             <motion.h1
+              data-edit="about.title"
               className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl"
               {...fadeUp(0.2)}
             >
@@ -59,6 +53,7 @@ export default function AboutHero({ data }: { data: SchoolData }) {
             </motion.h1>
 
             <motion.p
+              data-edit="about.description"
               className="font-(family-name:--font-ta-body-lg) text-[17px] leading-relaxed text-ta-on-surface-variant"
               {...fadeUp(0.3)}
             >
@@ -75,9 +70,12 @@ export default function AboutHero({ data }: { data: SchoolData }) {
                   <div key={stat.label} className="flex flex-row items-center gap-6">
                     <div className="flex flex-col">
                       <span className="text-ta-primary font-(family-name:--font-ta-h2) text-3xl font-bold">
-                        {stat.value}{stat.suffix ?? ''}
+                        <span data-edit={`stats.${i}.value`}>{stat.value}</span>{stat.suffix ?? ''}
                       </span>
-                      <span className="text-ta-on-surface-variant font-(family-name:--font-ta-label-md) text-ta-label-md mt-1">
+                      <span
+                        data-edit={`stats.${i}.label`}
+                        className="text-ta-on-surface-variant font-(family-name:--font-ta-label-md) text-ta-label-md mt-1"
+                      >
                         {stat.label}
                       </span>
                     </div>
@@ -101,18 +99,19 @@ export default function AboutHero({ data }: { data: SchoolData }) {
             <div className="absolute w-full h-[500px] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-40 z-0" />
 
             {/* Main image */}
-            {data.about.image ? (
+            {data.about.heroImage ? (
               <div className="relative border-8 border-white w-[60%] aspect-square rounded-3xl overflow-hidden z-10 shadow-lg">
                 <Image
-                  src={data.about.image}
+                  src={data.about.heroImage}
                   alt={`${data.name} campus`}
                   fill
                   className="object-cover"
+                  data-edit-img="about.heroImage"
                 />
               </div>
             ) : (
               <div className="relative border-8 border-white w-[60%] aspect-square rounded-3xl overflow-hidden z-10">
-                <ImagePlaceholder label="Add about image" />
+                <ImagePlaceholder label="Add about hero image" editPath="about.heroImage" />
               </div>
             )}
 
@@ -123,11 +122,11 @@ export default function AboutHero({ data }: { data: SchoolData }) {
                   <Icon icon={data.about.badges[0].icon ?? 'lucide:award'} className="text-2xl text-ta-secondary-container" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-(family-name:--font-ta-h3) text-lg font-semibold text-ta-on-surface leading-tight">
+                  <span data-edit="about.badges.0.label" className="font-(family-name:--font-ta-h3) text-lg font-semibold text-ta-on-surface leading-tight">
                     {data.about.badges[0].label}
                   </span>
                   {data.about.badges[0].sublabel && (
-                    <span className="font-(family-name:--font-ta-body-md) text-sm text-ta-on-surface-variant">
+                    <span data-edit="about.badges.0.sublabel" className="font-(family-name:--font-ta-body-md) text-sm text-ta-on-surface-variant">
                       {data.about.badges[0].sublabel}
                     </span>
                   )}

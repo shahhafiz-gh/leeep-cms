@@ -26,7 +26,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   const data = await getSiteData(school, 'published')
   return (
     <>
-      {renderTemplate(data, 'home', school)}
+      {renderTemplate(data, 'home', school, editing)}
       {/* Inline-edit layer: injected ONLY for an editor preview
           (?preview=1&token=<PREVIEW_SECRET>). Capture-only; the authoritative
           server gate arrives in prompt 3. */}

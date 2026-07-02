@@ -23,15 +23,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
         <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-ta-gutter items-center relative z-10">
           {/* Left Content */}
           <div className="md:col-span-6 flex flex-col gap-ta-lg pt-ta-lg pb-ta-xl md:py-ta-xl text-center md:text-left items-center md:items-start">
-            <motion.div
-              data-edit="hero.slides.0.subtitle"
-              className="px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-            >
-              {slide.subtitle || `Welcome to ${data.name}`}
-            </motion.div>
+          
 
             <motion.h1
               data-edit="hero.slides.0.title"
@@ -55,7 +47,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
                 className="flex flex-col sm:flex-row flex-wrap gap-ta-sm mt-ta-xs w-full sm:w-auto"
                 {...fadeUp(0.4)}
               >
-                <Link href={slide.cta.href} data-edit-link="hero.slides.0.cta.href" className="w-full sm:w-auto">
+                <Link href="/admissions" className="w-full sm:w-auto">
                   <button className="w-full inline-flex items-center justify-center gap-2 cursor-pointer bg-ta-primary-container text-ta-on-primary font-(family-name:--font-ta-label-md) text-ta-label-md rounded-full shadow-[0_8px_16px_rgba(0,107,32,0.2)] hover:scale-105 active:scale-95 transition-all duration-200 px-8 py-4">
                     <span data-edit="hero.slides.0.cta.label">{slide.cta.label}</span>
                   </button>
@@ -70,11 +62,17 @@ export default function HeroSection({ data }: { data: SchoolData }) {
                 {...fadeUp(0.5)}
               >
                 {data.stats.slice(0, 3).map((stat, i) => (
-                  <div key={stat.label} className="flex items-center gap-(--spacing-ta-xs) text-ta-on-surface-variant">
+                  <div
+                    key={stat.label}
+                    data-note="These highlights come from your Stats. They’re not edited here — update them in the Stats section and they’ll change everywhere."
+                    data-note-action="Edit in Stats →"
+                    data-note-target={`stats.${i}.value`}
+                    className="flex items-center gap-(--spacing-ta-xs) text-ta-on-surface-variant"
+                  >
                     <Icon icon={stat.icon || 'lucide:shield-check'} className="text-ta-primary-container text-xl w-5 h-5 shrink-0" />
                     <span className="font-(family-name:--font-ta-label-md) text-ta-label-md capitalize">
-                      <span data-edit={`stats.${i}.value`}>{stat.value}</span>{' '}
-                      <span data-edit={`stats.${i}.label`}>{stat.label}</span>
+                      <span data-bind={`stats.${i}.value`}>{stat.value}</span><span data-bind={`stats.${i}.suffix`}>{stat.suffix ?? ''}</span>{' '}
+                      <span data-bind={`stats.${i}.label`}>{stat.label}</span>
                     </span>
                   </div>
                 ))}

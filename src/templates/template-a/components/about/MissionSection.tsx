@@ -26,7 +26,9 @@ export default function MissionSection({ data }: { data: SchoolData }) {
       label: 'Our Vision',
       icon: 'lucide:telescope',
       text: vision,
+      path: 'about.vision',
       tags: values.slice(0, 3),
+      tagOffset: 0,
       decoratorPos: 'top-0 right-0 rounded-bl-full -mr-8 -mt-8',
     },
     {
@@ -34,7 +36,9 @@ export default function MissionSection({ data }: { data: SchoolData }) {
       label: 'Our Mission',
       icon: 'lucide:compass',
       text: mission,
+      path: 'about.missionStatement',
       tags: values.slice(3, 6),
+      tagOffset: 3,
       decoratorPos: 'bottom-0 right-0 rounded-tl-full -mr-10 -mb-10',
     },
   ].filter((c) => c.text)
@@ -67,7 +71,7 @@ export default function MissionSection({ data }: { data: SchoolData }) {
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <div className="mb-4 px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block">
-            Why Choose Us
+            What Drives Us
           </div>
           <h2 className="font-(family-name:--font-ta-h2) text-4xl md:text-[--text-ta-h2] text-ta-on-surface mb-4 max-w-2xl mx-auto leading-tight">
             Our Vision & Mission
@@ -106,15 +110,16 @@ export default function MissionSection({ data }: { data: SchoolData }) {
 
                 <div className="h-[3px] w-12 my-4 rounded-full bg-ta-primary opacity-80" />
 
-                <p className="font-(family-name:--font-ta-body-md) text-[--text-ta-body-md] text-ta-on-surface-variant mb-8 flex-grow leading-relaxed">
+                <p data-edit={card.path} className="font-(family-name:--font-ta-body-md) text-[--text-ta-body-md] text-ta-on-surface-variant mb-8 flex-grow leading-relaxed">
                   {card.text}
                 </p>
 
                 {card.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-auto">
-                    {card.tags.map((tag) => (
+                    {card.tags.map((tag, ti) => (
                       <span
                         key={tag}
+                        data-edit={`about.values.${card.tagOffset + ti}`}
                         className="px-3 py-1 rounded-full font-(family-name:--font-ta-caption) text-[--text-ta-caption] border border-ta-primary/20 bg-ta-primary/5 text-ta-primary transition-colors duration-300"
                       >
                         {tag}

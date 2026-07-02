@@ -64,19 +64,20 @@ export default function Achievements({ data }: { data: SchoolData }) {
                 <Icon
                   icon={item.icon ?? ICONS[index % ICONS.length]}
                   className="text-ta-primary group-hover:text-ta-on-primary text-[28px] transition-colors duration-500"
+
                 />
               </div>
 
-              <h3 className="font-(family-name:--font-ta-h3) text-[18px] leading-tight text-ta-on-surface mb-2 font-bold">
+              <h3 data-edit={`about.achievements.${index}.title`} className="font-(family-name:--font-ta-h3) text-[18px] leading-tight text-ta-on-surface mb-2 font-bold">
                 {item.title}
               </h3>
 
-              <p className="font-(family-name:--font-ta-caption) text-[--text-ta-caption] text-ta-on-surface-variant mb-4">
+              <p data-edit={`about.achievements.${index}.description`} className="font-(family-name:--font-ta-caption) text-[--text-ta-caption] text-ta-on-surface-variant mb-4">
                 {item.description}
               </p>
 
               {item.year && (
-                <span className="mt-auto inline-block font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold text-ta-primary bg-ta-primary/5 rounded-full px-4 py-1">
+                <span data-edit={`about.achievements.${index}.year`} className="mt-auto inline-block font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold text-ta-primary bg-ta-primary/5 rounded-full px-4 py-1">
                   {item.year}
                 </span>
               )}

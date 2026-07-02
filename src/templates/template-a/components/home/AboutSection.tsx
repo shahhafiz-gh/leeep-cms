@@ -4,11 +4,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
-import ScrollReveal from '@/shared/animations/scroll-reveal'
 import StaggerChildren from '@/shared/animations/stagger-children'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 
 export default function AboutSection({ data }: { data: SchoolData }) {
+  // Home-only teaser content — independent of the About page.
+  const homeAbout = data.homeAbout ?? {}
   return (
     <section className="py-10 md:py-20 bg-ta-surface overflow-hidden">
       <div className="container my-10 mx-auto px-4 md:px-6">
@@ -18,85 +19,52 @@ export default function AboutSection({ data }: { data: SchoolData }) {
             <div className="absolute inset-0 bg-ta-primary/5 rounded-[30%_70%_70%_30%/30%_30%_70%_70%] opacity-80 z-0 scale-110 animate-pulse" />
 
             <div className="relative z-10 w-full h-full rounded-[30%_60%_70%_30%/60%_30%_70%_40%] bg-ta-surface-dim overflow-hidden shadow-inner border-4 border-ta-surface">
-              {data.about.image ? (
+              {homeAbout.image ? (
                 <Image
-                  src={data.about.image}
+                  src={homeAbout.image}
                   alt={`Students at ${data.name}`}
                   fill
                   className="object-cover"
-                  data-edit-img="about.image"
+                  data-edit-img="homeAbout.image"
                 />
               ) : (
-                <ImagePlaceholder label="Add about image" editPath="about.image" />
+                <ImagePlaceholder label="Add about image" editPath="homeAbout.image" />
               )}
             </div>
-
-            {/* Floating Badge (first) */}
-            {data.about.badges?.[0] && (
-              <ScrollReveal direction="left" delay={0.2} className="absolute top-4 -left-2 md:top-8 md:-left-8 z-20">
-                <div className="bg-ta-tertiary-container text-ta-on-tertiary-container px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-ta-on-tertiary-container/10 flex items-center justify-center">
-                    <Icon icon={data.about.badges[0].icon ?? 'lucide:landmark'} className="w-5 h-5" data-edit-icon="about.badges.0.icon" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-sm" data-edit="about.badges.0.label">{data.about.badges[0].label}</div>
-                    {data.about.badges[0].sublabel && (
-                      <div className="text-xs opacity-80" data-edit="about.badges.0.sublabel">{data.about.badges[0].sublabel}</div>
-                    )}
-                  </div>
-                </div>
-              </ScrollReveal>
-            )}
-
-            {/* Floating Badge (second) */}
-            {data.about.badges?.[1] && (
-              <ScrollReveal direction="right" delay={0.4} className="absolute bottom-4 -right-2 md:bottom-8 md:-right-8 z-20">
-                <div className="bg-ta-secondary-container text-ta-on-secondary-container px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-ta-on-secondary-container/10 flex items-center justify-center">
-                    <Icon icon={data.about.badges[1].icon ?? 'lucide:shield-check'} className="w-5 h-5" data-edit-icon="about.badges.1.icon" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-sm" data-edit="about.badges.1.label">{data.about.badges[1].label}</div>
-                    {data.about.badges[1].sublabel && (
-                      <div className="text-xs opacity-80" data-edit="about.badges.1.sublabel">{data.about.badges[1].sublabel}</div>
-                    )}
-                  </div>
-                </div>
-              </ScrollReveal>
-            )}
           </div>
 
           {/* Right Column: Content */}
           <div className="flex flex-col items-start gap-6 md:gap-8 relative z-10 px-4 md:px-0">
             <div className="flex items-center gap-2">
-              <span data-edit="about.title" className="bg-ta-primary/10 text-ta-primary font-bold text-ta-label-md px-4 py-1 rounded-full uppercase tracking-wider">
-                {data.about.title || 'About Us'}
+              <span data-edit="homeAbout.title" className="bg-ta-primary/10 text-ta-primary font-bold text-ta-label-md px-4 py-1 rounded-full uppercase tracking-wider">
+                {homeAbout.title || 'About Us'}
               </span>
               <Icon icon="lucide:stars" className="text-ta-primary text-xl" />
             </div>
 
-            <h2 data-edit="about.subtitle" className="font-(family-name:--font-ta-h2) text-3xl md:text-ta-h2 text-ta-on-surface m-0 leading-tight">
-              {data.about.subtitle || 'Nurturing Excellence in Education'}
+            <h2 data-edit="homeAbout.subtitle" className="font-(family-name:--font-ta-h2) text-3xl md:text-ta-h2 text-ta-on-surface m-0 leading-tight">
+              {homeAbout.subtitle || 'Nurturing Excellence in Education'}
             </h2>
 
-            <p data-edit="about.description" className="font-(family-name:--font-ta-body-lg) text-ta-body-lg text-ta-on-surface-variant leading-relaxed">
-              {data.about.description}
+            <p data-edit="homeAbout.description" className="font-(family-name:--font-ta-body-lg) text-ta-body-lg text-ta-on-surface-variant leading-relaxed">
+              {homeAbout.description}
             </p>
 
-            {/* Mission Points */}
-            {data.about.mission && (
+            {/* Mission Points — only when there are some */}
+            {homeAbout.mission && homeAbout.mission.length > 0 && (
               <StaggerChildren stagger={0.1} className="flex flex-col gap-4 w-full">
-                {data.about.mission.map((point) => (
+                {homeAbout.mission.map((point, mi) => (
                   <div
                     key={point.title}
+                    data-edit-group
                     className="flex gap-4 p-4 rounded-2xl bg-ta-surface-container-low border border-ta-outline-variant/30 hover:border-ta-primary/30 hover:shadow-md transition-all"
                   >
                     <div className="w-10 h-10 rounded-full bg-ta-primary/10 flex items-center justify-center shrink-0">
                       <Icon icon="lucide:check" className="w-5 h-5 text-ta-primary" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-ta-on-surface text-sm mb-1">{point.title}</h4>
-                      <p className="text-ta-on-surface-variant text-sm">{point.description}</p>
+                      <h4 data-edit={`homeAbout.mission.${mi}.title`} className="font-bold text-ta-on-surface text-sm mb-1">{point.title}</h4>
+                      <p data-edit={`homeAbout.mission.${mi}.description`} className="text-ta-on-surface-variant text-sm">{point.description}</p>
                     </div>
                   </div>
                 ))}
@@ -119,6 +87,7 @@ export default function AboutSection({ data }: { data: SchoolData }) {
                   </div>
                   <a
                     href={`tel:${data.contact?.phone?.[0]}`}
+                    data-edit="contact.phone.0"
                     className="font-(family-name:--font-ta-label-md) text-ta-label-md font-bold text-ta-on-surface hover:text-ta-primary transition-colors"
                   >
                     {data.contact?.phone?.[0]}

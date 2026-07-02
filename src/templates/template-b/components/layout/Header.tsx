@@ -42,14 +42,14 @@ export default function Header({ data, page }: { data: SchoolData; page: PageTyp
                     alt={data.name}
                     width={75}
                     height={75}
-                    className="h-[55px] w-auto object-contain"
+                    className="max-h-14  max-w-14 object-contain"
                     data-edit-img="logo"
                   />
                 ) : (
                   <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-14 h-14 rounded-full shrink-0 gap-0.5" editPath="logo" />
                 )}
                 <div className="flex flex-col ml-1 font-(family-name:--font-inter)">
-                  <span data-edit="name" className={`font-bold text-[19px] leading-tight uppercase tracking-normal ${isDark ? 'text-tb-heading' : 'text-tb-background'}`}>
+                  <span data-edit="name" className={`font-bold text-[19px] text-center w-52 max-w-42.5leading-tight uppercase tracking-normal ${isDark ? 'text-tb-heading' : 'text-tb-background'}`}>
                     {data.name}
                   </span>
                 </div>

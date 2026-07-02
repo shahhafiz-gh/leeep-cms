@@ -13,7 +13,7 @@ const REQUIREMENTS = [
 ]
 
 export default function AdmissionRequirements({ data }: { data: SchoolData }) {
-  const image = data.about.image || '/assets/demo/placeholder.png'
+  const image = data.admissions.requirementsImage || '/assets/demo/placeholder.png'
 
   return (
     <section className="py-16 md:py-24 bg-white">
@@ -21,7 +21,7 @@ export default function AdmissionRequirements({ data }: { data: SchoolData }) {
         <ScrollReveal>
           <h3 className="text-2xl md:text-3xl font-bold text-tb-heading mb-8">New Student Admissions</h3>
           <div className="rounded-2xl overflow-hidden mb-12">
-            <img src={image} alt="Admissions" className="w-full h-[280px] md:h-[380px] object-cover" />
+            <img src={image} alt="Admissions" className="w-full h-[280px] md:h-[380px] object-cover" data-edit-img="admissions.requirementsImage" />
           </div>
         </ScrollReveal>
 

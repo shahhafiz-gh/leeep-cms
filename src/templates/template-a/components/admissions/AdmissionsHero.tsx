@@ -98,9 +98,9 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
           <div className="relative h-[300px] w-full max-w-[500px] lg:h-[400px] rounded-xl border border-ta-outline-variant bg-ta-surface-container-highest z-10">
             <div className="w-full h-full rounded-xl overflow-hidden">
               {admissions.image ? (
-                <img alt="Admissions" className="w-full h-full object-cover" src={admissions.image} />
+                <img alt="Admissions" className="w-full h-full object-cover" src={admissions.image} data-edit-img="admissions.image" />
               ) : (
-                <ImagePlaceholder label="Add admissions image" icon="lucide:graduation-cap" />
+                <ImagePlaceholder label="Add admissions image" icon="lucide:graduation-cap" editPath="admissions.image" />
               )}
             </div>
 

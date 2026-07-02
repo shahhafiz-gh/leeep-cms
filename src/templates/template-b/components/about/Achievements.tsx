@@ -56,18 +56,19 @@ export default function Achievements({ data }: { data: SchoolData }) {
                   <Icon
                     icon={icon}
                     className="w-8 h-8 text-black group-hover:text-white relative z-10 drop-shadow-sm"
+
                   />
                 </div>
 
-                <h5 className="text-xl font-semibold text-black mb-4 transition-all duration-300 relative z-10">
+                <h5 data-edit={`about.achievements.${index}.title`} className="text-xl font-semibold text-black mb-4 transition-all duration-300 relative z-10">
                   {item.title}
                 </h5>
-                <p className="text-black/80 leading-relaxed text-base relative z-10 flex-grow">
+                <p data-edit={`about.achievements.${index}.description`} className="text-black/80 leading-relaxed text-base relative z-10 flex-grow">
                   {item.description}
                 </p>
 
                 {item.year && (
-                  <span className="mt-4 inline-block text-sm font-semibold text-tb-body relative z-10">
+                  <span data-edit={`about.achievements.${index}.year`} className="mt-4 inline-block text-sm font-semibold text-tb-body relative z-10">
                     {item.year}
                   </span>
                 )}

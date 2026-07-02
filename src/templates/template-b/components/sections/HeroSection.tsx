@@ -12,25 +12,27 @@ export default function HeroSection({ data }: { data: SchoolData }) {
       id="home"
       className="relative h-[70vh] flex items-center justify-center overflow-hidden"
     >
-      {/* Video or Image Background */}
-      {slide.video ? (
-        <video
-          autoPlay
-          muted
-          playsInline
-          className="relative inset-0 w-full h-full object-cover z-0"
-        >
-          <source src={slide.video} type="video/mp4" />
-          {/* Fallback image if video fails */}
-          <img src={slide.image} alt={slide.title} className="absolute inset-0 w-full h-full object-cover" />
-        </video>
-      ) : (
-        <div
-          className="absolute inset-0 bg-cover bg-center z-0"
-          style={{ backgroundImage: `url(${slide.image})` }}
-          data-edit-img="hero.slides.0.image"
-        />
-      )}
+      {/* Background. We ALWAYS render a <video> whose poster IS the hero image,
+          so with no clip it simply shows the image; uploading a background video
+          (from the form) swaps in the playing source live — no page reload, and
+          no dependence on the demo shipping a video. The poster is an editable
+          image slot (`data-edit-img`); the playable source is patched via
+          `data-video-target`. */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={slide.image}
+        data-edit-img="hero.slides.0.image"
+        data-video-target="hero.slides.0.video"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      >
+        {slide.video && <source src={slide.video} type="video/mp4" />}
+      </video>
+
+    
 
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/50 z-1" />
@@ -56,8 +58,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
 
         {slide.cta && (
           <a
-            href={slide.cta.href}
-            data-edit-link="hero.slides.0.cta.href"
+            href="/admissions"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-tb-primary-400 text-tb-background font-semibold rounded-full hover:bg-tb-primary-500 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             <span data-edit="hero.slides.0.cta.label">{slide.cta.label}</span>

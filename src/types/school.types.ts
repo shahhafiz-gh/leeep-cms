@@ -106,7 +106,14 @@ export interface AboutData {
   title: string
   subtitle?: string
   description: string
+  /** "Our Story" image on the About page (and the primary about photo). */
   image?: string
+  /** Full-width hero image at the top of the About page. */
+  heroImage?: string
+  /** Image used in the About teaser section on the HOME page. */
+  homeImage?: string
+  /** Secondary/overlay image in the home About teaser (Template B layout). */
+  homeSecondaryImage?: string
   mission?: MissionItem[]
   /** Single mission statement (distinct from the `mission` pillar list) */
   missionStatement?: string
@@ -122,6 +129,21 @@ export interface AboutData {
     description: string
     items: { title: string; description: string; image?: string }[]
   }
+}
+
+/** Home-only "About our school" teaser content (Template A). Separate from
+ *  AboutData so the home section is self-contained and editable on the Home tab. */
+export interface HomeAboutData {
+  /** Small eyebrow / decorative label, e.g. "About Us". */
+  title?: string
+  /** Section heading. */
+  subtitle?: string
+  description?: string
+  image?: string
+  /** Secondary/overlay image (used by the Template B layout). */
+  secondaryImage?: string
+  badges?: Badge[]
+  mission?: MissionItem[]
 }
 
 // ── Academics ──
@@ -192,7 +214,12 @@ export interface AdmissionsData {
   title: string
   subtitle?: string
   description: string
+  /** Hero image on the Admissions page. */
   image?: string
+  /** Image used in the Admissions teaser/CTA section on the HOME page. */
+  homeImage?: string
+  /** Image shown in the "New Student Admissions" requirements block (Template B). */
+  requirementsImage?: string
   whyChoose?: WhyChooseItem[]
   feeStructure?: FeeItem[]
   faqs?: FAQ[]
@@ -212,6 +239,8 @@ export interface AdmissionsData {
 export interface ContactData {
   title: string
   subtitle?: string
+  /** Campus photo shown in the Contact page hero. */
+  image?: string
   address: string
   phone: string[]
   email: string[]
@@ -298,7 +327,6 @@ export interface StatData {
 export interface GalleryImage {
   src: string
   alt: string
-  category?: string
 }
 
 export interface GalleryData {
@@ -379,6 +407,9 @@ export interface SchoolData {
 
   hero: HeroData
   about: AboutData
+  /** Home-only "About our school" teaser (Template A) — independent of the
+   *  About page so editing it never changes the About page. */
+  homeAbout?: HomeAboutData
   academics: AcademicsData
   admissions: AdmissionsData
   contact: ContactData

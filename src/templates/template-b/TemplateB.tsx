@@ -20,7 +20,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   academics: AcademicsView,
   admissions: AdmissionsView,
   contact: ContactView,
-  updates: UpdatesView,
+  updates: UpdatesView, 
   login: LoginView,
 }
 

@@ -33,10 +33,11 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
                 <img
                   src={club.image}
                   alt={club.name}
+                  data-edit-img={`academics.clubs.${index}.image`}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="absolute inset-0 bg-tb-primary-100" />
+                <div className="absolute inset-0 bg-tb-primary-100" data-edit-img={`academics.clubs.${index}.image`} />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 

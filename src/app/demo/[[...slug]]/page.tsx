@@ -2,9 +2,11 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import type { PageType } from '@/types/school.types'
 import { getDemoData, resolveDemoTemplate } from '@/lib/demo'
+import { isEditPreview, type RouteSearchParams } from '@/lib/cms'
 import { buildMetadata } from '@/lib/metadata'
 import TemplateA from '@/templates/template-a/TemplateA'
 import TemplateB from '@/templates/template-b/TemplateB'
+import InlineEditLayer from '@/shared/InlineEditLayer'
 
 /**
  * Neutral template DEMO route.
@@ -21,7 +23,7 @@ import TemplateB from '@/templates/template-b/TemplateB'
 
 interface DemoProps {
   params: Promise<{ slug?: string[] }>
-  searchParams: Promise<{ template?: string | string[] }>
+  searchParams: Promise<RouteSearchParams>
 }
 
 /** Map the first URL segment under /demo to a template page. '' (no segment) → home. */
@@ -50,14 +52,25 @@ export default async function DemoPage({ params, searchParams }: DemoProps) {
   const page = resolvePage((await params).slug)
   if (!page) return notFound()
 
-  const template = resolveDemoTemplate((await searchParams).template)
+  const sp = await searchParams
+  const template = resolveDemoTemplate(sp.template)
   const data = getDemoData(template)
+  const editing = isEditPreview(sp)
 
   // The CARD's template (from the URL) decides the design — never the demo
   // data's `config.template_id`. Same `data` content, two different templates.
-  return template === 'B'
-    ? <TemplateB data={data} page={page} />
-    : <TemplateA data={data} page={page} />
+  return (
+    <>
+      {template === 'B'
+        ? <TemplateB data={data} page={page} />
+        : <TemplateA data={data} page={page} />}
+      {/* Inline-edit layer: injected ONLY for an editor preview
+          (?preview=1&token=<PREVIEW_SECRET>). Capture-only — mirrors the
+          home/about routes so every demo page (incl. About for both
+          templates) is editable in the inline editor. */}
+      {editing && <InlineEditLayer />}
+    </>
+  )
 }
 
 export const dynamic = 'force-dynamic'

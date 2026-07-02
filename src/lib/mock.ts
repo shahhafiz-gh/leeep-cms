@@ -36,6 +36,9 @@ export const placeholderTemplateAData: SchoolData = {
     description:
       'Describe your school here — your philosophy, your approach to education, and what sets you apart. This text appears on the home and about pages.',
     image: '',
+    heroImage: '',
+    homeImage: '',
+    homeSecondaryImage: '',
     badges: [
       { icon: 'lucide:landmark', label: 'Est. Year', sublabel: 'Add a short caption' },
       { icon: 'lucide:shield-check', label: 'Your Highlight', sublabel: 'Add a short caption' },
@@ -107,6 +110,8 @@ export const placeholderTemplateAData: SchoolData = {
     description:
       'Add a short introduction to your admissions process here, inviting families to apply.',
     image: '',
+    homeImage: '',
+    requirementsImage: '',
     highlights: [
       { icon: 'lucide:shield-check', label: 'Add a highlight' },
       { icon: 'lucide:star', label: 'Add a highlight' },
@@ -139,6 +144,7 @@ export const placeholderTemplateAData: SchoolData = {
   contact: {
     title: 'Contact Us',
     subtitle: 'Get In Touch',
+    image: '',
     address: 'Add your school address here',
     phone: ['+00 00000 00000'],
     email: ['info@yourschool.com'],
@@ -211,10 +217,10 @@ export const placeholderTemplateAData: SchoolData = {
   gallery: {
     title: 'Life at Our Campus',
     images: [
-      { src: '', alt: 'Add a caption', category: 'Campus' },
-      { src: '', alt: 'Add a caption', category: 'Academics' },
-      { src: '', alt: 'Add a caption', category: 'Sports' },
-      { src: '', alt: 'Add a caption', category: 'Events' },
+      { src: '', alt: 'Add a caption' },
+      { src: '', alt: 'Add a caption' },
+      { src: '', alt: 'Add a caption' },
+      { src: '', alt: 'Add a caption' },
     ],
   },
 
@@ -258,11 +264,12 @@ export const placeholderTemplateAData: SchoolData = {
 
   navigation: [
     { label: 'Home', href: '/' },
+    { label: 'Updates', href: '/updates' },
     { label: 'About', href: '/about' },
     { label: 'Academics', href: '/academics' },
-    { label: 'Updates', href: '/updates' },
     { label: 'Admissions', href: '/admissions' },
     { label: 'Contact', href: '/contact' },
+    { label: 'Login', href: '/login' },
   ],
 
   socialLinks: [
@@ -302,7 +309,8 @@ export const mockKcgsData: SchoolData = {
         title: 'Kashmir Cambridge Group of Schools',
         subtitle: 'Knowledge Meets Innovation',
         description: 'Nurturing young minds with excellence in academics, character, and values since 2009 — Tukroo, Shopian.',
-        video: '/assets/kcs/images/campus-life/campus-life-vid.mp4',
+        // No default background video — the hero shows the image until the school
+        // uploads its own (optimised) video. See HeroSection's editor control.
         image: '/assets/kcs/images/campus-life/campus-life-hero.webp',
       },
     ],
@@ -313,6 +321,9 @@ export const mockKcgsData: SchoolData = {
     subtitle: 'Est. 2009',
     description: 'At Kashmir Cambridge Group of Schools, we believe in the transformative power of education and the boundless potential within every individual. Established in 2009, we have been dedicated to fostering intellectual curiosity, academic excellence, and a vibrant campus community.',
     image: '/assets/kcs/images/about/kc-building.webp',
+    heroImage: '/assets/kcs/images/about/kc-building-2.webp',
+    homeImage: '/assets/kcs/images/campus-life/student-life.webp',
+    homeSecondaryImage: '/assets/kcs/images/campus-life/art-culture.webp',
     whyChooseUs: [
       { title: 'Academic Excellence', description: 'Rigorous curriculum with outstanding board results year after year.' },
       { title: 'Experienced Faculty', description: 'Dedicated teachers committed to unlocking every student\'s potential.' },
@@ -425,6 +436,9 @@ export const mockKcgsData: SchoolData = {
     title: 'Admissions Open',
     subtitle: 'Session 2025–26',
     description: 'Join the Kashmir Cambridge family. We welcome students from Nursery to Class 12. Apply online or visit our campus at Tukroo, Shopian.',
+    image: '/assets/kcs/images/about/kc-building-2.webp',
+    homeImage: '/assets/kcs/images/campus-life/athletics.webp',
+    requirementsImage: '/assets/kcs/images/campus-life/student-life.webp',
     process: {
       title: 'How to Apply',
       steps: [
@@ -449,6 +463,7 @@ export const mockKcgsData: SchoolData = {
   contact: {
     title: 'Contact Us',
     subtitle: 'Get In Touch',
+    image: '/assets/kcs/images/campus-life/campus-life-hero.webp',
     address: 'Tukroo, Shopian, Jammu & Kashmir — 192303',
     phone: ['+91 70060 37002'],
     email: ['info@kashmircambridge.in'],
@@ -543,10 +558,10 @@ export const mockKcgsData: SchoolData = {
 
   gallery: {
     images: [
-      { src: '/assets/kcs/images/campus-life/student-life.webp', alt: 'Student Life', category: 'Campus' },
-      { src: '/assets/kcs/images/campus-life/art-culture.webp', alt: 'Arts & Culture', category: 'Events' },
-      { src: '/assets/kcs/images/campus-life/athletics.webp', alt: 'Athletics', category: 'Sports' },
-      { src: '/assets/kcs/images/about/kc-building.webp', alt: 'Campus Building', category: 'Campus' },
+      { src: '/assets/kcs/images/campus-life/student-life.webp', alt: 'Student Life' },
+      { src: '/assets/kcs/images/campus-life/art-culture.webp', alt: 'Arts & Culture' },
+      { src: '/assets/kcs/images/campus-life/athletics.webp', alt: 'Athletics' },
+      { src: '/assets/kcs/images/about/kc-building.webp', alt: 'Campus Building' },
     ],
   },
 
@@ -574,10 +589,10 @@ export const mockKcgsData: SchoolData = {
 
   navigation: [
     { label: 'Home', href: '/' },
+    { label: 'Updates', href: '/updates' },
     { label: 'About', href: '/about' },
     { label: 'Academics', href: '/academics' },
     { label: 'Admissions', href: '/admissions' },
-    { label: 'Updates', href: '/updates' },
     { label: 'Contact', href: '/contact' },
   ],
 

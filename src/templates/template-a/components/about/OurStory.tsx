@@ -27,9 +27,10 @@ export default function OurStory({ data }: { data: SchoolData }) {
                   alt={`${data.name} campus`}
                   fill
                   className="object-cover"
+                  data-edit-img="about.image"
                 />
               ) : (
-                <ImagePlaceholder label="Add about image" />
+                <ImagePlaceholder label="Add about image" editPath="about.image" />
               )}
             </div>
 
@@ -41,9 +42,9 @@ export default function OurStory({ data }: { data: SchoolData }) {
                     <Icon icon={data.about.badges[0].icon ?? 'lucide:landmark'} className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-sm">{data.about.badges[0].label}</div>
+                    <div className="font-bold text-sm" data-edit="about.badges.0.label">{data.about.badges[0].label}</div>
                     {data.about.badges[0].sublabel && (
-                      <div className="text-xs opacity-80">{data.about.badges[0].sublabel}</div>
+                      <div className="text-xs opacity-80" data-edit="about.badges.0.sublabel">{data.about.badges[0].sublabel}</div>
                     )}
                   </div>
                 </div>
@@ -61,11 +62,11 @@ export default function OurStory({ data }: { data: SchoolData }) {
               </span>
             </div>
 
-            <h2 className="font-(family-name:--font-ta-h2) text-3xl md:text-[--text-ta-h2] text-ta-on-surface leading-tight">
+            <h2 data-edit="about.subtitle" className="font-(family-name:--font-ta-h2) text-3xl md:text-[--text-ta-h2] text-ta-on-surface leading-tight">
               {data.about.subtitle ?? 'A Legacy of Excellence in Education'}
             </h2>
 
-            <div className="flex flex-col gap-4">
+            <div data-edit="about.story" className="flex flex-col gap-4">
               {paragraphs.map((para, i) => (
                 <p
                   key={i}

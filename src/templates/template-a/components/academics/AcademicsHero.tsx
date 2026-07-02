@@ -63,11 +63,11 @@ export default function AcademicsHero({ data }: { data: SchoolData }) {
             <div className="absolute w-full h-[420px] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-40 z-0" />
             {academics.image ? (
               <div className="relative border-8 border-white w-[75%] aspect-[4/3] rounded-3xl overflow-hidden z-10 shadow-lg">
-                <Image src={academics.image} alt={`${data.name} academics`} fill className="object-cover" />
+                <Image src={academics.image} alt={`${data.name} academics`} fill className="object-cover" data-edit-img="academics.image" />
               </div>
             ) : (
               <div className="relative border-8 border-white w-[75%] aspect-[4/3] rounded-3xl overflow-hidden z-10">
-                <ImagePlaceholder label="Add academics image" icon="lucide:graduation-cap" />
+                <ImagePlaceholder label="Add academics image" icon="lucide:graduation-cap" editPath="academics.image" />
               </div>
             )}
           </motion.div>

@@ -62,6 +62,48 @@ export function resolveDemoTemplate(raw?: string | string[]): DemoTemplate {
   return 'A'
 }
 
+/** Map an internal `/demo/...?template=X` link to its live route, e.g. `/about`. */
+function demoHrefToLive(href: string): string {
+  const match = href.match(/^\/demo(\/[^?#]*)?/)
+  if (!match) return href
+  const path = match[1] ?? ''
+  return path === '' || path === '/' ? '/' : path
+}
+
+/**
+ * Demo data for the inline EDITOR preview.
+ *
+ * Identical to the template-selection demo (`getDemoData`) — same fully
+ * populated, fictional content — but internal links point at the LIVE routes
+ * (`/about`, …) instead of `/demo/...`, so navigating inside the editor stays on
+ * the real pages. Used so an admin always sees a complete, working example to
+ * edit over, never the school's own sparse draft/published data.
+ */
+export function getEditorDemoData(template: DemoTemplate): SchoolData {
+  const data = getDemoData(template)
+  return {
+    ...data,
+    navigation: data.navigation.map((item) => ({
+      ...item,
+      href: demoHrefToLive(item.href),
+      children: item.children?.map((child) => ({ ...child, href: demoHrefToLive(child.href) })),
+    })),
+    hero: {
+      ...data.hero,
+      slides: data.hero.slides.map((slide) =>
+        slide.cta ? { ...slide, cta: { ...slide.cta, href: demoHrefToLive(slide.cta.href) } } : slide,
+      ),
+    },
+    footer: {
+      ...data.footer,
+      columns: data.footer.columns.map((col) => ({
+        ...col,
+        links: col.links.map((link) => ({ ...link, href: demoHrefToLive(link.href) })),
+      })),
+    },
+  }
+}
+
 /**
  * Build the neutral demo SchoolData for the requested template.
  *
@@ -76,29 +118,41 @@ export function getDemoData(template: DemoTemplate): SchoolData {
   const demoHref = (path: string) => `/demo${path}${q}`
 
   return {
-    name: ' ',
+    name: 'Leeep Public School',
     tagline: 'Where curious minds grow',
     logo: '/assets/demo/logo.svg', // generic demo emblem — not a real client logo
     config: { template_id: templateId },
 
     hero: {
+      // Single hero (not a slider).
       slides: [
         {
-          title: 'Welcome to Leeep Schools',
+          title: 'Welcome to Leeep Public School',
           subtitle: 'Where curious minds grow',
           description:
             'A nurturing environment for every learner — blending strong academics, creativity, and character so each student discovers their full potential.',
           image: STOCK.hero1,
           cta: { label: 'Explore Admissions', href: demoHref('/admissions') },
         },
-        {
-          title: 'Learning that lasts a lifetime',
-          subtitle: 'Curiosity • Confidence • Community',
-          description:
-            'From early years to senior school, our students learn to think independently, work together, and lead with kindness.',
-          image: STOCK.hero2,
-          cta: { label: 'Discover Our Academics', href: demoHref('/academics') },
-        },
+      ],
+    },
+
+    // Home-only "About our school" teaser — independent of the About page.
+    homeAbout: {
+      title: 'EST. 2025',
+      subtitle: 'Nurturing Excellence in Education',
+      description:
+        'At Leeep Public School we pair a rich, inquiry-led curriculum with mentorship, the arts, and sport — helping every child grow in knowledge, character, and confidence.',
+      image: STOCK.students,
+      secondaryImage: STOCK.classroom,
+      badges: [
+        { icon: 'lucide:landmark', label: 'Established 2020', sublabel: 'A fresh approach' },
+        { icon: 'lucide:shield-check', label: 'Safe & Caring', sublabel: 'Every learner matters' },
+      ],
+      mission: [
+        { title: 'Inquiry-Led Learning', description: 'Students question, explore, and discover.', image: STOCK.groupStudy },
+        { title: 'Caring Mentors', description: 'Small classes mean every student is known.', image: STOCK.childRead },
+        { title: 'Beyond the Classroom', description: 'Clubs, sport, and the arts build character.', image: STOCK.sports },
       ],
     },
 
@@ -108,6 +162,9 @@ export function getDemoData(template: DemoTemplate): SchoolData {
       description:
         'Leeep Schools is a sample institution used to showcase this website template. We believe every child learns differently, and our approach pairs a rich curriculum with mentorship, the arts, and sport to grow well-rounded individuals.',
       image: STOCK.aboutMain,
+      heroImage: STOCK.building1,
+      homeImage: STOCK.students,
+      homeSecondaryImage: STOCK.classroom,
       badges: [
         { icon: 'lucide:landmark', label: 'Established 2020', sublabel: 'A fresh approach' },
         { icon: 'lucide:shield-check', label: 'Safe & Caring', sublabel: 'Every learner matters' },
@@ -194,6 +251,8 @@ export function getDemoData(template: DemoTemplate): SchoolData {
       description:
         'Join the Leeep Schools demo family. This is sample copy showing how your admissions invitation and process will appear to families.',
       image: STOCK.aboutAlt,
+      homeImage: STOCK.graduation,
+      requirementsImage: STOCK.groupStudy,
       highlights: [
         { icon: 'lucide:shield-check', label: 'Simple online form' },
         { icon: 'lucide:star', label: 'Welcoming community' },
@@ -232,6 +291,7 @@ export function getDemoData(template: DemoTemplate): SchoolData {
     contact: {
       title: 'Contact Us',
       subtitle: 'Get In Touch',
+      image: STOCK.building2,
       address: '123 Demo Road, Sample City, 000000',
       phone: ['+91 00000 00000'],
       email: ['hello@leeepschool.example'],
@@ -325,19 +385,19 @@ export function getDemoData(template: DemoTemplate): SchoolData {
     ],
 
     stats: [
-      { label: 'Students (demo)', value: '500+', icon: 'lucide:graduation-cap' },
-      { label: 'Teachers (demo)', value: '40+', icon: 'lucide:users' },
-      { label: 'Years (demo)', value: '5+', icon: 'lucide:history' },
-      { label: 'Clubs (demo)', value: '20+', icon: 'lucide:sparkles' },
+      { label: 'Students', value: '5000', suffix: '+', icon: 'lucide:graduation-cap' },
+      { label: 'Teachers', value: '420', suffix: '+', icon: 'lucide:users' },
+      { label: 'Years', value: '15', suffix: '+', icon: 'lucide:history' },
+      { label: 'Pass Rate', value: '98', suffix: '+', icon: 'lucide:award' },
     ],
 
     gallery: {
       title: 'Life at Leeep Schools',
       images: [
-        { src: STOCK.students, alt: 'Sample campus photo', category: 'Campus' },
-        { src: STOCK.classroom, alt: 'Sample classroom photo', category: 'Academics' },
-        { src: STOCK.sports, alt: 'Sample sports photo', category: 'Sports' },
-        { src: STOCK.artClass, alt: 'Sample event photo', category: 'Events' },
+        { src: STOCK.students, alt: 'Sample campus photo' },
+        { src: STOCK.classroom, alt: 'Sample classroom photo' },
+        { src: STOCK.sports, alt: 'Sample sports photo' },
+        { src: STOCK.artClass, alt: 'Sample event photo' },
       ],
     },
 
@@ -365,9 +425,9 @@ export function getDemoData(template: DemoTemplate): SchoolData {
 
     navigation: [
       { label: 'Home', href: demoHref('') },
+      { label: 'Updates', href: demoHref('/updates') },
       { label: 'About', href: demoHref('/about') },
       { label: 'Academics', href: demoHref('/academics') },
-      { label: 'Updates', href: demoHref('/updates') },
       { label: 'Admissions', href: demoHref('/admissions') },
       { label: 'Contact', href: demoHref('/contact') },
       { label: 'Login', href: demoHref('/login') },

@@ -17,10 +17,10 @@ export default function ResultsSection({ data }: { data: SchoolData }) {
           <ScrollReveal direction="left" className="relative">
             {results.image ? (
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border-t-8 border-l-8 border-white">
-                <Image src={results.image} alt={`${data.name} results`} fill className="object-cover" />
+                <Image src={results.image} alt={`${data.name} results`} fill className="object-cover" data-edit-img="academics.results.image" />
               </div>
             ) : (
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white/20 flex items-center justify-center">
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white/20 flex items-center justify-center" data-edit-img="academics.results.image">
                 <Icon icon="lucide:trophy" className="text-6xl text-white" />
               </div>
             )}

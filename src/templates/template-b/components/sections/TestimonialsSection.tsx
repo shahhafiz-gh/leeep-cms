@@ -4,10 +4,14 @@ import type { SchoolData } from '@/types/school.types'
 import { Icon } from '@iconify/react'
 import { useRef, useState, useCallback, useEffect } from 'react'
 import ScrollReveal from '@/shared/animations/scroll-reveal'
+import { useLiveList } from '@/shared/hooks/useLiveList'
+import AddItemButton from '@/shared/AddItemButton'
 
 /** Template B — Testimonials Section with scroll-snap carousel (KCS style) */
 export default function TestimonialsSection({ data }: { data: SchoolData }) {
-  const { testimonials } = data
+  // Own the array so an added testimonial (a new index the demo scaffold lacks)
+  // appears live — index-based DOM overlays can only patch existing cards.
+  const testimonials = useLiveList('testimonials', data.testimonials ?? [])
   const scrollRef = useRef<HTMLDivElement>(null)
   const [currentIdx, setCurrentIdx] = useState(0)
 
@@ -105,7 +109,7 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
             >
               {testimonials.map((item, idx) => (
                 <div
-                  key={item.id}
+                  key={item.id ?? idx}
                   data-slide
                   data-slide-idx={idx}
                   className="snap-start shrink-0 w-[min(340px,85vw)]"
@@ -123,8 +127,8 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
                       ))}
                     </div>
 
-                    <p data-edit={`testimonials.${idx}.content`} className="text-slate-600 text-[15px] leading-relaxed italic mb-7 grow">
-                      &ldquo;{item.content}&rdquo;
+                    <p className="text-slate-600 text-[15px] leading-relaxed italic mb-7 grow">
+                      &ldquo;<span data-edit={`testimonials.${idx}.content`}>{item.content}</span>&rdquo;
                     </p>
 
                     <div className="flex items-center justify-between border-t border-slate-100 pt-5 mt-auto">
@@ -145,6 +149,8 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
             </div>
           </ScrollReveal>
         </div>
+
+        <AddItemButton path="testimonials" label="Add testimonial" />
       </div>
     </section>
   )
