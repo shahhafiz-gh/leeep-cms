@@ -17,9 +17,11 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
           <p className="text-tb-primary-400 text-sm font-bold uppercase tracking-widest mb-3">
             Beyond the Classroom
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-tb-heading mb-4">Clubs &amp; Activities</h2>
-          <p className="text-tb-body text-lg max-w-2xl mx-auto leading-relaxed">
-            A vibrant co-curricular life that helps every student discover and develop their passions.
+          <h2 data-edit="academics.clubsTitle" className="text-3xl md:text-4xl font-bold text-tb-heading mb-4">
+            {data.academics.clubsTitle ?? 'Clubs & Activities'}
+          </h2>
+          <p data-edit="academics.clubsDescription" className="text-tb-body text-lg max-w-2xl mx-auto leading-relaxed">
+            {data.academics.clubsDescription ?? 'A vibrant co-curricular life that helps every student discover and develop their passions.'}
           </p>
         </ScrollReveal>
 
@@ -45,8 +47,8 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
                 <div className="w-11 h-11 rounded-full bg-tb-primary-400 flex items-center justify-center mb-3">
                   <Icon icon={ICONS[index % ICONS.length]} className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-white font-bold text-lg leading-tight mb-1">{club.name}</h3>
-                <p className="text-white/75 text-sm leading-snug">{club.description}</p>
+                <h3 data-edit={`academics.clubs.${index}.name`} className="text-white font-bold text-lg leading-tight mb-1">{club.name}</h3>
+                <p data-edit={`academics.clubs.${index}.description`} className="text-white/75 text-sm leading-snug">{club.description}</p>
               </div>
             </div>
           ))}

@@ -32,21 +32,21 @@ export default function ResultsSection({ data }: { data: SchoolData }) {
               <div className="px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md mb-4 inline-block font-medium">
                 Results
               </div>
-              <h2 className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
+              <h2 data-edit="academics.results.title" className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
                 {results.title}
               </h2>
-              <p className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant mb-8 max-w-xl">
+              <p data-edit="academics.results.description" className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant mb-8 max-w-xl">
                 {results.description}
               </p>
             </ScrollReveal>
 
             <StaggerChildren stagger={0.1} className="grid grid-cols-2 gap-5">
-              {results.stats.map((stat) => (
+              {results.stats.map((stat, si) => (
                 <div key={stat.label} className="bg-ta-surface-container-lowest rounded-2xl border border-ta-outline-variant p-6">
-                  <div className="font-(family-name:--font-ta-h2) text-4xl font-extrabold text-ta-primary mb-1">
+                  <div data-edit={`academics.results.stats.${si}.value`} className="font-(family-name:--font-ta-h2) text-4xl font-extrabold text-ta-primary mb-1">
                     {stat.value}
                   </div>
-                  <div className="font-(family-name:--font-ta-label-md) text-ta-label-md text-ta-on-surface-variant">
+                  <div data-edit={`academics.results.stats.${si}.label`} className="font-(family-name:--font-ta-label-md) text-ta-label-md text-ta-on-surface-variant">
                     {stat.label}
                   </div>
                 </div>

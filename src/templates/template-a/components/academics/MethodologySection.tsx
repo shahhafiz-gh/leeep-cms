@@ -19,12 +19,12 @@ export default function MethodologySection({ data }: { data: SchoolData }) {
             </div>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <h2 className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
+            <h2 data-edit="academics.methodology.title" className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
               {methodology.title}
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
-            <p className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant max-w-[520px]">
+            <p data-edit="academics.methodology.description" className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant max-w-[520px]">
               {methodology.description}
             </p>
           </ScrollReveal>
@@ -42,10 +42,10 @@ export default function MethodologySection({ data }: { data: SchoolData }) {
               <div className="w-14 h-14 rounded-2xl bg-ta-primary/10 flex items-center justify-center mb-6 relative z-10">
                 <Icon icon={step.icon ?? DEFAULT_ICONS[index % DEFAULT_ICONS.length]} className="text-2xl text-ta-primary" />
               </div>
-              <h3 className="font-(family-name:--font-ta-h3) text-ta-h4 text-ta-on-surface mb-3 leading-tight relative z-10">
+              <h3 data-edit={`academics.methodology.steps.${index}.title`} className="font-(family-name:--font-ta-h3) text-ta-h4 text-ta-on-surface mb-3 leading-tight relative z-10">
                 {step.title}
               </h3>
-              <p className="font-(family-name:--font-ta-body-md) text-ta-body-md text-ta-on-surface-variant leading-relaxed relative z-10">
+              <p data-edit={`academics.methodology.steps.${index}.description`} className="font-(family-name:--font-ta-body-md) text-ta-body-md text-ta-on-surface-variant leading-relaxed relative z-10">
                 {step.description}
               </p>
             </div>

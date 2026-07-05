@@ -48,20 +48,20 @@ export default function ContactForm({ data }: { data: SchoolData }) {
                 <InfoRow icon="lucide:map-pin" label="Address">
                   {data.name}
                   <br />
-                  {contact.address}
+                  <span data-edit="contact.address">{contact.address}</span>
                 </InfoRow>
                 <InfoRow icon="lucide:phone" label="Phone">
-                  {contact.phone.map((p) => (
-                    <a key={p} href={`tel:${p.replace(/\s+/g, '')}`} className="block hover:text-white">{p}</a>
+                  {contact.phone.map((p, i) => (
+                    <a key={i} href={`tel:${p.replace(/\s+/g, '')}`} className="block hover:text-white" data-edit={`contact.phone.${i}`}>{p}</a>
                   ))}
                 </InfoRow>
                 <InfoRow icon="lucide:mail" label="Email">
-                  {contact.email.map((e) => (
-                    <a key={e} href={`mailto:${e}`} className="block hover:text-white">{e}</a>
+                  {contact.email.map((e, i) => (
+                    <a key={i} href={`mailto:${e}`} className="block hover:text-white" data-edit={`contact.email.${i}`}>{e}</a>
                   ))}
                 </InfoRow>
                 <InfoRow icon="lucide:clock" label="Office Hours">
-                  {contact.workingHours ?? 'Mon – Sat: 9 AM – 5 PM'}
+                  <span data-edit="contact.workingHours">{contact.workingHours ?? 'Mon – Sat: 9 AM – 5 PM'}</span>
                   <span className="block text-white/55 text-[13px]">Sunday: Closed</span>
                 </InfoRow>
               </div>

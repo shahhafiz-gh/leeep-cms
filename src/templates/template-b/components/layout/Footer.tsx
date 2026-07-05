@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Icon } from '@iconify/react'
 
 /** Template B — Footer (Kashmir-Cambridge style) */
-export default function Footer({ data }: { data: SchoolData }) {
+export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   return (
     <>
       <footer className="border-t border-gray-200 bg-white pt-16 pb-12 lg:pt-24 lg:pb-20">
@@ -27,28 +27,33 @@ export default function Footer({ data }: { data: SchoolData }) {
                   {data.footer.description || data.tagline}
                 </p>
               )}
-              {/* Social links — all canonical platforms render; the inline-edit
-                  layer reveals empties for editing. In LIVE only platforms with
-                  a URL are visible (empties hidden via inline style). */}
+              {/* In the EDITOR all canonical platforms render (the inline-edit
+                  layer reveals empties so each can be set up). On the LIVE site we
+                  simply DON'T render a platform with no real URL — so an
+                  un-configured icon never appears. */}
               {data.socialLinks.length > 0 && (
                 <div className="flex items-center gap-3">
-                  {data.socialLinks.map((social, si) => (
-                    <a
-                      key={social.platform}
-                      href={social.url || undefined}
-                      data-edit-social={`socialLinks.${si}.url`}
-                      data-social-platform={social.platform}
-                      data-social-url={social.url || ''}
-                      data-social-empty={social.url ? undefined : 'true'}
-                      style={social.url ? undefined : { display: 'none' }}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={social.platform}
-                      className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-tb-body hover:text-tb-primary hover:border-tb-primary transition-colors duration-300"
-                    >
-                      <Icon icon={social.icon ?? `mdi:${social.platform}`} className="w-4 h-4" />
-                    </a>
-                  ))}
+                  {data.socialLinks.map((social, si) => {
+                    const hasUrl = !!social.url && social.url !== '#'
+                    if (!editing && !hasUrl) return null
+                    return (
+                      <a
+                        key={social.platform}
+                        href={social.url || undefined}
+                        data-edit-social={`socialLinks.${si}.url`}
+                        data-social-platform={social.platform}
+                        data-social-url={social.url || ''}
+                        data-social-empty={hasUrl ? undefined : 'true'}
+                        style={hasUrl ? undefined : { display: 'none' }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={social.platform}
+                        className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-tb-body hover:text-tb-primary hover:border-tb-primary transition-colors duration-300"
+                      >
+                        <Icon icon={social.icon ?? `mdi:${social.platform}`} className="w-4 h-4" />
+                      </a>
+                    )
+                  })}
                 </div>
               )}
             </div>

@@ -7,16 +7,19 @@ import { usePathname } from 'next/navigation'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 
-export default function Footer({ data }: { data: SchoolData }) {
+export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   const isHomeRoute = usePathname() === '/'
 
   // Real Frappe blobs may omit whole slices — guard them.
   const contact = data.contact ?? { address: '', phone: [], email: [] }
-  const realColumns = data.footer?.columns ?? []
-  const hasRealColumns = realColumns.length > 0
-  const footerColumns = hasRealColumns
-    ? realColumns
-    : [{ title: 'Quick Links', links: data.navigation.map((n) => ({ label: n.label, href: n.href })) }]
+  // "Explore" is a single, NON-editable navigation list (keeps the footer to one
+  // row: brand · explore · contact). Source it from the actual site navigation —
+  // NOT the editable `footer.columns` blob, which can carry stale/test labels
+  // (e.g. a leftover "LINK_LABEL_TEST" saved before the footer nav was locked).
+  // Drop auth links like Login; they don't belong in the footer.
+  const exploreLinks = (data.navigation ?? [])
+    .filter((n) => n.href !== '/login' && n.label.toLowerCase() !== 'login')
+    .map((n) => ({ label: n.label, href: n.href }))
 
   return (
     <footer
@@ -46,13 +49,13 @@ export default function Footer({ data }: { data: SchoolData }) {
                   width={80}
                   height={80}
                   alt={`${data.name} Logo`}
-                  className="w-16 h-16 max-h-16  rounded-full"
+                  className="w-16 h-16 max-h-16 max-w-16  rounded-full"
                   data-edit-img="logo"
                 />
               ) : (
                 <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-16 h-16 rounded-full shrink-0 gap-0.5" editPath="logo" />
               )}
-              <h2 className="text-2xl font-bold leading-tight text-ta-inverse-on-surface">
+              <h2 className="text-2xl text-center font-bold leading-tight text-ta-inverse-on-surface">
                 {data.name.split(' ').slice(0, 2).join(' ')}
                 <br />
                 {data.name.split(' ').slice(2).join(' ')}
@@ -62,54 +65,52 @@ export default function Footer({ data }: { data: SchoolData }) {
               {data.footer?.description || data.tagline}
             </p>
             <div className="flex items-center gap-4">
-              {/* All canonical platforms render; the inline-edit layer reveals
-                  empties for editing. In LIVE (no edit layer) only platforms
-                  with a URL are visible — empties are hidden via inline style. */}
-              {data.socialLinks.map((social, si) => (
-                <a
-                  key={social.platform}
-                  href={social.url || undefined}
-                  data-edit-social={`socialLinks.${si}.url`}
-                  data-social-platform={social.platform}
-                  data-social-url={social.url || ''}
-                  data-social-empty={social.url ? undefined : 'true'}
-                  style={social.url ? undefined : { display: 'none' }}
-                  className="p-2 bg-ta-inverse-on-surface/5 rounded-full hover:bg-ta-inverse-primary/20 transition-all duration-300 hover:scale-110"
-                  aria-label={social.platform}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Icon icon={social.icon || `ri:${social.platform}-fill`} className="w-[18px] h-[18px]" />
-                </a>
-              ))}
+              {/* In the EDITOR all canonical platforms render (the inline-edit
+                  layer reveals empties so each can be set up). On the LIVE site we
+                  simply DON'T render a platform that has no real URL — so an
+                  un-configured icon (e.g. YouTube) never appears. */}
+              {data.socialLinks.map((social, si) => {
+                const hasUrl = !!social.url && social.url !== '#'
+                if (!editing && !hasUrl) return null
+                return (
+                  <a
+                    key={social.platform}
+                    href={social.url || undefined}
+                    data-edit-social={`socialLinks.${si}.url`}
+                    data-social-platform={social.platform}
+                    data-social-url={social.url || ''}
+                    data-social-empty={hasUrl ? undefined : 'true'}
+                    style={hasUrl ? undefined : { display: 'none' }}
+                    className="p-2 bg-ta-inverse-on-surface/5 rounded-full hover:bg-ta-inverse-primary/20 transition-all duration-300 hover:scale-110"
+                    aria-label={social.platform}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon icon={social.icon || `ri:${social.platform}-fill`} className="w-[18px] h-[18px]" />
+                  </a>
+                )
+              })}
             </div>
           </div>
 
-          {/* Column 2: Footer link columns — data-driven (data.footer.columns),
-              falling back to navigation-derived Quick Links when none exist. */}
-          {footerColumns.map((column, ci) => (
-            <div key={column.title} className="space-y-6 flex justify-center flex-col items-center">
-              <h3
-                data-edit={hasRealColumns ? `footer.columns.${ci}.title` : undefined}
-                className="text-lg font-bold tracking-wider uppercase text-ta-inverse-on-surface/90"
-              >
-                {column.title}
-              </h3>
-              <ul className="space-y-3">
-                {column.links.map((link, li) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      data-edit-link={hasRealColumns ? `footer.columns.${ci}.links.${li}.href` : undefined}
-                      className="text-ta-outline-variant hover:text-ta-inverse-primary text-sm transition-colors duration-200"
-                    >
-                      <span data-edit={hasRealColumns ? `footer.columns.${ci}.links.${li}.label` : undefined}>{link.label}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Column 2: Explore — a single merged, NON-editable navigation list. */}
+          <div className="space-y-6 flex justify-center flex-col items-center">
+            <h3 className="text-lg font-bold tracking-wider uppercase text-ta-inverse-on-surface/90">
+              Explore
+            </h3>
+            <ul className="space-y-3">
+              {exploreLinks.map((link, li) => (
+                <li key={`${link.href}-${li}`}>
+                  <Link
+                    href={link.href}
+                    className="text-ta-outline-variant hover:text-ta-inverse-primary text-sm transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* Column 3: Contact */}
           <div className="space-y-6 flex justify-center flex-col items-end">
@@ -154,8 +155,15 @@ export default function Footer({ data }: { data: SchoolData }) {
         </div>
 
         {/* Bottom Footer */}
-        <div className="mt-10 pt-4 pb-4 border-t items-center justify-center border-ta-inverse-on-surface/10 flex flex-col lg:flex-row gap-2">
+        <div className="mt-10 pt-4 pb-4 border-t items-center justify-center lg:justify-between border-ta-inverse-on-surface/10 flex flex-col lg:flex-row gap-2">
           <span data-edit="footer.copyright" className="text-ta-outline-variant text-sm">{data.footer?.copyright}</span>
+          {/* Hardcoded, non-editable "Powered by Leeep" — brand attribution, not school content. */}
+          <p className="text-ta-outline-variant text-sm flex items-center gap-1.5">
+            Powered by
+            <a href="https://leeep.in" className="hover:opacity-80 transition-opacity">
+              <img src="/assets/kcs/leeep.svg" alt="Leeep" className="h-8 w-auto inline" />
+            </a>
+          </p>
         </div>
       </div>
     </footer>

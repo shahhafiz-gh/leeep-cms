@@ -19,9 +19,15 @@ export default function UpdatesView({ data }: { data: SchoolData }) {
       ) : (
         <>
           <PageHero
-            eyebrow="Stay Informed"
-            title="News & Events"
-            description={`Stay updated with the latest announcements, important news, and upcoming events at ${data.name}.`}
+            eyebrow={data.updatesHero?.subtitle ?? 'Stay Informed'}
+            title={data.updatesHero?.title ?? 'News & Events'}
+            description={
+              data.updatesHero?.description ??
+              `Stay updated with the latest announcements, important news, and upcoming events at ${data.name}.`
+            }
+            eyebrowEditPath="updatesHero.subtitle"
+            titleEditPath="updatesHero.title"
+            descriptionEditPath="updatesHero.description"
           />
           <NewsList data={data} />
           <EventsList data={data} />

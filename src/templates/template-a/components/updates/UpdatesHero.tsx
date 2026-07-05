@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 
 export default function UpdatesHero({ data }: { data: SchoolData }) {
+  const hero = data.updatesHero ?? {}
   return (
     <section className="relative bg-ta-surface pt-32 md:pt-40 pb-10 md:pb-20 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
@@ -17,7 +18,7 @@ export default function UpdatesHero({ data }: { data: SchoolData }) {
             className="px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-flex items-center gap-2"
           >
             <Icon icon="lucide:megaphone" className="text-sm" />
-            What&apos;s Happening
+            <span data-edit="updatesHero.subtitle">{hero.subtitle ?? 'What’s Happening'}</span>
           </motion.div>
 
           <div className="space-y-4">
@@ -26,8 +27,9 @@ export default function UpdatesHero({ data }: { data: SchoolData }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-background max-w-2xl mx-auto"
+              data-edit="updatesHero.title"
             >
-              Stay In The Loop With Everything At School
+              {hero.title ?? 'Stay In The Loop With Everything At School'}
             </motion.h1>
 
             <motion.p
@@ -35,8 +37,9 @@ export default function UpdatesHero({ data }: { data: SchoolData }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="font-(family-name:--font-ta-body-lg) text-[17px] leading-relaxed text-ta-on-surface-variant max-w-xl mx-auto"
+              data-edit="updatesHero.description"
             >
-              Discover the latest news, upcoming academic deadlines, and vibrant campus events — your central hub for all {data.name} updates.
+              {hero.description ?? `Discover the latest news, upcoming academic deadlines, and vibrant campus events — your central hub for all ${data.name} updates.`}
             </motion.p>
           </div>
 

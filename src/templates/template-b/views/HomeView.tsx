@@ -13,12 +13,12 @@ import AdmissionsSection from '../components/sections/AdmissionsSection'
 /** Template B — Home Page View (Kashmir-Cambridge style) */
 export default function HomeView({ data }: { data: SchoolData }) {
   return (
-    <div className="font-[family-name:var(--font-inter)] bg-tb-background text-tb-foreground">
+    <div className="font-(family-name:--font-inter) bg-tb-background text-tb-foreground">
       <HeroSection data={data} />
-      <AboutSection data={data} />
-      <WhyChooseUs data={data} />
       <NewsSection data={data} />
       <EventsSection data={data} />
+      <AboutSection data={data} />
+      <WhyChooseUs data={data} />
       <ProgramsSection data={data} />
       <GallerySection data={data} />
       <AlumniSection data={data} />

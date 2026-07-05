@@ -1,8 +1,15 @@
+'use client'
+
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
+import { useLiveValue } from '@/shared/hooks/useLiveValue'
+import { toMapEmbedUrl } from '@/shared/map-embed'
 
 export default function MapSection({ data }: { data: SchoolData }) {
   const { contact } = data
+  // Live value + normalization: admins paste regular Google Maps links (which
+  // refuse to load in an iframe) — convert to an embeddable URL at render time.
+  const mapSrc = toMapEmbedUrl(useLiveValue('contact.mapEmbedUrl', contact.mapEmbedUrl ?? ''))
 
   return (
     <section className="pb-20 bg-[#f8f9ff]">
@@ -19,9 +26,9 @@ export default function MapSection({ data }: { data: SchoolData }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
           <div className="lg:col-span-8">
             <div className="rounded-2xl overflow-hidden shadow-[0_4px_30px_rgba(65,80,182,0.10)] h-[420px]">
-              {contact.mapEmbedUrl && (
+              {mapSrc && (
                 <iframe
-                  src={contact.mapEmbedUrl}
+                  src={mapSrc}
                   width="100%"
                   height="100%"
                   style={{ border: 0, display: 'block' }}
@@ -41,20 +48,20 @@ export default function MapSection({ data }: { data: SchoolData }) {
                   <Icon icon="lucide:school" className="text-white text-xl" />
                 </div>
                 <h4 className="font-bold text-xl text-tb-heading mb-3">{data.name}</h4>
-                <p className="text-tb-body text-sm leading-relaxed mb-5">{contact.address}</p>
+                <p data-edit="contact.address" className="text-tb-body text-sm leading-relaxed mb-5">{contact.address}</p>
 
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2.5">
                     <Icon icon="lucide:clock" className="text-tb-secondary text-[15px] w-[18px] shrink-0" />
-                    <span className="text-[13px] text-slate-600">{contact.workingHours ?? 'Mon – Sat: 9 AM – 5 PM'}</span>
+                    <span data-edit="contact.workingHours" className="text-[13px] text-slate-600">{contact.workingHours ?? 'Mon – Sat: 9 AM – 5 PM'}</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <Icon icon="lucide:phone" className="text-tb-secondary text-[15px] w-[18px] shrink-0" />
-                    <span className="text-[13px] text-slate-600">{contact.phone[0]}</span>
+                    <span data-edit="contact.phone.0" className="text-[13px] text-slate-600">{contact.phone[0]}</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <Icon icon="lucide:mail" className="text-tb-secondary text-[15px] w-[18px] shrink-0" />
-                    <span className="text-[13px] text-slate-600 truncate">{contact.email[0]}</span>
+                    <span data-edit="contact.email.0" className="text-[13px] text-slate-600 truncate">{contact.email[0]}</span>
                   </div>
                 </div>
               </div>

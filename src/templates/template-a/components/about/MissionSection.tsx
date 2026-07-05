@@ -18,8 +18,6 @@ export default function MissionSection({ data }: { data: SchoolData }) {
   const mission = data.about.missionStatement
   if (!vision && !mission) return null
 
-  const values = data.about.values ?? []
-
   const cards = [
     {
       key: 'vision',
@@ -27,8 +25,8 @@ export default function MissionSection({ data }: { data: SchoolData }) {
       icon: 'lucide:telescope',
       text: vision,
       path: 'about.vision',
-      tags: values.slice(0, 3),
-      tagOffset: 0,
+      tags: data.about.visionBadges ?? [],
+      badgePath: 'about.visionBadges',
       decoratorPos: 'top-0 right-0 rounded-bl-full -mr-8 -mt-8',
     },
     {
@@ -37,8 +35,8 @@ export default function MissionSection({ data }: { data: SchoolData }) {
       icon: 'lucide:compass',
       text: mission,
       path: 'about.missionStatement',
-      tags: values.slice(3, 6),
-      tagOffset: 3,
+      tags: data.about.missionBadges ?? [],
+      badgePath: 'about.missionBadges',
       decoratorPos: 'bottom-0 right-0 rounded-tl-full -mr-10 -mb-10',
     },
   ].filter((c) => c.text)
@@ -119,7 +117,7 @@ export default function MissionSection({ data }: { data: SchoolData }) {
                     {card.tags.map((tag, ti) => (
                       <span
                         key={tag}
-                        data-edit={`about.values.${card.tagOffset + ti}`}
+                        data-edit={`${card.badgePath}.${ti}`}
                         className="px-3 py-1 rounded-full font-(family-name:--font-ta-caption) text-[--text-ta-caption] border border-ta-primary/20 bg-ta-primary/5 text-ta-primary transition-colors duration-300"
                       >
                         {tag}

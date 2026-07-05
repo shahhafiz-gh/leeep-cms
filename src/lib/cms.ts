@@ -1,4 +1,5 @@
 import { cache } from 'react'
+import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { SchoolData, WebsiteIdentity } from '@/types/school.types'
 import { placeholderTemplateAData, mockKcgsData } from './mock'
 
@@ -81,23 +82,48 @@ export function resolvePreviewMode(searchParams?: RouteSearchParams): SiteMode {
 }
 
 /**
- * Whether the request is an editor PREVIEW — `?preview=1&token=<PREVIEW_SECRET>`.
+ * Whether the request is an editor PREVIEW — `?preview=1&token=<signed token>`.
  * This is the SAME token mechanism as `resolvePreviewMode`; it is exposed
  * separately so the inline-edit layer can be gated on it WITHOUT forcing the
  * content fetch into `draft` mode.
  *
- * Why decoupled: fetching draft content requires server-side auth to Frappe
- * (the editor's session), which is wired in a later step. Until then the editor
- * preview renders PUBLISHED content with the edit layer on top — capture only,
- * nothing is saved — so it works on localhost without an authenticated fetch.
+ * The token is minted by the authenticated builder (Frappe's
+ * `website_builder.get_preview_token`, editor-gated) in the form
+ * `<school>:<expiry>:<hmac-sha256(secret, school:expiry)>`. We recompute the
+ * HMAC with the shared server-side secret (`PREVIEW_SECRET` — the same value
+ * as Frappe's `preview_secret` site config) and accept only an unexpired
+ * signature naming the school being previewed. The secret never reaches a
+ * browser; leaked preview URLs go stale on expiry.
+ *
+ * Why decoupled from the content fetch: fetching draft content requires
+ * server-side auth to Frappe (the editor's session), which is wired in a later
+ * step. Until then the editor preview renders PUBLISHED content with the edit
+ * layer on top — capture only, nothing is saved.
  */
 export function isEditPreview(searchParams?: RouteSearchParams): boolean {
   const previewRaw = searchParams?.preview
-  const wantsPreview = previewRaw === '1' || previewRaw === 'true'
+  if (previewRaw !== '1' && previewRaw !== 'true') return false
   const tokenRaw = searchParams?.token
   const token = Array.isArray(tokenRaw) ? tokenRaw[0] : tokenRaw
   const secret = process.env.PREVIEW_SECRET
-  return wantsPreview && !!secret && token === secret
+  if (!token || !secret) return false
+
+  const parts = token.split(':')
+  if (parts.length !== 3) return false
+  const [school, expiry, signature] = parts
+  if (!school || !/^\d+$/.test(expiry)) return false
+  if (Number(expiry) * 1000 < Date.now()) return false
+
+  const expected = createHmac('sha256', secret).update(`${school}:${expiry}`).digest('hex')
+  const given = Buffer.from(signature)
+  const wanted = Buffer.from(expected)
+  if (given.length !== wanted.length || !timingSafeEqual(given, wanted)) return false
+
+  // Single-school proof: when the URL names the school it is previewing
+  // (the builder always sends ?subdomain=), the token must be FOR that school.
+  const subRaw = searchParams?.subdomain ?? searchParams?.school
+  const requested = (Array.isArray(subRaw) ? subRaw[0] : subRaw)?.trim()
+  return !requested || requested === school
 }
 
 // ── Editor navigation (editor preview only) ──

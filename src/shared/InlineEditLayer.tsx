@@ -62,6 +62,28 @@ export default function InlineEditLayer() {
     action?: string
     target?: string
   } | null>(null)
+  // Shared-section note shown on HOVER (e.g. "Why choose us"). Distinct from the
+  // click popup above so hovering the section reveals the info without a click.
+  const [hoverNote, setHoverNote] = useState<{
+    text: string
+    x: number
+    y: number
+    action?: string
+    target?: string
+  } | null>(null)
+  const hoverHideTimer = useRef<number | null>(null)
+  const cancelHoverHide = () => {
+    if (hoverHideTimer.current) {
+      clearTimeout(hoverHideTimer.current)
+      hoverHideTimer.current = null
+    }
+  }
+  // Small grace delay so moving the pointer from the section into the tooltip
+  // (e.g. to click its action button) doesn't dismiss it.
+  const scheduleHoverHide = () => {
+    cancelHoverHide()
+    hoverHideTimer.current = window.setTimeout(() => setHoverNote(null), 160)
+  }
   const targetOriginRef = useRef<string>('*')
 
   useEffect(() => {
@@ -80,6 +102,36 @@ export default function InlineEditLayer() {
     // them instead of stacking duplicate listeners. New nodes — e.g. a card a
     // client section adds on `apply-list` — get bound on the next scan.
     const bound = new WeakSet<HTMLElement>()
+
+    // Applied media (image/video poster) overrides, keyed by content path. The
+    // preview renders the DEMO scaffold; the admin overlays saved draft images
+    // via `apply-image`. But next/image (lazy-loading / client re-render) can
+    // reset an <img>'s src back to the demo AFTER our swap, so a refresh would
+    // "lose" the saved image. We remember every applied override and re-assert
+    // it whenever the element's src drifts (via the observer + timed passes).
+    const mediaOverrides = new Map<string, string>()
+    // Applied TEXT overrides (data-edit / data-bind), keyed by content path. Same
+    // problem as media: the admin overlays draft text onto the demo scaffold, but
+    // a React re-render (dev StrictMode / Fast Refresh, or any client re-render)
+    // resets the element's text back to the demo value. We remember every applied
+    // text override and re-assert it on drift so draft content stays visible in
+    // the preview (this is why edits showed live but "vanished" on the draft
+    // preview until published).
+    const textOverrides = new Map<string, string>()
+    // Re-assert every remembered text override whose element drifted back to a
+    // different value (skipping one the admin is actively editing). Assigned here
+    // so the observer/timers can call it; media version is assigned below.
+    const reassertText = () => {
+      textOverrides.forEach((value, path) => {
+        document.querySelectorAll<HTMLElement>(`[data-edit="${path}"],[data-bind="${path}"]`).forEach((el) => {
+          if (document.activeElement === el) return
+          if (el.textContent !== value) el.textContent = value
+        })
+      })
+    }
+    // Assigned once `applyImage` exists (below); the observer calls it via this
+    // binding so image overrides survive framework-driven src resets.
+    let reassertMedia: () => void = () => {}
 
     // Bind every editable affordance found in the DOM right now. Idempotent, so
     // it's safe to call repeatedly as repeatable sections add/remove cards.
@@ -103,7 +155,11 @@ export default function InlineEditLayer() {
       syncEmpty()
       const onBlur = () => {
         syncEmpty()
-        post({ path, type: 'text', value: el.innerText.trim() })
+        const edited = el.innerText.trim()
+        // Keep the override current with the admin's own inline edit, so a later
+        // re-render's reassert restores THIS value, not the pre-edit one.
+        textOverrides.set(path, edited)
+        post({ path, type: 'text', value: edited })
       }
       // Keep edits single-line for text fields.
       const onKeydown = (e: KeyboardEvent) => {
@@ -221,9 +277,20 @@ export default function InlineEditLayer() {
       requestAnimationFrame(() => {
         scanQueued = false
         scan()
+        // Re-assert saved text + images if a re-render reset them back to the
+        // demo. Guarded (only re-applies on drift), so this can't loop.
+        reassertText()
+        reassertMedia()
       })
     })
-    observer.observe(document.body, { childList: true, subtree: true })
+    // Watch src/srcset too: next/image resetting an <img> is an attribute change,
+    // not a childList one, so without this the drift would go unnoticed.
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['src', 'srcset'],
+    })
     cleanups.push(() => observer.disconnect())
 
     // ── Social links: reveal empties + open the custom popup ──────────────
@@ -257,39 +324,32 @@ export default function InlineEditLayer() {
       })
     })
 
-    // ── Shared-section note: hover outlines the section, click opens it ───
-    // For whole sections whose content is reused on another page. Clicking the
-    // section's bare area (not an editable element inside it) shows the note.
-    const EDITABLE_SEL =
-      '[data-edit],[data-edit-img],[data-edit-icon],[data-edit-link],[data-edit-date],[data-edit-social],[data-note]'
+    // ── Shared-section note: hover outlines the section AND reveals the note ──
+    // For whole sections whose content is reused on another page (e.g. "Why
+    // choose us"). Hovering the section outlines it and shows the info tooltip;
+    // it stays while the pointer is over the section or the tooltip itself.
     document.querySelectorAll<HTMLElement>('[data-section-note]').forEach((el) => {
       const text = el.getAttribute('data-section-note') || ''
       const action = el.getAttribute('data-note-action') || undefined
       const target = el.getAttribute('data-note-target') || undefined
-      const onEnter = () => {
+      const onEnter = (e: MouseEvent) => {
         el.style.outline = '2px dashed rgba(37,99,235,.45)'
         el.style.outlineOffset = '-6px'
+        cancelHoverHide()
+        setHoverNote({ text, x: e.clientX, y: e.clientY, action, target })
       }
       const onLeave = () => {
         el.style.outline = ''
         el.style.outlineOffset = ''
-      }
-      const onClick = (e: MouseEvent) => {
-        // Let clicks land on actual editable elements; only the bare section opens the note.
-        if ((e.target as HTMLElement | null)?.closest(EDITABLE_SEL)) return
-        e.preventDefault()
-        e.stopPropagation()
-        setNote({ text, x: e.clientX, y: e.clientY, action, target })
+        scheduleHoverHide()
       }
       el.addEventListener('mouseenter', onEnter)
       el.addEventListener('mouseleave', onLeave)
-      el.addEventListener('click', onClick)
       cleanups.push(() => {
         el.style.outline = ''
         el.style.outlineOffset = ''
         el.removeEventListener('mouseenter', onEnter)
         el.removeEventListener('mouseleave', onLeave)
-        el.removeEventListener('click', onClick)
       })
     })
 
@@ -357,14 +417,16 @@ export default function InlineEditLayer() {
     const style = document.createElement('style')
     style.textContent = `
       [data-leeep-editable]{outline:1px dashed rgba(59,130,246,.6);outline-offset:2px;border-radius:3px}
-      /* Fill the whole element box on hover/focus — not just the text run.
-         Padding (with a compensating negative margin so layout doesn't shift)
-         gives inline spans real area for the background to paint, and
-         box-decoration-break keeps wrapped lines tidy. */
-      [data-leeep-editable="text"]{box-decoration-break:clone;-webkit-box-decoration-break:clone;border-radius:4px}
-      [data-leeep-editable="text"]:hover,[data-leeep-editable="text"]:focus{padding:.14em .4em;margin:-.14em -.4em}
-      [data-leeep-editable="text"]:hover{background:rgba(59,130,246,.09)}
-      [data-leeep-editable="text"]:focus{outline:2px solid rgba(59,130,246,.9);outline-offset:2px;background:rgba(59,130,246,.16)}
+      /* Highlight the editable text WITHOUT changing its box. A spread box-shadow
+         paints a soft "chip" around the element and background tints it, but
+         NEITHER takes up layout space — so a centered element (mx-auto) keeps its
+         centering and the box never grows/shrinks on hover or focus. The old
+         approach used padding + a negative margin, which overrode mx-auto (the
+         element jumped to the left) and changed the box size (the pointer fell in
+         and out of it, causing flicker). */
+      [data-leeep-editable="text"]{box-decoration-break:clone;-webkit-box-decoration-break:clone;border-radius:4px;transition:background-color .12s ease,box-shadow .12s ease}
+      [data-leeep-editable="text"]:hover{background:rgba(59,130,246,.09);box-shadow:0 0 0 4px rgba(59,130,246,.09)}
+      [data-leeep-editable="text"]:focus{outline:2px solid rgba(59,130,246,.9);outline-offset:2px;background:rgba(59,130,246,.16);box-shadow:0 0 0 4px rgba(59,130,246,.16)}
       /* Empty field (e.g. a just-added blank card) shows its label as a hint so
          the admin knows what to fill; it vanishes as soon as they type/focus. */
       [data-leeep-empty]::before{content:attr(data-leeep-ph);opacity:.5;font-style:italic;font-weight:400;pointer-events:none}
@@ -415,6 +477,23 @@ export default function InlineEditLayer() {
         el.style.backgroundPosition = 'center'
         el.style.backgroundRepeat = 'no-repeat'
       }
+    }
+
+    // Re-apply every remembered image override whose element has drifted back to
+    // a different src (e.g. next/image re-asserting the demo URL after our swap).
+    // Guarded on drift so it never fights itself into a loop.
+    reassertMedia = () => {
+      mediaOverrides.forEach((url, path) => {
+        document
+          .querySelectorAll<HTMLElement>(`[data-edit-img="${path}"]`)
+          .forEach((el) => {
+            if (el instanceof HTMLImageElement) {
+              if (el.getAttribute('src') !== url) applyImage(el, url)
+            } else if (!(el instanceof HTMLVideoElement) && !el.style.backgroundImage.includes(url)) {
+              applyImage(el, url)
+            }
+          })
+      })
     }
 
     // Set/clear a background <video>'s playable source so an uploaded clip plays
@@ -496,6 +575,8 @@ export default function InlineEditLayer() {
       // Image upload / image field → swap every matching element's source.
       if (msg.type === 'apply-image') {
         const value = typeof msg.value === 'string' ? msg.value : ''
+        if (value) mediaOverrides.set(msg.path, value)
+        else mediaOverrides.delete(msg.path)
         document.querySelectorAll<HTMLElement>(sel('data-edit-img')).forEach((el) => applyImage(el, value))
         // Background-video sources (e.g. Template B hero): set/clear the playable
         // source so an uploaded clip plays in place (the poster stays the image).
@@ -508,15 +589,28 @@ export default function InlineEditLayer() {
       // Skip an element the user is actively editing inline (don't fight the caret).
       if (msg.type === 'apply-field') {
         const value = msg.value == null ? '' : String(msg.value)
+        // Remember the override so it survives a later re-render resetting it back
+        // to the demo (see textOverrides). Applies to both editable + bound text.
+        let hadTextTarget = false
         document.querySelectorAll<HTMLElement>(sel('data-edit')).forEach((el) => {
+          hadTextTarget = true
           if (document.activeElement !== el) el.textContent = value
         })
         // Display-only mirrors (e.g. hero stat badges): reflect the value but
         // never editable — so edited stats show here without being editable.
         document.querySelectorAll<HTMLElement>(sel('data-bind')).forEach((el) => {
+          hadTextTarget = true
           el.textContent = value
         })
-        document.querySelectorAll<HTMLElement>(sel('data-edit-img')).forEach((el) => applyImage(el, value))
+        if (hadTextTarget) textOverrides.set(msg.path, value)
+        // Remember image overrides delivered as apply-field too, so they survive
+        // a later src reset (same reasoning as apply-image).
+        const imgTargets = document.querySelectorAll<HTMLElement>(sel('data-edit-img'))
+        if (imgTargets.length) {
+          if (value) mediaOverrides.set(msg.path, value)
+          else mediaOverrides.delete(msg.path)
+        }
+        imgTargets.forEach((el) => applyImage(el, value))
         // Background video set from the form panel → swap the playable source in
         // (this is the path the hero video uses; without it the clip never shows).
         document.querySelectorAll<HTMLVideoElement>(sel('data-video-target')).forEach((el) => applyVideo(el, value))
@@ -526,15 +620,20 @@ export default function InlineEditLayer() {
         // Social links (footer): set the href + stored url. We keep the icon
         // visible in the editor regardless (the edit layer reveals empties), so
         // an admin can still set a URL for a platform that's currently blank.
+        // The green "configured" tick must toggle here too — the demo scaffold
+        // starts with ALL platforms empty, so saved URLs arrive only via this
+        // overlay, after the initial bind already ran.
         document.querySelectorAll<HTMLElement>(sel('data-edit-social')).forEach((el) => {
           el.setAttribute('data-social-url', value)
           if (value) {
             el.setAttribute('href', value)
             el.removeAttribute('data-social-empty')
+            el.setAttribute('data-leeep-social-done', 'true')
             el.style.display = ''
           } else {
             el.removeAttribute('href')
             el.setAttribute('data-social-empty', 'true')
+            el.removeAttribute('data-leeep-social-done')
           }
         })
         return
@@ -557,6 +656,35 @@ export default function InlineEditLayer() {
 
     // Handshake so the admin knows the editable layer is live.
     post({ type: 'ready' })
+
+    // Ask the admin for every image slot's SAVED value. The preview renders the
+    // demo image as a scaffold; the admin holds the real (uploaded) URL in the
+    // draft. Unlike text, an image has no reliable per-field form entry to drive
+    // the load-time overlay (a section may expose the image inline-only, with no
+    // sidebar field), so we pull it here by the DOM's own [data-edit-img] paths.
+    // The admin replies with `apply-image` for any path that has a saved URL,
+    // which also records it in mediaOverrides so it survives later src resets.
+    const requestImages = () => {
+      const paths = Array.from(
+        new Set(
+          Array.from(document.querySelectorAll<HTMLElement>('[data-edit-img]'))
+            .map((el) => el.getAttribute('data-edit-img'))
+            .filter((p): p is string => !!p),
+        ),
+      )
+      if (paths.length) post({ type: 'request-images', value: paths })
+    }
+    requestImages()
+
+    // Belt-and-suspenders: re-assert saved images a few times after load, in case
+    // next/image finishes (lazy) loading a below-the-fold image after the initial
+    // overlay ran and reset its src back to the demo. The observer covers most
+    // cases; these timed passes cover any it misses. We also re-request in case a
+    // section's image slots mounted after the first pass (e.g. list cards).
+    ;[300, 900, 1800].forEach((delay) => {
+      const id = window.setTimeout(() => { reassertText(); reassertMedia(); requestImages() }, delay)
+      cleanups.push(() => clearTimeout(id))
+    })
 
     return () => cleanups.forEach((fn) => fn())
   }, [])
@@ -682,7 +810,91 @@ export default function InlineEditLayer() {
     </div>
   ) : null
 
-  if (!social) return notePopup
+  // ── Hover note tooltip (shared-section note, e.g. "Why choose us") ──────
+  // No full-screen backdrop (that would block hovering the page); the card
+  // itself keeps the tooltip alive while the pointer is over it.
+  const hoverPopup = hoverNote ? (
+    <div
+      role="dialog"
+      aria-label="Note"
+      onMouseEnter={cancelHoverHide}
+      onMouseLeave={scheduleHoverHide}
+      style={{
+        position: 'fixed',
+        left: Math.max(12, Math.min(hoverNote.x, window.innerWidth - 312)),
+        top: Math.min(hoverNote.y + 16, window.innerHeight - 170),
+        width: 300,
+        background: '#fff',
+        borderRadius: 14,
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 20px 50px rgba(15,23,42,.28)',
+        padding: 16,
+        fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+        color: '#0f172a',
+        animation: 'leeepNoteIn .14s ease-out',
+        zIndex: 2147483647,
+      }}
+    >
+      <style>{`@keyframes leeepNoteIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}`}</style>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 26,
+            height: 26,
+            borderRadius: 9999,
+            background: '#eff6ff',
+            color: '#2563eb',
+            fontSize: 15,
+            fontWeight: 700,
+            flexShrink: 0,
+          }}
+          aria-hidden
+        >
+          i
+        </span>
+        <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>Good to know</h3>
+      </div>
+      <p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: '#475569' }}>{hoverNote.text}</p>
+      {hoverNote.action && hoverNote.target && (
+        <button
+          type="button"
+          onClick={() => {
+            window.parent.postMessage(
+              { source: MESSAGE_SOURCE, type: 'focus', path: hoverNote.target },
+              targetOriginRef.current,
+            )
+            setHoverNote(null)
+          }}
+          style={{
+            marginTop: 12,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            border: 'none',
+            background: '#2563eb',
+            color: '#fff',
+            borderRadius: 8,
+            padding: '7px 12px',
+            fontSize: 12.5,
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          {hoverNote.action}
+        </button>
+      )}
+    </div>
+  ) : null
+
+  if (!social) return (
+    <>
+      {notePopup}
+      {hoverPopup}
+    </>
+  )
 
   const label = social.platform.charAt(0).toUpperCase() + social.platform.slice(1)
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -693,6 +905,7 @@ export default function InlineEditLayer() {
   return (
     <>
     {notePopup}
+    {hoverPopup}
     <div
       role="dialog"
       aria-modal="true"

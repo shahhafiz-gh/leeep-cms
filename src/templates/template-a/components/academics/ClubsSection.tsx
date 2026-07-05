@@ -12,7 +12,7 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
   if (clubs.length === 0) return null
 
   return (
-    <section className="py-16 md:py-24 bg-ta-surface-container-lowest">
+    <section className="py-16 md:py-24 mb-10 bg-ta-surface-container-lowest">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-14 flex flex-col items-center">
           <ScrollReveal>
@@ -21,13 +21,13 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
             </div>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <h2 className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
-              Clubs & Activities
+            <h2 data-edit="academics.clubsTitle" className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
+              {data.academics.clubsTitle ?? 'Clubs & Activities'}
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
-            <p className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant max-w-[520px]">
-              Co-curricular programs that nurture talent, teamwork, and character beyond academics.
+            <p data-edit="academics.clubsDescription" className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant max-w-[520px]">
+              {data.academics.clubsDescription ?? 'Co-curricular programs that nurture talent, teamwork, and character beyond academics.'}
             </p>
           </ScrollReveal>
         </div>
@@ -49,10 +49,10 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
                 </div>
               </div>
               <div className="p-6 flex flex-col grow">
-                <h3 className="font-(family-name:--font-ta-h3) text-ta-h4 text-ta-on-surface mb-2 leading-tight">
+                <h3 data-edit={`academics.clubs.${index}.name`} className="font-(family-name:--font-ta-h3) text-ta-h4 text-ta-on-surface mb-2 leading-tight">
                   {club.name}
                 </h3>
-                <p className="font-(family-name:--font-ta-body-md) text-ta-body-md text-ta-on-surface-variant grow">
+                <p data-edit={`academics.clubs.${index}.description`} className="font-(family-name:--font-ta-body-md) text-ta-body-md text-ta-on-surface-variant grow">
                   {club.description}
                 </p>
               </div>

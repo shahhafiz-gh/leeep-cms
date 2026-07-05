@@ -433,10 +433,17 @@ export function getDemoData(template: DemoTemplate): SchoolData {
       { label: 'Login', href: demoHref('/login') },
     ],
 
+    // All five canonical platforms in a FIXED order (matches the backend's
+    // STANDARD_SOCIAL) so the inline editor's index-based `socialLinks.N.url`
+    // edits always land on the right platform. ALL start un-configured (empty
+    // url → blue outline in the editor); the admin's saved URLs overlay green
+    // "done" ticks. Only configured ones ever render on a live site.
     socialLinks: [
-      { platform: 'facebook', url: '#', icon: 'ri:facebook-fill' },
-      { platform: 'instagram', url: '#', icon: 'ri:instagram-fill' },
-      { platform: 'youtube', url: '#', icon: 'ri:youtube-fill' },
+      { platform: 'facebook', url: '', icon: 'ri:facebook-fill' },
+      { platform: 'instagram', url: '', icon: 'ri:instagram-line' },
+      { platform: 'twitter', url: '', icon: 'ri:twitter-x-fill' },
+      { platform: 'youtube', url: '', icon: 'ri:youtube-fill' },
+      { platform: 'linkedin', url: '', icon: 'ri:linkedin-fill' },
     ],
 
     footer: {

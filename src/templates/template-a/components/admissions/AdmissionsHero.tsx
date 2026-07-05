@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
+import { useLiveList } from '@/shared/hooks/useLiveList'
 
 const scrollToForm = () => {
   document.getElementById('admission-application-form')?.scrollIntoView({ behavior: 'smooth' })
@@ -15,6 +16,9 @@ const handleDownloadForm = () => {
 
 export default function AdmissionsHero({ data }: { data: SchoolData }) {
   const { admissions } = data
+  // Live list — highlights added/removed in the builder re-render immediately
+  // (see AdmissionsFaqSection for why data-edit patching alone can't do this).
+  const highlights = useLiveList('admissions.highlights', admissions.highlights ?? [])
 
   return (
     <section className="relative bg-ta-surface-container-low pt-32 md:pt-40 pb-12 md:pb-20 border-b border-ta-outline-variant overflow-hidden print:hidden">
@@ -29,7 +33,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
             transition={{ delay: 0.1 }}
             className="w-fit mb-4 px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block"
           >
-            {admissions.subtitle ?? 'Join Us'}
+            <span data-edit="admissions.subtitle">{admissions.subtitle ?? 'Join Us'}</span>
           </motion.div>
 
           <motion.h1
@@ -37,6 +41,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl mb-5"
+            data-edit="admissions.title"
           >
             {admissions.title}
           </motion.h1>
@@ -46,6 +51,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className="font-(family-name:--font-ta-body-lg) text-ta-body-md md:text-ta-body-lg text-ta-on-surface-variant mb-8 max-w-xl"
+            data-edit="admissions.description"
           >
             {admissions.description}
           </motion.p>
@@ -70,17 +76,17 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
             </button>
           </motion.div>
 
-          {admissions.highlights && admissions.highlights.length > 0 && (
+          {highlights.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="flex flex-wrap gap-6 border-t border-ta-outline-variant pt-6"
             >
-              {admissions.highlights.map((highlight) => (
-                <div key={highlight.label} className="flex items-center gap-2">
+              {highlights.map((highlight, index) => (
+                <div key={index} className="flex items-center gap-2">
                   <Icon icon={highlight.icon ?? 'lucide:check'} className="text-ta-primary text-xl" />
-                  <span className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{highlight.label}</span>
+                  <span data-edit={`admissions.highlights.${index}.label`} className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{highlight.label}</span>
                 </div>
               ))}
             </motion.div>
@@ -113,9 +119,9 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
               >
                 <Icon icon={admissions.callout.icon ?? 'lucide:users'} className="text-ta-secondary-container bg-ta-secondary-container/20 p-2 rounded-full text-4xl" />
                 <div>
-                  <div className="font-(family-name:--font-ta-caption) text-xs font-bold text-ta-on-surface">{admissions.callout.label}</div>
+                  <div data-edit="admissions.callout.label" className="font-(family-name:--font-ta-caption) text-xs font-bold text-ta-on-surface">{admissions.callout.label}</div>
                   {admissions.callout.sublabel && (
-                    <div className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{admissions.callout.sublabel}</div>
+                    <div data-edit="admissions.callout.sublabel" className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{admissions.callout.sublabel}</div>
                   )}
                 </div>
               </motion.div>

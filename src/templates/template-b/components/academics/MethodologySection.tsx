@@ -17,8 +17,8 @@ export default function MethodologySection({ data }: { data: SchoolData }) {
           <p className="text-tb-primary-400 text-sm font-bold uppercase tracking-widest mb-3">
             Our Approach
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-tb-heading mb-4">{methodology.title}</h2>
-          <p className="text-tb-body text-lg max-w-2xl mx-auto leading-relaxed">{methodology.description}</p>
+          <h2 data-edit="academics.methodology.title" className="text-3xl md:text-4xl font-bold text-tb-heading mb-4">{methodology.title}</h2>
+          <p data-edit="academics.methodology.description" className="text-tb-body text-lg max-w-2xl mx-auto leading-relaxed">{methodology.description}</p>
         </ScrollReveal>
 
         <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -33,8 +33,8 @@ export default function MethodologySection({ data }: { data: SchoolData }) {
               <div className="w-14 h-14 rounded-full bg-tb-primary-400 flex items-center justify-center mb-5 relative z-10 shadow-sm">
                 <Icon icon={step.icon ?? DEFAULT_ICONS[index % DEFAULT_ICONS.length]} className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-lg font-bold text-tb-heading mb-2 relative z-10">{step.title}</h3>
-              <p className="text-tb-body text-sm leading-relaxed relative z-10">{step.description}</p>
+              <h3 data-edit={`academics.methodology.steps.${index}.title`} className="text-lg font-bold text-tb-heading mb-2 relative z-10">{step.title}</h3>
+              <p data-edit={`academics.methodology.steps.${index}.description`} className="text-tb-body text-sm leading-relaxed relative z-10">{step.description}</p>
             </div>
           ))}
         </StaggerChildren>

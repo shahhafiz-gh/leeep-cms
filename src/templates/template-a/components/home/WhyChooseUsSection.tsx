@@ -39,13 +39,13 @@ export default function WhyChooseUsSection({ data }: { data: SchoolData }) {
             </div>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <h2 className="font-(family-name:--font-ta-h2) text-(length:--text-ta-h2) text-ta-on-surface mb-4">
-              What Sets Us Apart
+            <h2 data-edit="about.whyChooseTitle" className="font-(family-name:--font-ta-h2) text-(length:--text-ta-h2) text-ta-on-surface mb-4">
+              {data.about.whyChooseTitle ?? 'What Sets Us Apart'}
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
-            <p className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-2xl mx-auto">
-              Discover what makes us the preferred choice for families seeking quality education.
+            <p data-edit="about.whyChooseDescription" className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-2xl mx-auto">
+              {data.about.whyChooseDescription ?? 'Discover what makes us the preferred choice for families seeking quality education.'}
             </p>
           </ScrollReveal>
         </div>
@@ -55,7 +55,7 @@ export default function WhyChooseUsSection({ data }: { data: SchoolData }) {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="bg-ta-surface rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col items-center text-center border border-ta-outline-variant"
+              className="h-full bg-ta-surface rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col items-center text-center border border-ta-outline-variant"
             >
               <div
                 className={`w-16 h-16 ${colorClasses[index % colorClasses.length]} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 ${blobClasses[index % blobClasses.length]}`}

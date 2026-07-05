@@ -25,9 +25,24 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
     // Demo content keyed to the school's template, with editor-friendly nav.
     const demo = getEditorDemoData(templateId === 'template-b' ? 'B' : 'A')
     const renderData = withEditorNavigation(demo)
+    // Social links are the school's real IDENTITY/config, not "content to write
+    // over" — so overlay the real (published) URLs onto the demo's fixed platform
+    // slots instead of showing the demo's empty '#' placeholders. This makes
+    // already-configured platforms render as configured (green tick) on load and
+    // survive a refresh, matching the live site. Un-configured slots keep the demo
+    // placeholder so every platform stays available to set up. Matching by
+    // platform (not index) keeps it correct even if the orders differ.
+    const realUrlByPlatform = new Map((data.socialLinks ?? []).map((s) => [s.platform, s.url]))
+    const editorData: SchoolData = {
+      ...renderData,
+      socialLinks: renderData.socialLinks.map((s) => {
+        const realUrl = realUrlByPlatform.get(s.platform)
+        return realUrl != null ? { ...s, url: realUrl } : s
+      }),
+    }
     return templateId === 'template-b'
-      ? <TemplateB data={renderData} page={page} />
-      : <TemplateA data={renderData} page={page} />
+      ? <TemplateB data={editorData} page={page} editing />
+      : <TemplateA data={editorData} page={page} editing />
   }
 
   if (templateId === 'template-b') return <TemplateB data={data} page={page} />

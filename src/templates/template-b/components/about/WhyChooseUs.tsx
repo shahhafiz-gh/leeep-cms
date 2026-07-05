@@ -12,7 +12,12 @@ export default function WhyChooseUs({ data }: { data: SchoolData }) {
     <div className="py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h3 className="text-3xl font-bold text-tb-heading">Why Choose {data.name}?</h3>
+          <h3 data-edit="about.whyChooseTitle" className="text-3xl font-bold text-tb-heading">
+            {data.about.whyChooseTitle ?? `Why Choose ${data.name}?`}
+          </h3>
+          <p data-edit="about.whyChooseDescription" className="text-tb-body text-lg mt-4 max-w-2xl mx-auto">
+            {data.about.whyChooseDescription ?? 'Discover what makes us the preferred choice for families seeking quality education.'}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

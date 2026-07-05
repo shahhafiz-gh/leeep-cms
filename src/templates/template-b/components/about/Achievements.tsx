@@ -33,9 +33,12 @@ export default function Achievements({ data }: { data: SchoolData }) {
 
       <div className="container mx-auto px-4 relative z-10">
         <ScrollReveal className="text-center mb-12">
-          <h3 className="text-3xl font-bold text-white">Our Achievements</h3>
-          <p className="text-white text-lg mt-4 max-w-2xl mx-auto">
-            A proud legacy of accomplishments that reflect the dedication of our students, faculty, and the {data.name} community.
+          <h3 data-edit="about.achievementsTitle" className="text-3xl font-bold text-white">
+            {data.about.achievementsTitle ?? 'Our Achievements'}
+          </h3>
+          <p data-edit="about.achievementsDescription" className="text-white text-lg mt-4 max-w-2xl mx-auto">
+            {data.about.achievementsDescription ??
+              `A proud legacy of accomplishments that reflect the dedication of our students, faculty, and the ${data.name} community.`}
           </p>
         </ScrollReveal>
 

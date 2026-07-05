@@ -30,6 +30,7 @@ export default function AcademicsHero({ data }: { data: SchoolData }) {
           {/* Content */}
           <div className="w-full md:w-[55%] flex flex-col items-start gap-6">
             <motion.div
+              data-edit="academics.subtitle"
               className="px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -39,6 +40,7 @@ export default function AcademicsHero({ data }: { data: SchoolData }) {
             </motion.div>
 
             <motion.h1
+              data-edit="academics.title"
               className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl"
               {...fadeUp(0.2)}
             >
@@ -46,6 +48,7 @@ export default function AcademicsHero({ data }: { data: SchoolData }) {
             </motion.h1>
 
             <motion.p
+              data-edit="academics.description"
               className="font-(family-name:--font-ta-body-lg) text-[17px] leading-relaxed text-ta-on-surface-variant max-w-xl"
               {...fadeUp(0.3)}
             >

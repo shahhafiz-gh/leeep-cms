@@ -2,7 +2,6 @@ import Image from 'next/image'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ScrollReveal from '@/shared/animations/scroll-reveal'
-import StaggerChildren from '@/shared/animations/stagger-children'
 
 export default function OurStory({ data }: { data: SchoolData }) {
   const storyText = data.about.story ?? data.about.description
@@ -57,21 +56,7 @@ export default function OurStory({ data }: { data: SchoolData }) {
           </ScrollReveal>
         </div>
 
-        {/* Stats Row */}
-        {data.stats.length > 0 && (
-          <StaggerChildren className="grid grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 pt-16 pb-12 md:pt-24 md:pb-20 divide-y-2 lg:divide-y-0 items-start">
-            {data.stats.slice(0, 4).map((stat, i) => (
-              <div key={stat.label} className="flex flex-col items-center text-center pt-8 lg:pt-0">
-                <h2 className="text-5xl md:text-6xl font-bold text-tb-primary-400 tracking-tight mb-3">
-                  <span data-edit={`stats.${i}.value`}>{stat.value}</span>{stat.suffix ?? ''}
-                </h2>
-                <p data-edit={`stats.${i}.label`} className="text-base md:text-lg text-slate-700 font-medium uppercase tracking-wider">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </StaggerChildren>
-        )}
+   
       </div>
     </div>
   )

@@ -67,13 +67,19 @@ export default function AboutHero({ data }: { data: SchoolData }) {
                 {...fadeUp(0.4)}
               >
                 {data.stats.slice(0, 3).map((stat, i) => (
-                  <div key={stat.label} className="flex flex-row items-center gap-6">
+                  <div
+                    key={stat.label}
+                    data-note="These highlights come from your Stats. They’re not edited here — update them in the Stats section and they’ll change everywhere."
+                    data-note-action="Edit in Stats →"
+                    data-note-target={`stats.${i}.value`}
+                    className="flex flex-row items-center gap-6"
+                  >
                     <div className="flex flex-col">
                       <span className="text-ta-primary font-(family-name:--font-ta-h2) text-3xl font-bold">
-                        <span data-edit={`stats.${i}.value`}>{stat.value}</span>{stat.suffix ?? ''}
+                        <span data-bind={`stats.${i}.value`}>{stat.value}</span><span data-bind={`stats.${i}.suffix`}>{stat.suffix ?? ''}</span>
                       </span>
                       <span
-                        data-edit={`stats.${i}.label`}
+                        data-bind={`stats.${i}.label`}
                         className="text-ta-on-surface-variant font-(family-name:--font-ta-label-md) text-ta-label-md mt-1"
                       >
                         {stat.label}
@@ -98,7 +104,8 @@ export default function AboutHero({ data }: { data: SchoolData }) {
             {/* Blob background */}
             <div className="absolute w-full h-[500px] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-40 z-0" />
 
-            {/* Main image */}
+            {/* Main image — the About hero's own picture (distinct from the
+                "Our story" image, which uses data.about.image). */}
             {data.about.heroImage ? (
               <div className="relative border-8 border-white w-[60%] aspect-square rounded-3xl overflow-hidden z-10 shadow-lg">
                 <Image
@@ -111,7 +118,7 @@ export default function AboutHero({ data }: { data: SchoolData }) {
               </div>
             ) : (
               <div className="relative border-8 border-white w-[60%] aspect-square rounded-3xl overflow-hidden z-10">
-                <ImagePlaceholder label="Add about hero image" editPath="about.heroImage" />
+                <ImagePlaceholder label="Add hero image" editPath="about.heroImage" />
               </div>
             )}
 

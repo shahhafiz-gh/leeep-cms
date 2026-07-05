@@ -40,11 +40,12 @@ export default function Achievements({ data }: { data: SchoolData }) {
           <div className="mb-4 px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block">
             Milestones
           </div>
-          <h2 className="font-(family-name:--font-ta-h2) text-4xl md:text-[--text-ta-h2] text-ta-on-surface mb-3 leading-tight">
-            Our Achievements
+          <h2 data-edit="about.achievementsTitle" className="font-(family-name:--font-ta-h2) text-4xl md:text-[--text-ta-h2] text-ta-on-surface mb-3 leading-tight">
+            {data.about.achievementsTitle ?? 'Our Achievements'}
           </h2>
-          <p className="font-(family-name:--font-ta-body-md) text-[--text-ta-body-md] text-ta-on-surface-variant max-w-[520px]">
-            A proud legacy of accomplishments that reflect the dedication of our students, faculty, and the {data.name} community.
+          <p data-edit="about.achievementsDescription" className="font-(family-name:--font-ta-body-md) text-[--text-ta-body-md] text-ta-on-surface-variant max-w-[520px]">
+            {data.about.achievementsDescription ??
+              `A proud legacy of accomplishments that reflect the dedication of our students, faculty, and the ${data.name} community.`}
           </p>
         </motion.div>
 

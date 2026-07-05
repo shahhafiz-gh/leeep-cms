@@ -34,7 +34,6 @@ const SLUG_TO_PAGE: Record<string, PageType> = {
   admissions: 'admissions',
   contact: 'contact',
   updates: 'updates',
-  login: 'login',
 }
 
 function resolvePage(slug?: string[]): PageType | null {

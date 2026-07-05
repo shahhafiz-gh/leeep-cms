@@ -23,13 +23,13 @@ export default function StreamsSection({ data }: { data: SchoolData }) {
             </div>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <h2 className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
-              A Program for Every Stage
+            <h2 data-edit="academics.streamsTitle" className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
+              {data.academics.streamsTitle ?? 'A Program for Every Stage'}
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
-            <p className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant max-w-[520px]">
-              Carefully structured wings that grow with your child — from the foundational years to board examinations.
+            <p data-edit="academics.streamsDescription" className="font-(family-name:--font-ta-body-md) text-lg text-ta-on-surface-variant max-w-[520px]">
+              {data.academics.streamsDescription ?? 'Carefully structured wings that grow with your child — from the foundational years to board examinations.'}
             </p>
           </ScrollReveal>
         </div>
@@ -45,16 +45,16 @@ export default function StreamsSection({ data }: { data: SchoolData }) {
                 <div className="w-12 h-12 bg-ta-surface rounded-full flex items-center justify-center mb-6 shadow-sm">
                   <Icon icon={style.icon} className={`text-2xl ${style.iconColor}`} />
                 </div>
-                <h3 className="font-(family-name:--font-ta-h3) text-ta-h4 text-ta-on-surface mb-3 leading-tight">
+                <h3 data-edit={`academics.streams.${index}.name`} className="font-(family-name:--font-ta-h3) text-ta-h4 text-ta-on-surface mb-3 leading-tight">
                   {stream.name}
                 </h3>
-                <p className="font-(family-name:--font-ta-body-md) text-ta-body-md text-ta-on-surface-variant mb-6 grow">
+                <p data-edit={`academics.streams.${index}.description`} className="font-(family-name:--font-ta-body-md) text-ta-body-md text-ta-on-surface-variant mb-6 grow">
                   {stream.description}
                 </p>
                 {stream.subjects && stream.subjects.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {stream.subjects.map((subject) => (
-                      <span key={subject} className={`${style.tag} font-(family-name:--font-ta-label-md) text-[12px] px-3 py-1 rounded-full`}>
+                    {stream.subjects.map((subject, si) => (
+                      <span key={subject} data-edit={`academics.streams.${index}.subjects.${si}`} className={`${style.tag} font-(family-name:--font-ta-label-md) text-[12px] px-3 py-1 rounded-full`}>
                         {subject}
                       </span>
                     ))}

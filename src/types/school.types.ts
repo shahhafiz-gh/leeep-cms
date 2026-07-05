@@ -5,7 +5,7 @@
 
 // ── Page & Template Identifiers ──
 
-export type PageType = 'home' | 'about' | 'academics' | 'admissions' | 'contact' | 'updates' | 'login'
+export type PageType = 'home' | 'about' | 'academics' | 'admissions' | 'contact' | 'updates'
 
 export type TemplateId = 'template-a' | 'template-b'
 
@@ -118,8 +118,18 @@ export interface AboutData {
   /** Single mission statement (distinct from the `mission` pillar list) */
   missionStatement?: string
   vision?: string
+  /** @deprecated split into missionBadges / visionBadges */
   values?: string[]
+  /** Badges shown inside the Mission and Vision cards (each stored separately). */
+  missionBadges?: string[]
+  visionBadges?: string[]
+  /** Editable heading + intro for the "Why choose us" section. */
+  whyChooseTitle?: string
+  whyChooseDescription?: string
   whyChooseUs?: WhyChooseItem[]
+  /** Editable heading + intro for the Achievements section. */
+  achievementsTitle?: string
+  achievementsDescription?: string
   achievements?: Achievement[]
   /** Small floating trust badges shown across the about sections (icon + label + sublabel). */
   badges?: Badge[]
@@ -180,12 +190,18 @@ export interface AcademicsData {
     description: string
     items: { title: string; description: string }[]
   }
+  /** Editable heading + intro for the Streams section. */
+  streamsTitle?: string
+  streamsDescription?: string
   streams?: Stream[]
   methodology?: {
     title: string
     description: string
     steps: { title: string; description: string; icon?: string }[]
   }
+  /** Editable heading + intro for the Clubs section. */
+  clubsTitle?: string
+  clubsDescription?: string
   clubs?: Club[]
   results?: {
     title: string
@@ -223,6 +239,17 @@ export interface AdmissionsData {
   whyChoose?: WhyChooseItem[]
   feeStructure?: FeeItem[]
   faqs?: FAQ[]
+  /**
+   * School-defined EXTRA questions appended to the fixed base application
+   * form, per form part (see shared/admission-form.ts CustomFormField).
+   */
+  formFields?: {
+    section: string
+    label: string
+    type?: string
+    options?: string[]
+    required?: string
+  }[]
   process?: {
     title: string
     steps: { step: number; title: string; description: string }[]
@@ -239,6 +266,8 @@ export interface AdmissionsData {
 export interface ContactData {
   title: string
   subtitle?: string
+  /** Intro paragraph under the Contact page hero title. */
+  description?: string
   /** Campus photo shown in the Contact page hero. */
   image?: string
   address: string
@@ -414,6 +443,16 @@ export interface SchoolData {
   admissions: AdmissionsData
   contact: ContactData
   updates: UpdatesData
+  /**
+   * Updates PAGE header copy. Lives OUTSIDE `updates` because that key is
+   * server-owned (announcements/events are folded into it on every read,
+   * replacing whatever the blob holds).
+   */
+  updatesHero?: {
+    subtitle?: string
+    title?: string
+    description?: string
+  }
   testimonials: TestimonialData[]
   stats: StatData[]
   gallery: GalleryData

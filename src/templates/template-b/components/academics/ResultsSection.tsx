@@ -32,17 +32,17 @@ export default function ResultsSection({ data }: { data: SchoolData }) {
               <p className="text-white/80 text-sm font-bold uppercase tracking-widest mb-3">
                 Our Results
               </p>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{results.title}</h2>
-              <p className="text-white/85 text-lg leading-relaxed mb-10 max-w-xl">{results.description}</p>
+              <h2 data-edit="academics.results.title" className="text-3xl md:text-4xl font-bold text-white mb-4">{results.title}</h2>
+              <p data-edit="academics.results.description" className="text-white/85 text-lg leading-relaxed mb-10 max-w-xl">{results.description}</p>
             </ScrollReveal>
 
             <StaggerChildren className="grid grid-cols-2 gap-6">
-              {results.stats.map((stat) => (
+              {results.stats.map((stat, si) => (
                 <div key={stat.label} className="border-l-2 border-white/40 pl-5">
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1 leading-none">
+                  <div data-edit={`academics.results.stats.${si}.value`} className="text-4xl md:text-5xl font-bold text-white mb-1 leading-none">
                     {stat.value}
                   </div>
-                  <div className="text-white/75 text-sm uppercase tracking-wider">{stat.label}</div>
+                  <div data-edit={`academics.results.stats.${si}.label`} className="text-white/75 text-sm uppercase tracking-wider">{stat.label}</div>
                 </div>
               ))}
             </StaggerChildren>

@@ -7,7 +7,9 @@ import StaggerChildren from '@/shared/animations/stagger-children'
 export default function MissionVision({ data }: { data: SchoolData }) {
   const mission = data.about.missionStatement
   const vision = data.about.vision
-  const values = data.about.values ?? []
+  // Each card owns its own badges (stored separately).
+  const missionValues = data.about.missionBadges ?? []
+  const visionValues = data.about.visionBadges ?? []
 
   if (!mission && !vision) return null
 
@@ -29,7 +31,20 @@ export default function MissionVision({ data }: { data: SchoolData }) {
                 <Icon icon="lucide:target" className="w-8 h-8 text-tb-primary-500" />
               </div>
               <h4 className="text-2xl font-bold text-tb-heading mb-4">Our Mission</h4>
-              <p data-edit="about.missionStatement" className="text-tb-body text-lg leading-relaxed">{mission}</p>
+              <p data-edit="about.missionStatement" className="text-tb-body text-lg leading-relaxed grow">{mission}</p>
+              {missionValues.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-6">
+                  {missionValues.map((v, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1.5 bg-tb-primary-50 border border-tb-border text-tb-heading text-sm rounded-full px-4 py-2"
+                    >
+                      <Icon icon="lucide:star" className="w-3.5 h-3.5 text-tb-primary-400" />
+                      <span data-edit={`about.missionBadges.${i}`}>{v}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -40,31 +55,23 @@ export default function MissionVision({ data }: { data: SchoolData }) {
                 <Icon icon="lucide:eye" className="w-8 h-8 text-white" />
               </div>
               <h4 className="text-2xl font-bold text-white mb-4">Our Vision</h4>
-              <p data-edit="about.vision" className="text-white text-lg leading-relaxed">{vision}</p>
+              <p data-edit="about.vision" className="text-white text-lg leading-relaxed grow">{vision}</p>
+              {visionValues.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-6">
+                  {visionValues.map((v, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1.5 bg-white/15 border border-white/25 text-white text-sm rounded-full px-4 py-2"
+                    >
+                      <Icon icon="lucide:star" className="w-3.5 h-3.5 text-white" />
+                      <span data-edit={`about.visionBadges.${i}`}>{v}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </StaggerChildren>
-
-        {/* Core Values — full-width band below both cards, so neither card is
-            left with an empty gap and the two stay balanced. */}
-        {values.length > 0 && (
-          <div className="mt-10 text-center">
-            <p className="text-tb-primary-500 font-semibold uppercase tracking-wider text-xs mb-4">
-              Our Core Values
-            </p>
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {values.map((v, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-1.5 bg-white border border-tb-border text-tb-heading text-sm rounded-full px-4 py-2 shadow-sm"
-                >
-                  <Icon icon="lucide:star" className="w-3.5 h-3.5 text-tb-primary-400" />
-                  <span data-edit={`about.values.${i}`}>{v}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

@@ -4,13 +4,17 @@ import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
+import { useLiveList } from '@/shared/hooks/useLiveList'
 
 export default function ContactHero({ data }: { data: SchoolData }) {
   const { contact } = data
+  // Live list — highlight cards added/removed in the builder re-render
+  // immediately (data-edit patching alone can't create/remove DOM nodes).
+  const highlights = useLiveList('contact.highlights', contact.highlights ?? [])
   const quickInfo = [
-    { icon: 'lucide:phone', label: contact.phone[0] },
-    { icon: 'lucide:mail', label: contact.email[0] },
-    { icon: 'lucide:clock', label: contact.workingHours ?? 'Mon-Sat: 9AM - 4PM' },
+    { icon: 'lucide:phone', label: contact.phone[0], path: 'contact.phone.0' },
+    { icon: 'lucide:mail', label: contact.email[0], path: 'contact.email.0' },
+    { icon: 'lucide:clock', label: contact.workingHours ?? 'Mon-Sat: 9AM - 4PM', path: 'contact.workingHours' },
   ].filter((i) => i.label)
 
   return (
@@ -24,7 +28,7 @@ export default function ContactHero({ data }: { data: SchoolData }) {
             transition={{ delay: 0.1 }}
             className="w-fit px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold"
           >
-            {contact.subtitle ?? 'Get In Touch'}
+            <span data-edit="contact.subtitle">{contact.subtitle ?? 'Get In Touch'}</span>
           </motion.div>
 
           <motion.h1
@@ -32,8 +36,9 @@ export default function ContactHero({ data }: { data: SchoolData }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl"
+            data-edit="contact.title"
           >
-            Let&apos;s Start A Conversation
+            {contact.title ?? 'Let’s Start A Conversation'}
           </motion.h1>
 
           <motion.p
@@ -41,8 +46,9 @@ export default function ContactHero({ data }: { data: SchoolData }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-xl"
+            data-edit="contact.description"
           >
-            Whether you have questions about admissions, academics, or campus life, our dedicated team is ready to assist you.
+            {contact.description ?? 'Whether you have questions about admissions, academics, or campus life, our dedicated team is ready to assist you.'}
           </motion.p>
 
           <motion.div
@@ -53,11 +59,11 @@ export default function ContactHero({ data }: { data: SchoolData }) {
           >
             {quickInfo.map((info) => (
               <div
-                key={info.label}
+                key={info.path}
                 className="flex items-center gap-3 bg-ta-surface-container-low px-4 py-3 rounded-xl border border-ta-outline-variant/30 hover:border-ta-primary/30 transition-colors"
               >
                 <Icon icon={info.icon} className="text-ta-primary text-xl" />
-                <span className="font-(family-name:--font-ta-label-md) text-ta-label-md text-ta-on-surface">{info.label}</span>
+                <span data-edit={info.path} className="font-(family-name:--font-ta-label-md) text-ta-label-md text-ta-on-surface">{info.label}</span>
               </div>
             ))}
           </motion.div>
@@ -80,7 +86,7 @@ export default function ContactHero({ data }: { data: SchoolData }) {
               )}
             </div>
 
-            {contact.highlights?.[0] && (
+            {highlights[0] && (
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -88,18 +94,18 @@ export default function ContactHero({ data }: { data: SchoolData }) {
                 className="absolute -bottom-6 -left-4 md:-left-12 bg-ta-surface-container-lowest p-4 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
               >
                 <div className="bg-ta-primary-container text-ta-on-primary-container p-3 rounded-full flex">
-                  <Icon icon={contact.highlights[0].icon ?? 'lucide:check-circle'} className="text-2xl" />
+                  <Icon icon={highlights[0].icon ?? 'lucide:check-circle'} className="text-2xl" />
                 </div>
                 <div>
-                  <p className="font-(family-name:--font-ta-label-md) font-bold text-ta-on-surface">{contact.highlights[0].label}</p>
-                  {contact.highlights[0].sublabel && (
-                    <p className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{contact.highlights[0].sublabel}</p>
+                  <p data-edit="contact.highlights.0.label" className="font-(family-name:--font-ta-label-md) font-bold text-ta-on-surface">{highlights[0].label}</p>
+                  {highlights[0].sublabel && (
+                    <p data-edit="contact.highlights.0.sublabel" className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{highlights[0].sublabel}</p>
                   )}
                 </div>
               </motion.div>
             )}
 
-            {contact.highlights?.[1] && (
+            {highlights[1] && (
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -107,12 +113,12 @@ export default function ContactHero({ data }: { data: SchoolData }) {
                 className="absolute top-10 -right-4 md:-right-8 bg-ta-surface-container-lowest p-4 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
               >
                 <div className="bg-ta-secondary-container text-ta-on-secondary-container p-3 rounded-full flex">
-                  <Icon icon={contact.highlights[1].icon ?? 'lucide:star'} className="text-2xl" />
+                  <Icon icon={highlights[1].icon ?? 'lucide:star'} className="text-2xl" />
                 </div>
                 <div>
-                  <p className="font-(family-name:--font-ta-label-md) font-bold text-ta-on-surface">{contact.highlights[1].label}</p>
-                  {contact.highlights[1].sublabel && (
-                    <p className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{contact.highlights[1].sublabel}</p>
+                  <p data-edit="contact.highlights.1.label" className="font-(family-name:--font-ta-label-md) font-bold text-ta-on-surface">{highlights[1].label}</p>
+                  {highlights[1].sublabel && (
+                    <p data-edit="contact.highlights.1.sublabel" className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{highlights[1].sublabel}</p>
                   )}
                 </div>
               </motion.div>
