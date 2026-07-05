@@ -7,12 +7,14 @@
 
 export type PageType = 'home' | 'about' | 'academics' | 'admissions' | 'contact' | 'updates'
 
-export type TemplateId = 'template-a' | 'template-b'
+export type TemplateId = 'template-a' | 'template-b' | 'template-c'
 
 // ── Template Configuration ──
 
 export interface TemplateConfig {
   template_id: TemplateId
+  /** Curated colour preset id (Settings/Builder). Empty → the template default. */
+  palette?: string
 }
 
 // ── Website Identity (education.education.api.get_website_registration) ──

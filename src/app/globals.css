@@ -205,3 +205,187 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * CURATED COLOUR PALETTES
+ * A school picks a preset (config.palette) applied as [data-palette] on the
+ * template root. Presets only re-map the design TOKENS the components already
+ * use, so a school can recolour the site without being able to break the design.
+ *
+ * ta- palettes apply to Willow (.template-a) AND Horizon (.template-c, which
+ * also carries the .template-a class). Default (no data-palette) = emerald for
+ * Willow; Horizon defaults to `warm`.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Horizon — serif headings for an editorial feel (distinct from Willow). */
+.template-c h1,
+.template-c h2,
+.template-c h3,
+.template-c h4 {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+/* ── Warm (terracotta / amber on ivory) ── */
+.template-a[data-palette="warm"] {
+  --color-ta-primary: #b45309;
+  --color-ta-on-primary: #ffffff;
+  --color-ta-primary-container: #c2620f;
+  --color-ta-on-primary-container: #fff7ed;
+  --color-ta-primary-fixed: #fed7aa;
+  --color-ta-primary-fixed-dim: #fdba74;
+  --color-ta-on-primary-fixed: #431407;
+  --color-ta-on-primary-fixed-variant: #9a3412;
+  --color-ta-secondary: #a16207;
+  --color-ta-on-secondary: #ffffff;
+  --color-ta-secondary-container: #fde68a;
+  --color-ta-on-secondary-container: #713f12;
+  --color-ta-tertiary: #78716c;
+  --color-ta-on-tertiary: #ffffff;
+  --color-ta-tertiary-container: #e7e5e4;
+  --color-ta-on-tertiary-container: #292524;
+  --color-ta-background: #fdf8f3;
+  --color-ta-on-background: #1c1917;
+  --color-ta-surface: #fdf8f3;
+  --color-ta-on-surface: #1c1917;
+  --color-ta-surface-variant: #ede4d8;
+  --color-ta-on-surface-variant: #57534e;
+  --color-ta-surface-dim: #e7dccd;
+  --color-ta-surface-bright: #fffaf4;
+  --color-ta-surface-tint: #b45309;
+  --color-ta-surface-container-lowest: #ffffff;
+  --color-ta-surface-container-low: #f8f0e7;
+  --color-ta-surface-container: #f3e9dc;
+  --color-ta-surface-container-high: #ede1d1;
+  --color-ta-surface-container-highest: #e7dccd;
+  --color-ta-outline: #8c8378;
+  --color-ta-outline-variant: #d8cbb9;
+  --color-ta-inverse-surface: #362f2a;
+  --color-ta-inverse-on-surface: #f7ede1;
+  --color-ta-inverse-primary: #fdba74;
+}
+
+/* ── Coastal (deep teal on sand) ── */
+.template-a[data-palette="coastal"] {
+  --color-ta-primary: #0f766e;
+  --color-ta-on-primary: #ffffff;
+  --color-ta-primary-container: #115e59;
+  --color-ta-on-primary-container: #ccfbf1;
+  --color-ta-primary-fixed: #99f6e4;
+  --color-ta-primary-fixed-dim: #5eead4;
+  --color-ta-on-primary-fixed: #042f2e;
+  --color-ta-on-primary-fixed-variant: #115e59;
+  --color-ta-secondary: #0d9488;
+  --color-ta-on-secondary: #ffffff;
+  --color-ta-secondary-container: #99f6e4;
+  --color-ta-on-secondary-container: #134e4a;
+  --color-ta-tertiary: #64748b;
+  --color-ta-on-tertiary: #ffffff;
+  --color-ta-tertiary-container: #e2e8f0;
+  --color-ta-on-tertiary-container: #1e293b;
+  --color-ta-background: #f7f5ef;
+  --color-ta-on-background: #1a1c1b;
+  --color-ta-surface: #f7f5ef;
+  --color-ta-on-surface: #1a1c1b;
+  --color-ta-surface-variant: #e0e6df;
+  --color-ta-on-surface-variant: #47504c;
+  --color-ta-surface-dim: #dcdad2;
+  --color-ta-surface-bright: #fdfbf5;
+  --color-ta-surface-tint: #0f766e;
+  --color-ta-surface-container-lowest: #ffffff;
+  --color-ta-surface-container-low: #f1efe8;
+  --color-ta-surface-container: #ebe9e1;
+  --color-ta-surface-container-high: #e5e3da;
+  --color-ta-surface-container-highest: #dfddd3;
+  --color-ta-outline: #79817c;
+  --color-ta-outline-variant: #c7cdc5;
+  --color-ta-inverse-surface: #2d302e;
+  --color-ta-inverse-on-surface: #eff1ec;
+  --color-ta-inverse-primary: #5eead4;
+}
+
+/* ── Indigo (indigo on cool off-white) ── */
+.template-a[data-palette="indigo"] {
+  --color-ta-primary: #4f46e5;
+  --color-ta-on-primary: #ffffff;
+  --color-ta-primary-container: #4338ca;
+  --color-ta-on-primary-container: #e0e7ff;
+  --color-ta-primary-fixed: #c7d2fe;
+  --color-ta-primary-fixed-dim: #a5b4fc;
+  --color-ta-on-primary-fixed: #1e1b4b;
+  --color-ta-on-primary-fixed-variant: #3730a3;
+  --color-ta-secondary: #6366f1;
+  --color-ta-on-secondary: #ffffff;
+  --color-ta-secondary-container: #c7d2fe;
+  --color-ta-on-secondary-container: #312e81;
+  --color-ta-tertiary: #64748b;
+  --color-ta-on-tertiary: #ffffff;
+  --color-ta-tertiary-container: #e2e8f0;
+  --color-ta-on-tertiary-container: #1e293b;
+  --color-ta-background: #fafaff;
+  --color-ta-on-background: #1a1a2e;
+  --color-ta-surface: #fafaff;
+  --color-ta-on-surface: #1a1a2e;
+  --color-ta-surface-variant: #e6e6f0;
+  --color-ta-on-surface-variant: #4a4a5a;
+  --color-ta-surface-dim: #dcdce8;
+  --color-ta-surface-bright: #ffffff;
+  --color-ta-surface-tint: #4f46e5;
+  --color-ta-surface-container-lowest: #ffffff;
+  --color-ta-surface-container-low: #f3f3fb;
+  --color-ta-surface-container: #ededf7;
+  --color-ta-surface-container-high: #e7e7f3;
+  --color-ta-surface-container-highest: #e1e1ef;
+  --color-ta-outline: #7a7a8c;
+  --color-ta-outline-variant: #c9c9d8;
+  --color-ta-inverse-surface: #2e2e3a;
+  --color-ta-inverse-on-surface: #f0f0f7;
+  --color-ta-inverse-primary: #a5b4fc;
+}
+
+/* ── Emerald (explicit) — matches Willow's default @theme green, so Horizon can
+ *    opt into it too. Kept in sync with the @theme ta- values. ── */
+.template-a[data-palette="emerald"] {
+  --color-ta-primary: #006b20;
+  --color-ta-on-primary: #ffffff;
+  --color-ta-primary-container: #00872b;
+  --color-ta-on-primary-container: #f7fff1;
+  --color-ta-secondary: #006e24;
+  --color-ta-background: #f4fcef;
+  --color-ta-on-background: #171d16;
+  --color-ta-surface: #f4fcef;
+  --color-ta-on-surface: #171d16;
+  --color-ta-surface-tint: #006e21;
+}
+
+/* ── Heritage (tb-) palettes — Navy & Gold is the default (@theme). ── */
+.template-b[data-palette="crimson"] {
+  --color-tb-primary-50: #fdf2f4;
+  --color-tb-primary-100: #fbe0e6;
+  --color-tb-primary-200: #f5c2cd;
+  --color-tb-primary-300: #ec9aab;
+  --color-tb-primary: #b91c3c;
+  --color-tb-primary-400: #b91c3c;
+  --color-tb-primary-500: #a01834;
+  --color-tb-primary-600: #86142b;
+  --color-tb-primary-700: #6b1023;
+  --color-tb-accent: #b91c3c;
+  --color-tb-hover: #a01834;
+  --color-tb-secondary: #1c1a2e;
+  --color-tb-footer: #171122;
+}
+
+.template-b[data-palette="emerald"] {
+  --color-tb-primary-50: #ecfdf5;
+  --color-tb-primary-100: #d1fae5;
+  --color-tb-primary-200: #a7f3d0;
+  --color-tb-primary-300: #6ee7b7;
+  --color-tb-primary: #047857;
+  --color-tb-primary-400: #047857;
+  --color-tb-primary-500: #065f46;
+  --color-tb-primary-600: #064e3b;
+  --color-tb-primary-700: #053e2f;
+  --color-tb-accent: #047857;
+  --color-tb-hover: #065f46;
+  --color-tb-secondary: #0c1f18;
+  --color-tb-footer: #0a1a14;
+}

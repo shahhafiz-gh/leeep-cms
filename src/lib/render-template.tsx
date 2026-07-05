@@ -3,6 +3,7 @@ import { withEditorNavigation } from '@/lib/cms'
 import { getEditorDemoData } from '@/lib/demo'
 import TemplateA from '@/templates/template-a/TemplateA'
 import TemplateB from '@/templates/template-b/TemplateB'
+import TemplateC from '@/templates/template-c/TemplateC'
 
 /**
  * Render the correct template for a school's data.
@@ -40,12 +41,16 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
         return realUrl != null ? { ...s, url: realUrl } : s
       }),
     }
-    return templateId === 'template-b'
-      ? <TemplateB data={editorData} page={page} editing />
-      : <TemplateA data={editorData} page={page} editing />
+    // Keep the school's real config (template_id + palette) on the demo data so
+    // the preview renders in the chosen template AND palette.
+    editorData.config = { ...editorData.config, ...data.config }
+    if (templateId === 'template-b') return <TemplateB data={editorData} page={page} editing />
+    if (templateId === 'template-c') return <TemplateC data={editorData} page={page} editing />
+    return <TemplateA data={editorData} page={page} editing />
   }
 
   if (templateId === 'template-b') return <TemplateB data={data} page={page} />
+  if (templateId === 'template-c') return <TemplateC data={data} page={page} />
 
   if (templateId !== 'template-a') {
     console.warn(

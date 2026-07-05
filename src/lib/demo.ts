@@ -14,7 +14,7 @@ import type { SchoolData, TemplateId } from '@/types/school.types'
  *  prospective schools, so nothing may resemble an existing client.
  * ──────────────────────────────────────────────────────────── */
 
-export type DemoTemplate = 'A' | 'B'
+export type DemoTemplate = 'A' | 'B' | 'C'
 
 /** Build a sized Unsplash stock-photo URL from a (verified) photo id. */
 const img = (id: string, w = 1200) =>
@@ -59,6 +59,7 @@ const STOCK = {
 export function resolveDemoTemplate(raw?: string | string[]): DemoTemplate {
   const value = (Array.isArray(raw) ? raw[0] : raw)?.toLowerCase().trim()
   if (value === 'b' || value === 'template-b') return 'B'
+  if (value === 'c' || value === 'template-c') return 'C'
   return 'A'
 }
 
@@ -112,7 +113,10 @@ export function getEditorDemoData(template: DemoTemplate): SchoolData {
  * without ever touching the real subdomain or draft-preview render paths.
  */
 export function getDemoData(template: DemoTemplate): SchoolData {
-  const templateId: TemplateId = template === 'B' ? 'template-b' : 'template-a'
+  const templateId: TemplateId =
+    template === 'B' ? 'template-b' : template === 'C' ? 'template-c' : 'template-a'
+  // Horizon defaults to its warm palette so the demo card shows its true look.
+  const palette = template === 'C' ? 'warm' : ''
   const q = `?template=${template}`
   /** Internal demo link helper, e.g. demoHref('/about') → '/demo/about?template=A'. */
   const demoHref = (path: string) => `/demo${path}${q}`
@@ -121,7 +125,7 @@ export function getDemoData(template: DemoTemplate): SchoolData {
     name: 'Leeep Public School',
     tagline: 'Where curious minds grow',
     logo: '/assets/demo/logo.svg', // generic demo emblem — not a real client logo
-    config: { template_id: templateId },
+    config: { template_id: templateId, palette },
 
     hero: {
       // Single hero (not a slider).

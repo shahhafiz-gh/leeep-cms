@@ -34,7 +34,10 @@ export default function TemplateA({ data, page, editing = false }: TemplateProps
   const PageComponent = pageMap[page]
 
   return (
-    <div className="template-a bg-ta-background text-ta-on-background font-(family-name:--font-dm-sans) min-h-screen flex flex-col">
+    <div
+      className="template-a bg-ta-background text-ta-on-background font-(family-name:--font-dm-sans) min-h-screen flex flex-col"
+      data-palette={data.config?.palette || undefined}
+    >
       <Header data={data} />
       <main className="grow">
         <PageComponent data={data} />

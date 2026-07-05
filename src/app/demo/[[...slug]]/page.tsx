@@ -6,6 +6,7 @@ import { isEditPreview, type RouteSearchParams } from '@/lib/cms'
 import { buildMetadata } from '@/lib/metadata'
 import TemplateA from '@/templates/template-a/TemplateA'
 import TemplateB from '@/templates/template-b/TemplateB'
+import TemplateC from '@/templates/template-c/TemplateC'
 import InlineEditLayer from '@/shared/InlineEditLayer'
 
 /**
@@ -60,9 +61,13 @@ export default async function DemoPage({ params, searchParams }: DemoProps) {
   // data's `config.template_id`. Same `data` content, two different templates.
   return (
     <>
-      {template === 'B'
-        ? <TemplateB data={data} page={page} />
-        : <TemplateA data={data} page={page} />}
+      {template === 'B' ? (
+        <TemplateB data={data} page={page} />
+      ) : template === 'C' ? (
+        <TemplateC data={data} page={page} />
+      ) : (
+        <TemplateA data={data} page={page} />
+      )}
       {/* Inline-edit layer: injected ONLY for an editor preview
           (?preview=1&token=<PREVIEW_SECRET>). Capture-only — mirrors the
           home/about routes so every demo page (incl. About for both
