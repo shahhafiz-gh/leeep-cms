@@ -17,13 +17,17 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
+        // Every school runs its own Frappe site at <label>.leeep.in and serves
+        // its uploaded logo/images from /files/**. One wildcard covers them all,
+        // so we never have to whitelist schools one by one. (`**.` matches any
+        // subdomain depth; the apex leeep.in is covered separately below.)
         protocol: "https",
-        hostname: "iei.leeep.in",
+        hostname: "**.leeep.in",
         pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "kcs.leeep.in",
+        hostname: "leeep.in",
         pathname: "/**",
       },
       {
