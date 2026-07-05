@@ -12,7 +12,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const sp = await searchParams
   // Published content for metadata (see HomePage note on draft auth).
   const data = await getSiteData(resolveSchool(headersList, sp), 'published')
-  return buildMetadata({ schoolName: data.name, description: data.tagline })
+  return buildMetadata({ seo: data.seo, schoolName: data.name, description: data.tagline })
 }
 
 export default async function HomePage({ searchParams }: PageProps) {

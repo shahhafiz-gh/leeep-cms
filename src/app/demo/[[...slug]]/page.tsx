@@ -44,7 +44,7 @@ function resolvePage(slug?: string[]): PageType | null {
 export async function generateMetadata({ searchParams }: DemoProps): Promise<Metadata> {
   const template = resolveDemoTemplate((await searchParams).template)
   const data = getDemoData(template)
-  return buildMetadata({ schoolName: data.name, title: `Template ${template} Demo` })
+  return buildMetadata({ seo: data.seo, schoolName: data.name, title: `Template ${template} Demo` })
 }
 
 export default async function DemoPage({ params, searchParams }: DemoProps) {

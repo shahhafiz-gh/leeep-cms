@@ -433,6 +433,12 @@ export interface SchoolData {
   tagline: string
   logo: string
   config: TemplateConfig
+  /** Admin-configured search/social defaults (Settings → SEO). Optional. */
+  seo?: {
+    title?: string
+    description?: string
+    ogImage?: string
+  }
 
   hero: HeroData
   about: AboutData
