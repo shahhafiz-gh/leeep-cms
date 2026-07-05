@@ -38,31 +38,42 @@ getSiteData(school: string, mode: "published" | "draft" = "published"): Promise<
   via [`renderTemplate`](src/lib/render-template.tsx) — **never** a URL param.
   Missing/unknown → defaults to `template-a` with a `console.warn`.
 
-### School resolution (subdomain everywhere)
+### Tenancy: ONE renderer, one Frappe site per school
 
-One helper, `resolveSchool(headers, searchParams)` in `cms.ts`, is used by every
-page:
+This single deployment serves EVERY school. Each school runs its **own Frappe
+site** (e.g. `kcs.leeep.in`) holding its single `School Website`, so a request is
+routed to the right **backend**, resolved from the host in `middleware.ts`:
 
-1. **Primary — subdomain.** `proxy.ts` extracts the subdomain from the request
-   host into the `x-school-subdomain` header; that is the school.
-2. **Dev override — `?school=<slug>`.** On localhost/dev only (there are no real
-   subdomains on localhost), a `?school=` query param wins. **Ignored in
-   production.**
+| Incoming host | Backend used | Slug |
+|---|---|---|
+| `kcs.schools.leeep.in` (platform subdomain) | `https://kcs.leeep.in` — label + `FRAPPE_BASE_DOMAIN`, deterministic, no registry | `kcs` |
+| `www.stpauls.org` (custom domain) | looked up via `FRAPPE_DIRECTORY_URL`'s `resolve_domain` → `{ backend }` | from directory |
+| `localhost` / `*.vercel.app` | `FRAPPE_URL` (dev fallback); `?school=<slug>` sets the slug | override |
 
-Draft preview is token-gated: `?preview=1&token=<PREVIEW_SECRET>` makes
-`resolvePreviewMode` return `"draft"`; otherwise `"published"`. The secret stays
-server-side.
+Middleware injects `x-frappe-backend` + `x-school-subdomain`; `resolveBackend()`
+and `resolveSchool()` in `cms.ts` read them. `getSiteData` fetches from the
+per-request backend (the school's own site, which serves its single website — so
+the `?school=` param is optional and only a hint).
 
-### Environment variables (`.env.local`)
+Draft preview is token-gated: `?preview=1&token=<signed>` makes
+`resolvePreviewMode` return `"draft"`; otherwise `"published"`. The
+`PREVIEW_SECRET` must equal the school site's Frappe `preview_secret`.
+
+### Environment variables (`.env.local` / Vercel project env)
 
 | Var | Default | Purpose |
 |---|---|---|
-| `FRAPPE_URL` | `http://localhost:8000` | Frappe backend base URL. |
-| `USE_LOCAL_DATA` | `false` | `true` → serve the local mock fixture offline; `false` → fetch live Frappe. |
-| `FRAPPE_GET_SITE_METHOD` | `education.education.website_builder.get_site` | Dotted method path for content (override only if it moves). |
+| `NEXT_PUBLIC_PLATFORM_DOMAIN` | `schools.leeep.in` | Zone that carries school subdomains (public). |
+| `FRAPPE_BASE_DOMAIN` | `leeep.in` | Zone the per-school Frappe sites live under; backend = `https://<label>.<this>`. |
+| `FRAPPE_DIRECTORY_URL` | _(unset)_ | Central directory for custom-domain → backend resolution — set to `https://admin.leeep.in`. Unset → custom domains don't resolve (subdomains still work). |
+| `FRAPPE_URL` | `http://localhost:8000` | Dev/localhost fallback backend only. |
+| `NEXT_PUBLIC_DEV_SUBDOMAIN` | _(unset)_ | Slug used on localhost when no `?school=`. |
+| `USE_LOCAL_DATA` | `false` | `true` → serve the local mock fixture offline. |
+| `FRAPPE_GET_SITE_METHOD` | `education.education.website_builder.get_site` | Dotted method path for content. |
 | `FRAPPE_GET_IDENTITY_METHOD` | `education.education.api.get_website_registration` | Dotted method path for `getWebsiteIdentity`. |
-| `PREVIEW_SECRET` | _(unset)_ | When set, enables `?preview=1&token=…` draft preview. |
-| `DEMO_FALLBACK` | `false` | **Opt-in** graceful fallback to the local mock when Frappe is unreachable. Off by default so dev failures stay visible. |
+| `FRAPPE_RESOLVE_DOMAIN_METHOD` | `leeep.leeep.website_directory.resolve_domain` | Custom-domain resolver on the central directory (admin.leeep.in). |
+| `PREVIEW_SECRET` | _(unset)_ | Must match each school site's Frappe `preview_secret`. |
+| `DEMO_FALLBACK` | `false` | **Opt-in** fallback to the local mock when Frappe is unreachable. |
 
 ### Endpoints used
 

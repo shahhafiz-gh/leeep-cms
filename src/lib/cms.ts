@@ -1,4 +1,5 @@
 import { cache } from 'react'
+import { headers } from 'next/headers'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { SchoolData, WebsiteIdentity } from '@/types/school.types'
 import { placeholderTemplateAData, mockKcgsData } from './mock'
@@ -18,8 +19,18 @@ import { placeholderTemplateAData, mockKcgsData } from './mock'
 
 // ── Config ──
 
-/** Base URL of the Frappe backend (server-side only). */
-const FRAPPE_URL = process.env.FRAPPE_URL ?? 'http://localhost:8000'
+/**
+ * Base URL of the Frappe backend. One Frappe site PER SCHOOL, so the backend is
+ * per-request: `middleware.ts` resolves the host to the school's own site and
+ * injects it as `x-frappe-backend`. This env is only the dev/localhost fallback.
+ */
+const FRAPPE_URL_FALLBACK = process.env.FRAPPE_URL ?? 'http://localhost:8000'
+
+/** The per-school backend for THIS request (from middleware), or the fallback. */
+async function resolveBackend(): Promise<string> {
+  const backend = (await headers()).get('x-frappe-backend')
+  return backend && backend.trim() ? backend.trim().replace(/\/$/, '') : FRAPPE_URL_FALLBACK
+}
 
 /** Dotted Frappe method paths, kept in one place (env-overridable). */
 const GET_SITE_METHOD =
@@ -42,9 +53,10 @@ interface HeaderReader {
 /**
  * Resolve which school to render. Precedence:
  *
- *   1. PRIMARY — the subdomain from the request host, injected by `proxy.ts` as
- *      the `x-school-subdomain` header. This is how EVERY page resolves in real
- *      (non-localhost) environments.
+ *   1. PRIMARY — the school slug resolved from the request host by `middleware.ts`
+ *      and injected as the `x-school-subdomain` header (platform subdomain OR a
+ *      custom domain looked up in Frappe). This is how EVERY page resolves in
+ *      real (non-localhost) environments.
  *   2. DEV OVERRIDE — on localhost/dev ONLY, a `?school=<slug>` query param wins,
  *      because there are no real subdomains on localhost. Ignored in production.
  */
@@ -58,7 +70,10 @@ export function resolveSchool(
   const devOverrideAllowed =
     process.env.NODE_ENV !== 'production' ||
     host.includes('localhost') ||
-    host.startsWith('127.0.0.1')
+    host.startsWith('127.0.0.1') ||
+    // Raw Vercel deploy URLs (<project>-<hash>.vercel.app) carry no school
+    // subdomain, so allow `?school=<slug>` there for testing a live deploy.
+    host.endsWith('.vercel.app')
 
   if (devOverrideAllowed) {
     const raw = searchParams?.school
@@ -228,8 +243,9 @@ export const getSiteData = cache(
       return pickLocalMock(school)
     }
 
+    const backend = await resolveBackend()
     const url =
-      `${FRAPPE_URL}/api/method/${GET_SITE_METHOD}` +
+      `${backend}/api/method/${GET_SITE_METHOD}` +
       `?school=${encodeURIComponent(school)}&mode=${encodeURIComponent(mode)}`
 
     try {
@@ -246,7 +262,7 @@ export const getSiteData = cache(
       }
       // Frappe stores asset paths root-relative; resolve them against its own
       // origin so they don't 404 against the renderer's origin.
-      return absolutizeAssetUrls(json.message, FRAPPE_URL)
+      return absolutizeAssetUrls(json.message, backend)
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err)
       if (process.env.DEMO_FALLBACK === 'true') {
@@ -272,7 +288,8 @@ export const getSiteData = cache(
  * comes from `get_site`'s `config.template_id` — but available for editor flows.)
  */
 export const getWebsiteIdentity = cache(async (): Promise<WebsiteIdentity | null> => {
-  const url = `${FRAPPE_URL}/api/method/${GET_IDENTITY_METHOD}`
+  const backend = await resolveBackend()
+  const url = `${backend}/api/method/${GET_IDENTITY_METHOD}`
   try {
     const res = await fetch(url, {
       cache: 'no-store',

@@ -9,16 +9,22 @@ import type { NextRequest } from 'next/server'
  * method with the school resolved the same way pages resolve it.
  */
 
-const FRAPPE_URL = process.env.FRAPPE_URL ?? 'http://localhost:8000'
+const FRAPPE_URL_FALLBACK = process.env.FRAPPE_URL ?? 'http://localhost:8000'
 const SUBMIT_METHOD =
   process.env.FRAPPE_SUBMIT_APPLICATION_METHOD ??
   'education.education.website_builder.submit_admission_application'
+
+/** Per-school backend for this request, injected by middleware (one site/school). */
+function resolveBackend(req: NextRequest): string {
+  const backend = req.headers.get('x-frappe-backend')
+  return backend && backend.trim() ? backend.trim().replace(/\/$/, '') : FRAPPE_URL_FALLBACK
+}
 
 /**
  * School precedence mirrors `resolveSchool` in `lib/cms.ts`:
  * explicit query override (dev / builder preview URLs carry `?school=` or
  * `?subdomain=`) first, then the `x-school-subdomain` header injected by
- * `proxy.ts` on real subdomain hosts.
+ * `middleware.ts` on real subdomain / custom-domain hosts.
  */
 function resolveSchoolForRequest(req: NextRequest): string {
   const sp = req.nextUrl.searchParams
@@ -65,7 +71,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const res = await fetch(`${FRAPPE_URL}/api/method/${SUBMIT_METHOD}`, {
+    const res = await fetch(`${resolveBackend(req)}/api/method/${SUBMIT_METHOD}`, {
       method: 'POST',
       headers: { Accept: 'application/json', ...contentTypeHeader },
       body,
