@@ -81,9 +81,35 @@ async function resolve(host: string): Promise<Resolved> {
   return resolveCustomDomain(host)
 }
 
+/**
+ * Preview override: the builder runs on the school's own Frappe site and passes
+ * `?backend=<its origin>` (+ `?subdomain=`/`?school=`) so the shared renderer host
+ * (*.vercel.app) knows which per-school site to load. Restricted to hosts under
+ * FRAPPE_BASE_DOMAIN so it can't be pointed at an arbitrary URL (SSRF guard).
+ */
+function previewOverride(request: NextRequest): Resolved | null {
+  const sp = request.nextUrl.searchParams
+  const rawBackend = sp.get('backend')
+  if (!rawBackend) return null
+  let backendHost = ''
+  try {
+    backendHost = new URL(rawBackend).hostname.toLowerCase()
+  } catch {
+    return null
+  }
+  const allowed =
+    backendHost === FRAPPE_BASE_DOMAIN ||
+    backendHost.endsWith(`.${FRAPPE_BASE_DOMAIN}`) ||
+    backendHost === 'localhost' ||
+    backendHost === '127.0.0.1'
+  if (!allowed) return null
+  const slug = (sp.get('subdomain') || sp.get('school') || '').trim()
+  return { backend: rawBackend.replace(/\/$/, ''), subdomain: slug }
+}
+
 export default async function middleware(request: NextRequest) {
   const host = (request.headers.get('host') ?? '').toLowerCase().split(':')[0]
-  const { backend, subdomain } = await resolve(host)
+  const { backend, subdomain } = previewOverride(request) ?? (await resolve(host))
 
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-frappe-backend', backend)

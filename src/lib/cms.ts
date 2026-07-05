@@ -76,7 +76,9 @@ export function resolveSchool(
     host.endsWith('.vercel.app')
 
   if (devOverrideAllowed) {
-    const raw = searchParams?.school
+    // Builder preview URLs carry the slug as `?subdomain=`; the dev override uses
+    // `?school=`. Accept either.
+    const raw = searchParams?.school ?? searchParams?.subdomain
     const override = Array.isArray(raw) ? raw[0] : raw
     if (override && override.trim() !== '') return override.trim()
   }
