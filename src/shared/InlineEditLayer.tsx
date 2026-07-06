@@ -889,8 +889,30 @@ export default function InlineEditLayer() {
     </div>
   ) : null
 
+  // Editable affordance: outline any editable element on hover so the admin can
+  // SEE what's clickable (clicking opens the docked editor panel in the admin).
+  // Only present while this layer is mounted, i.e. the editor preview.
+  const editHoverStyle = (
+    <style>{`
+      [data-edit]:hover, [data-edit-img]:hover, [data-edit-icon]:hover,
+      [data-edit-link]:hover, [data-edit-date]:hover, [data-edit-social]:hover,
+      [data-edit-add]:hover {
+        outline: 2px solid rgba(37, 99, 235, 0.55);
+        outline-offset: 2px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      [data-edit]:hover { cursor: text; }
+      [data-edit]:focus, [data-edit-img]:focus-visible {
+        outline: 2px solid rgba(37, 99, 235, 0.85);
+        outline-offset: 2px;
+      }
+    `}</style>
+  )
+
   if (!social) return (
     <>
+      {editHoverStyle}
       {notePopup}
       {hoverPopup}
     </>
@@ -904,6 +926,7 @@ export default function InlineEditLayer() {
 
   return (
     <>
+    {editHoverStyle}
     {notePopup}
     {hoverPopup}
     <div

@@ -112,11 +112,12 @@ export function getEditorDemoData(template: DemoTemplate): SchoolData {
  * `?template=` flag) so the whole preview stays self-contained and navigable
  * without ever touching the real subdomain or draft-preview render paths.
  */
-export function getDemoData(template: DemoTemplate): SchoolData {
+export function getDemoData(template: DemoTemplate, paletteOverride?: string): SchoolData {
   const templateId: TemplateId =
     template === 'B' ? 'template-b' : template === 'C' ? 'template-c' : 'template-a'
-  // Horizon defaults to its warm palette so the demo card shows its true look.
-  const palette = template === 'C' ? 'warm' : ''
+  // Horizon defaults to its warm palette so the demo card shows its true look; an
+  // explicit override (from ?palette=) lets the gallery preview any curated preset.
+  const palette = paletteOverride !== undefined ? paletteOverride : template === 'C' ? 'warm' : ''
   const q = `?template=${template}`
   /** Internal demo link helper, e.g. demoHref('/about') → '/demo/about?template=A'. */
   const demoHref = (path: string) => `/demo${path}${q}`

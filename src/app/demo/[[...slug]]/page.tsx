@@ -54,7 +54,8 @@ export default async function DemoPage({ params, searchParams }: DemoProps) {
 
   const sp = await searchParams
   const template = resolveDemoTemplate(sp.template)
-  const data = getDemoData(template)
+  const paletteRaw = Array.isArray(sp.palette) ? sp.palette[0] : sp.palette
+  const data = getDemoData(template, paletteRaw)
   const editing = isEditPreview(sp)
 
   // The CARD's template (from the URL) decides the design — never the demo
