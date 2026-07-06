@@ -55,10 +55,8 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               ) : (
                 <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-16 h-16 rounded-full shrink-0 gap-0.5" editPath="logo" />
               )}
-              <h2 className="text-2xl text-center font-bold leading-tight text-ta-inverse-on-surface">
-                {data.name.split(' ').slice(0, 2).join(' ')}
-                <br />
-                {data.name.split(' ').slice(2).join(' ')}
+              <h2 data-bind="name" className="text-2xl text-center font-bold leading-tight text-ta-inverse-on-surface">
+                {data.name}
               </h2>
             </div>
             <p data-edit="footer.description" className="text-ta-outline-variant text-sm leading-relaxed">
