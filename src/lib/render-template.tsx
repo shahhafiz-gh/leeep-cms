@@ -44,6 +44,9 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
     // Keep the school's real config (template_id + palette) on the demo data so
     // the preview renders in the chosen template AND palette.
     editorData.config = { ...editorData.config, ...data.config }
+    // Carry over saved per-component style overrides so the scaffold reflects them
+    // on load (the builder also re-applies them live via apply-style).
+    if (data.styles) editorData.styles = data.styles
     if (templateId === 'template-b') return <TemplateB data={editorData} page={page} editing />
     if (templateId === 'template-c') return <TemplateC data={editorData} page={page} editing />
     return <TemplateA data={editorData} page={page} editing />

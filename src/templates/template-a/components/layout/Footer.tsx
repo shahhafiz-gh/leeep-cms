@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
+import { styleObject } from '@/lib/component-styles'
 
 export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   const isHomeRoute = usePathname() === '/'
@@ -55,7 +56,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               ) : (
                 <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-16 h-16 rounded-full shrink-0 gap-0.5" editPath="logo" />
               )}
-              <h2 data-bind="name" className="text-2xl text-center font-bold leading-tight text-ta-inverse-on-surface">
+              <h2 data-bind="name" data-style="name" style={styleObject(data, 'name')} className="text-2xl text-center font-bold leading-tight text-ta-inverse-on-surface">
                 {data.name}
               </h2>
             </div>

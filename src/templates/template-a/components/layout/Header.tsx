@@ -8,6 +8,7 @@ import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { useScrollHeader } from '@/templates/template-a/hooks/layout/useScrollHeader'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
+import { styleObject } from '@/lib/component-styles'
 
 export default function Header({ data }: { data: SchoolData }) {
   const pathname = usePathname()
@@ -36,7 +37,7 @@ export default function Header({ data }: { data: SchoolData }) {
           ) : (
             <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-14 h-14 rounded-full shrink-0 gap-0.5" editPath="logo" />
           )}
-          <span data-edit="name" className="hidden max-w-[200px] lg:block font-bold text-xl text-center tracking-tight text-ta-primary">
+          <span data-edit="name" data-style="name" style={styleObject(data, 'name')} className="hidden max-w-[200px] lg:block font-bold text-xl text-center tracking-tight text-ta-primary">
             {data.name}
           </span>
         </Link>

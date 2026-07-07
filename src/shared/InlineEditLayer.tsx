@@ -129,6 +129,18 @@ export default function InlineEditLayer() {
         })
       })
     }
+    // Per-component STYLE overrides (align / wrap / …) keyed by style path, applied
+    // as inline styles on [data-style="<path>"]. Re-asserted like text so a
+    // framework re-render doesn't drop them.
+    const styleOverrides = new Map<string, Record<string, string>>()
+    const reassertStyle = () => {
+      styleOverrides.forEach((styleObj, path) => {
+        document.querySelectorAll<HTMLElement>(`[data-style="${path}"]`).forEach((el) => {
+          Object.assign(el.style, styleObj)
+        })
+      })
+    }
+
     // Assigned once `applyImage` exists (below); the observer calls it via this
     // binding so image overrides survive framework-driven src resets.
     let reassertMedia: () => void = () => {}
@@ -281,6 +293,7 @@ export default function InlineEditLayer() {
         // demo. Guarded (only re-applies on drift), so this can't loop.
         reassertText()
         reassertMedia()
+        reassertStyle()
       })
     })
     // Watch src/srcset too: next/image resetting an <img> is an attribute change,
@@ -639,6 +652,18 @@ export default function InlineEditLayer() {
         return
       }
 
+      // Per-component STYLE override (curated align / wrap / … presets) → apply
+      // as inline styles on every [data-style="<path>"] element, and remember it
+      // so a re-render can't drop it.
+      if (msg.type === 'apply-style') {
+        const styleObj = (msg.value && typeof msg.value === 'object') ? (msg.value as Record<string, string>) : {}
+        styleOverrides.set(msg.path, styleObj)
+        document.querySelectorAll<HTMLElement>(sel('data-style')).forEach((el) => {
+          Object.assign(el.style, styleObj)
+        })
+        return
+      }
+
       // Array-shaped sections (add / remove / reorder of whole items) are NOT
       // patched here — surgically rebuilding their DOM is fragile. They own their
       // list in a client component that listens for its own message. Currently:
@@ -682,7 +707,7 @@ export default function InlineEditLayer() {
     // cases; these timed passes cover any it misses. We also re-request in case a
     // section's image slots mounted after the first pass (e.g. list cards).
     ;[300, 900, 1800].forEach((delay) => {
-      const id = window.setTimeout(() => { reassertText(); reassertMedia(); requestImages() }, delay)
+      const id = window.setTimeout(() => { reassertText(); reassertMedia(); reassertStyle(); requestImages() }, delay)
       cleanups.push(() => clearTimeout(id))
     })
 

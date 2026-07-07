@@ -441,6 +441,9 @@ export interface SchoolData {
     description?: string
     ogImage?: string
   }
+  /** Curated per-component style overrides (align / wrap / …), keyed by style
+   *  path (e.g. `name`). Values are curated option ids resolved by component-styles. */
+  styles?: Record<string, Record<string, string>>
 
   hero: HeroData
   about: AboutData
