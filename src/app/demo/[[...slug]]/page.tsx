@@ -7,6 +7,7 @@ import { buildMetadata } from '@/lib/metadata'
 import TemplateA from '@/templates/template-a/TemplateA'
 import TemplateB from '@/templates/template-b/TemplateB'
 import TemplateC from '@/templates/template-c/TemplateC'
+import TemplateD from '@/templates/template-d/TemplateD'
 import InlineEditLayer from '@/shared/InlineEditLayer'
 
 /**
@@ -66,6 +67,8 @@ export default async function DemoPage({ params, searchParams }: DemoProps) {
         <TemplateB data={data} page={page} />
       ) : template === 'C' ? (
         <TemplateC data={data} page={page} />
+      ) : template === 'D' ? (
+        <TemplateD data={data} page={page} />
       ) : (
         <TemplateA data={data} page={page} />
       )}

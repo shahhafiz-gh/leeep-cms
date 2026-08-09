@@ -7,7 +7,7 @@
 
 export type PageType = 'home' | 'about' | 'academics' | 'admissions' | 'contact' | 'updates'
 
-export type TemplateId = 'template-a' | 'template-b' | 'template-c'
+export type TemplateId = 'template-a' | 'template-b' | 'template-c' | 'template-d'
 
 // ── Template Configuration ──
 

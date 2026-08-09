@@ -14,7 +14,7 @@ import type { SchoolData, TemplateId } from '@/types/school.types'
  *  prospective schools, so nothing may resemble an existing client.
  * ──────────────────────────────────────────────────────────── */
 
-export type DemoTemplate = 'A' | 'B' | 'C'
+export type DemoTemplate = 'A' | 'B' | 'C' | 'D'
 
 /** Build a sized Unsplash stock-photo URL from a (verified) photo id. */
 const img = (id: string, w = 1200) =>
@@ -60,6 +60,7 @@ export function resolveDemoTemplate(raw?: string | string[]): DemoTemplate {
   const value = (Array.isArray(raw) ? raw[0] : raw)?.toLowerCase().trim()
   if (value === 'b' || value === 'template-b') return 'B'
   if (value === 'c' || value === 'template-c') return 'C'
+  if (value === 'd' || value === 'template-d') return 'D'
   return 'A'
 }
 
@@ -114,9 +115,16 @@ export function getEditorDemoData(template: DemoTemplate): SchoolData {
  */
 export function getDemoData(template: DemoTemplate, paletteOverride?: string): SchoolData {
   const templateId: TemplateId =
-    template === 'B' ? 'template-b' : template === 'C' ? 'template-c' : 'template-a'
+    template === 'B'
+      ? 'template-b'
+      : template === 'C'
+        ? 'template-c'
+        : template === 'D'
+          ? 'template-d'
+          : 'template-a'
   // Horizon defaults to its warm palette so the demo card shows its true look; an
   // explicit override (from ?palette=) lets the gallery preview any curated preset.
+  // Quill's built-in terracotta IS its default, so it needs no preset id.
   const palette = paletteOverride !== undefined ? paletteOverride : template === 'C' ? 'warm' : ''
   const q = `?template=${template}`
   /** Internal demo link helper, e.g. demoHref('/about') → '/demo/about?template=A'. */

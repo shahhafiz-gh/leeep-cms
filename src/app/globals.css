@@ -87,6 +87,38 @@
   --color-tb-warning: #FF8F3C;
   --color-tb-info: #1BA2DB;
 
+  /* ── Template D Colors (Quill — terracotta on ivory, editorial) ──
+   * Flat, semantic names (no MD3 role ladder): the design is built from a
+   * paper/ink/accent triad plus a small set of warm neutrals. */
+  --color-td-paper: #fcfbf9;          /* page background */
+  --color-td-card: #ffffff;           /* raised card on paper */
+  --color-td-panel: #f3efe9;          /* large sand panel */
+  --color-td-rail: #f0ece6;           /* pill track / hairline on paper */
+  --color-td-border: #eae4dc;         /* card + divider border */
+  --color-td-border-strong: #e2dbd2;  /* input border */
+
+  --color-td-ink: #14110f;            /* headings + dark panels */
+  --color-td-ink-soft: #1e1a17;       /* card inside a dark panel */
+  --color-td-ink-line: #332c27;       /* divider inside a dark panel */
+  --color-td-ink-border: #423b35;     /* outline button on dark */
+
+  --color-td-accent: #c2502b;         /* terracotta — links, pills, CTAs */
+  --color-td-accent-soft: #e08a63;    /* accent legible on ink */
+  --color-td-accent-wash: #f9ece7;    /* accent pill background on paper */
+
+  --color-td-body: #5d554c;           /* body copy on paper */
+  --color-td-muted: #6f665c;          /* secondary copy on paper */
+  --color-td-faint: #a2988d;          /* captions / placeholders */
+
+  --color-td-on-ink: #fcfbf9;         /* headings on ink */
+  --color-td-on-ink-body: #ddd6cd;    /* body on ink */
+  --color-td-on-ink-muted: #b7ada2;   /* secondary on ink */
+  --color-td-on-ink-faint: #8d837a;   /* eyebrows / captions on ink */
+
+  /* ── Template D Typography ── */
+  --font-td-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
+  --font-td-serif: var(--font-newsreader), Georgia, serif;
+
   /* ── Template A Typography ── */
   --font-ta-heading: "Nunito", sans-serif;
   --font-ta-body: "DM Sans", sans-serif;
@@ -355,6 +387,80 @@ body {
   --color-ta-surface: #f4fcef;
   --color-ta-on-surface: #171d16;
   --color-ta-surface-tint: #006e21;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Template D — "Quill" (editorial: Space Grotesk + Newsreader on ivory)
+ *
+ * Quill's display type is a LIGHT sans at large sizes with tight negative
+ * tracking, so headings need weight/tracking set once here rather than repeated
+ * on every element. Serif is opt-in per element (`.td-serif`) because it is used
+ * only for pull-quotes and italic accents, never for whole headings.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.template-d h1,
+.template-d h2,
+.template-d h3,
+.template-d h4 {
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  text-wrap: pretty;
+}
+
+/* Serif italic accent (pull-quotes, numerals, the hero's emphasised clause). */
+.template-d .td-serif {
+  font-family: var(--font-td-serif);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+/* Quill palettes — each preset re-maps ONLY the accent triad and the warm
+ * neutrals it must stay in tune with, so the paper/ink structure is identical
+ * across presets and a school cannot break the design. Default = terracotta. */
+
+/* ── Sage (deep olive on ivory) ── */
+.template-d[data-palette="sage"] {
+  --color-td-accent: #4d6b3c;
+  --color-td-accent-soft: #93b37c;
+  --color-td-accent-wash: #eaf0e4;
+  --color-td-panel: #f0f2ec;
+  --color-td-rail: #eaeee4;
+  --color-td-border: #e2e7da;
+  --color-td-border-strong: #d9e0d0;
+  --color-td-ink: #14170f;
+  --color-td-ink-soft: #1d2117;
+  --color-td-ink-line: #2f3527;
+  --color-td-ink-border: #3f4735;
+}
+
+/* ── Plum (aubergine on blush ivory) ── */
+.template-d[data-palette="plum"] {
+  --color-td-accent: #8a3a5e;
+  --color-td-accent-soft: #d18aa8;
+  --color-td-accent-wash: #f7eaf0;
+  --color-td-panel: #f4eff1;
+  --color-td-rail: #f0e9ec;
+  --color-td-border: #e9dfe4;
+  --color-td-border-strong: #e0d3d9;
+  --color-td-ink: #170f13;
+  --color-td-ink-soft: #21181c;
+  --color-td-ink-line: #342a2f;
+  --color-td-ink-border: #45383e;
+}
+
+/* ── Cobalt (deep blue on cool ivory) ── */
+.template-d[data-palette="cobalt"] {
+  --color-td-accent: #2c4fa8;
+  --color-td-accent-soft: #7f9ee0;
+  --color-td-accent-wash: #e8edf9;
+  --color-td-panel: #eef0f5;
+  --color-td-rail: #e9ecf3;
+  --color-td-border: #e0e4ed;
+  --color-td-border-strong: #d4dae6;
+  --color-td-ink: #0f1219;
+  --color-td-ink-soft: #171b24;
+  --color-td-ink-line: #272d3a;
+  --color-td-ink-border: #363d4d;
 }
 
 /* ── Heritage (tb-) palettes — Navy & Gold is the default (@theme). ── */

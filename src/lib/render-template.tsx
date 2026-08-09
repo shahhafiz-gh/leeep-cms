@@ -4,6 +4,7 @@ import { getEditorDemoData } from '@/lib/demo'
 import TemplateA from '@/templates/template-a/TemplateA'
 import TemplateB from '@/templates/template-b/TemplateB'
 import TemplateC from '@/templates/template-c/TemplateC'
+import TemplateD from '@/templates/template-d/TemplateD'
 
 /**
  * Render the correct template for a school's data.
@@ -24,7 +25,9 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
 
   if (editing) {
     // Demo content keyed to the school's template, with editor-friendly nav.
-    const demo = getEditorDemoData(templateId === 'template-b' ? 'B' : 'A')
+    const demo = getEditorDemoData(
+      templateId === 'template-b' ? 'B' : templateId === 'template-d' ? 'D' : 'A',
+    )
     const renderData = withEditorNavigation(demo)
     // Social links are the school's real IDENTITY/config, not "content to write
     // over" — so overlay the real (published) URLs onto the demo's fixed platform
@@ -49,11 +52,13 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
     if (data.styles) editorData.styles = data.styles
     if (templateId === 'template-b') return <TemplateB data={editorData} page={page} editing />
     if (templateId === 'template-c') return <TemplateC data={editorData} page={page} editing />
+    if (templateId === 'template-d') return <TemplateD data={editorData} page={page} editing />
     return <TemplateA data={editorData} page={page} editing />
   }
 
   if (templateId === 'template-b') return <TemplateB data={data} page={page} />
   if (templateId === 'template-c') return <TemplateC data={data} page={page} />
+  if (templateId === 'template-d') return <TemplateD data={data} page={page} />
 
   if (templateId !== 'template-a') {
     console.warn(
