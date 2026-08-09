@@ -3,7 +3,7 @@
 import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import AddItemButton from '@/shared/AddItemButton'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * Fees on an ink panel — the design's device for the one block on the page that

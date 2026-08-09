@@ -3,7 +3,7 @@
 import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import AddItemButton from '@/shared/AddItemButton'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * Ink panel of dated milestones — a school's history in four beats. Built from

@@ -3,7 +3,7 @@
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * "Getting here" — landmarks as a chip row above transport options as ruled

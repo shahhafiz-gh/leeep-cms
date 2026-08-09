@@ -5,7 +5,7 @@ import { useLiveList } from '@/shared/hooks/useLiveList'
 import Photo from '../common/Photo'
 import { SectionHead } from '../common/Bits'
 import AddItemButton from '@/shared/AddItemButton'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * Clubs and activities — the part of school that happens after the bell. Sand

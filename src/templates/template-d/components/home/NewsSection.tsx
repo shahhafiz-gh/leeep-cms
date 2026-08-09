@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import type { SchoolData } from '@/types/school.types'
 import { SectionHead } from '../common/Bits'
-import { gridCols } from '../../lib/grid'
-import { shortDate } from '../../lib/format'
+import { gridCols } from '@/shared/utils/grid'
+import { shortDate } from '@/shared/utils/format'
 
 /**
  * Three latest announcements as text-first cards — no images, so the row stays

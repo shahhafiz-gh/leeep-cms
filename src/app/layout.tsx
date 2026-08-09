@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Nunito, DM_Sans, Hind, Geist, Inter, Rufina, Space_Grotesk, Newsreader } from 'next/font/google'
+import { Nunito, DM_Sans, Hind, Geist, Inter, Rufina, Space_Grotesk, Newsreader, Lora, Work_Sans } from 'next/font/google'
 import './globals.css'
 
 const nunito = Nunito({
@@ -54,6 +54,23 @@ const newsreader = Newsreader({
   display: 'swap',
 })
 
+// Template E ("Ledger") — a text serif for headings and figures, with a plain
+// grotesque for everything else.
+const lora = Lora({
+  variable: '--font-lora',
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+})
+
+const workSans = Work_Sans({
+  variable: '--font-work-sans',
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
+})
+
 const geist = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -72,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunito.variable} ${dmSans.variable} ${hind.variable} ${inter.variable} ${rufina.variable} ${spaceGrotesk.variable} ${newsreader.variable} ${geist.variable} min-h-screen antialiased`}
+        className={`${nunito.variable} ${dmSans.variable} ${hind.variable} ${inter.variable} ${rufina.variable} ${spaceGrotesk.variable} ${newsreader.variable} ${lora.variable} ${workSans.variable} ${geist.variable} min-h-screen antialiased`}
       >
         {children}
       </body>

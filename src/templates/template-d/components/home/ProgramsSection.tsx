@@ -4,7 +4,7 @@ import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import Photo from '../common/Photo'
 import { Pill, SectionHead } from '../common/Bits'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * The school's divisions/programmes as tall cards: photo, grade-range pill,

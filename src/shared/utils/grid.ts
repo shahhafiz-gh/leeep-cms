@@ -18,10 +18,24 @@ const COLS: Record<number, string> = {
   4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
 }
 
-export function gridCols(count: number, max: 2 | 3 | 4 = 4): string {
-  if (count <= 1) return COLS[1]
+/**
+ * Same ladder, but already two-up on the narrowest screens. For CONTENT-LIGHT
+ * tiles — a figure and a two-word label — one per row wastes most of a phone
+ * screen and pushes the rest of the page below four scrolls of whitespace.
+ * Only use it where the tile genuinely fits half a phone width.
+ */
+const COLS_PAIRED: Record<number, string> = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-2',
+  3: 'grid-cols-2 lg:grid-cols-3',
+  4: 'grid-cols-2 lg:grid-cols-4',
+}
+
+export function gridCols(count: number, max: 2 | 3 | 4 = 4, base: 1 | 2 = 1): string {
+  const table = base === 2 ? COLS_PAIRED : COLS
+  if (count <= 1) return table[1]
   for (let n = Math.min(max, count); n >= 2; n--) {
-    if (count % n === 0) return COLS[n]
+    if (count % n === 0) return table[n]
   }
-  return COLS[Math.min(max, count)]
+  return table[Math.min(max, count)]
 }

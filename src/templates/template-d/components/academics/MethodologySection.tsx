@@ -1,6 +1,6 @@
 import type { SchoolData } from '@/types/school.types'
 import { Icon } from '@iconify/react'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * "How we teach" — a sand panel whose steps sit as small paper cards inside it,

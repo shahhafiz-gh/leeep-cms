@@ -8,6 +8,7 @@ import TemplateA from '@/templates/template-a/TemplateA'
 import TemplateB from '@/templates/template-b/TemplateB'
 import TemplateC from '@/templates/template-c/TemplateC'
 import TemplateD from '@/templates/template-d/TemplateD'
+import TemplateE from '@/templates/template-e/TemplateE'
 import InlineEditLayer from '@/shared/InlineEditLayer'
 
 /**
@@ -69,6 +70,8 @@ export default async function DemoPage({ params, searchParams }: DemoProps) {
         <TemplateC data={data} page={page} />
       ) : template === 'D' ? (
         <TemplateD data={data} page={page} />
+      ) : template === 'E' ? (
+        <TemplateE data={data} page={page} />
       ) : (
         <TemplateA data={data} page={page} />
       )}

@@ -115,9 +115,29 @@
   --color-td-on-ink-muted: #b7ada2;   /* secondary on ink */
   --color-td-on-ink-faint: #8d837a;   /* eyebrows / captions on ink */
 
-  /* ── Template D Typography ── */
-  --font-td-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
-  --font-td-serif: var(--font-newsreader), Georgia, serif;
+  /* ── Template E Colors (Ledger — brick on warm paper, institutional) ──
+   * A printed-prospectus palette: one paper, one ink, one brick accent, and a
+   * ladder of hairline rules. Nothing here is a "surface container" — the design
+   * separates things with 1px rules, not with fills or shadows. */
+  --color-te-paper: #f8f6f1;          /* page */
+  --color-te-white: #ffffff;          /* form fields, inset cards */
+  --color-te-panel: #f3efe5;          /* tinted band (stats, feature cells) */
+  --color-te-panel-alt: #eee9de;      /* hover fill on ghost buttons */
+  --color-te-rule: #d9d2c4;           /* the hairline that does all the work */
+  --color-te-rule-strong: #b9b0a0;    /* input borders */
+
+  --color-te-ink: #241a18;            /* headings, dark bands, footer */
+  --color-te-body: #4a4038;           /* running text */
+  --color-te-muted: #6f665c;          /* labels, meta */
+  --color-te-faint: #7d746a;          /* photo-slot captions */
+
+  --color-te-accent: #7e302d;         /* brick — links, eyebrows, primary button */
+  --color-te-accent-ink: #241a18;     /* accent button hover */
+
+  --color-te-on-ink: #f8f6f1;         /* headings on ink */
+  --color-te-on-ink-body: #cfc6ba;    /* body on ink */
+  --color-te-on-ink-faint: #8f8477;   /* eyebrows on ink */
+  --color-te-ink-rule: #5a4c44;       /* hairline on ink */
 
   /* ── Template A Typography ── */
   --font-ta-heading: "Nunito", sans-serif;
@@ -225,6 +245,36 @@
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * TEMPLATE FONT TOKENS — declared here, NOT in `@theme`.
+ *
+ * Tailwind v4 tree-shakes theme variables it cannot see used. A colour survives
+ * because it is referenced through a real utility (`text-te-ink`), but a font
+ * referenced only as `font-(family-name:--font-te-serif)` compiles to a bare
+ * `font-family: var(--font-te-serif)` — the scanner never records the token as
+ * used, so `@theme` drops it and the declaration resolves to nothing. The
+ * heading then silently falls back to Tailwind's default sans, which looks
+ * plausible enough on a Mac that it can ship unnoticed.
+ *
+ * Declaring them as plain custom properties emits them unconditionally.
+ *
+ * They must sit on `body`, NOT on `:root`. `next/font` exposes each family as a
+ * custom property on a class applied to <body>, so at :root `var(--font-lora)`
+ * is undefined — which makes the whole declaration invalid at computed-value
+ * time and inherits DOWN as invalid, even though --font-lora is perfectly well
+ * defined one level lower. Resolving on `body` is the only place both halves
+ * exist at once.
+ * ════════════════════════════════════════════════════════════════════════════ */
+body {
+  /* Template D — Quill */
+  --font-td-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
+  --font-td-serif: var(--font-newsreader), Georgia, serif;
+
+  /* Template E — Ledger */
+  --font-te-serif: var(--font-lora), Georgia, serif;
+  --font-te-sans: var(--font-work-sans), Helvetica, Arial, sans-serif;
 }
 
 /* ── Global Resets ── */
@@ -461,6 +511,49 @@ body {
   --color-td-ink-soft: #171b24;
   --color-td-ink-line: #272d3a;
   --color-td-ink-border: #363d4d;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Template E — "Ledger" (institutional: Lora + Work Sans, hairline rules)
+ *
+ * The whole design is square: no element in it has a border radius, so that is
+ * asserted once here rather than fought class-by-class. Headings are serif by
+ * default (the inverse of Quill, where serif is the opt-in accent).
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.template-e h1,
+.template-e h2,
+.template-e h3,
+.template-e h4 {
+  font-family: var(--font-te-serif);
+  font-weight: 500;
+  text-wrap: pretty;
+}
+
+/* Square by decree — including form controls, which UAs round on their own. */
+.template-e input,
+.template-e select,
+.template-e textarea,
+.template-e button {
+  border-radius: 0;
+}
+
+/* Ledger palettes — the paper and rules never move; only the accent does, since
+ * a school's crest colour is the one thing that legitimately varies. */
+
+/* ── Forest (deep green) ── */
+.template-e[data-palette="forest"] {
+  --color-te-accent: #0b5d2a;
+}
+
+/* ── Navy (deep blue) ── */
+.template-e[data-palette="navy"] {
+  --color-te-accent: #1b4a76;
+}
+
+/* ── Violet (deep aubergine-blue) ── */
+.template-e[data-palette="violet"] {
+  --color-te-accent: #4d427f;
 }
 
 /* ── Heritage (tb-) palettes — Navy & Gold is the default (@theme). ── */

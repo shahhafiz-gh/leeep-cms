@@ -4,7 +4,7 @@ import type { SchoolData } from '@/types/school.types'
 import { useGalleryImages } from '@/shared/hooks/useGalleryImages'
 import Photo from '../common/Photo'
 import { SectionHead } from '../common/Bits'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * Campus mosaic. The design's life-on-campus block is an asymmetric grid: one

@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+  DEV-ONLY viewport harness. Not linked from anywhere and not part of any route.
+
+  Chrome extensions can resize the browser WINDOW but that does not change the
+  page's `innerWidth` under a screenshot tool, so `lg:`/`sm:` breakpoints never
+  flip and a "mobile check" silently tests the desktop layout. An iframe DOES
+  get its own viewport, so media queries inside it resolve against the frame's
+  width — which makes this the honest way to look at a phone layout locally.
+
+  Usage:  /_devices.html?u=/demo%3Ftemplate%3DE&w=390&h=1400
+-->
+<meta charset="utf-8">
+<title>viewport harness</title>
+<style>
+  body { margin: 0; background: #3a3a3a; font: 12px ui-monospace, monospace; color: #ddd; }
+  .row { display: flex; gap: 24px; padding: 16px; align-items: flex-start; }
+  .dev { display: flex; flex-direction: column; gap: 6px; }
+  iframe { border: 0; background: #fff; display: block; }
+</style>
+<div class="row" id="row"></div>
+<script>
+  const q = new URLSearchParams(location.search)
+  // Same-origin PATHS only. This file is served from public/ so it is reachable
+  // in production; without this guard `?u=https://…` would frame third-party
+  // content under our own origin.
+  const raw = q.get('u') || '/demo?template=E'
+  const url = /^\/[^/]/.test(raw) ? raw : '/demo?template=E'
+  const h = +(q.get('h') || 1400)
+  // Widths worth checking: small phone, large phone, tablet.
+  const widths = (q.get('w') || '390').split(',').map(Number)
+  document.getElementById('row').innerHTML = widths
+    .map((w) => `<div class="dev"><div>${w}px</div><iframe src="${url}" width="${w}" height="${h}"></iframe></div>`)
+    .join('')
+</script>

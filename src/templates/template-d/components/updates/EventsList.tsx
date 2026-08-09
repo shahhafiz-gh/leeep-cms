@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
-import { dateParts, longDate } from '../../lib/format'
+import { dateParts, longDate } from '@/shared/utils/format'
 
 /**
  * Upcoming events as ruled rows with a date rail — the calendar page of the

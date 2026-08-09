@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import type { SchoolData } from '@/types/school.types'
 import Photo from '../common/Photo'
-import { gridCols } from '../../lib/grid'
-import { shortDate } from '../../lib/format'
+import { gridCols } from '@/shared/utils/grid'
+import { shortDate } from '@/shared/utils/format'
 
 /**
  * The announcements feed: the newest item runs as a wide featured panel, the

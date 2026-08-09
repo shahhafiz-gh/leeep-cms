@@ -1,5 +1,5 @@
 import type { SchoolData } from '@/types/school.types'
-import { gridCols } from '../../lib/grid'
+import { gridCols } from '@/shared/utils/grid'
 
 /**
  * "By the numbers" — outlined stat cards (not the filled sand ones the home page
@@ -18,7 +18,7 @@ export default function ResultsSection({ data }: { data: SchoolData }) {
         {results.title}
       </h2>
 
-      <div className={`grid gap-5 ${gridCols(results.stats.length, 4)}`}>
+      <div className={`grid gap-5 ${gridCols(results.stats.length, 4, 2)}`}>
         {results.stats.map((stat, i) => (
           <div key={i} className="flex flex-col gap-2 rounded-[18px] border border-td-border p-7">
             <div

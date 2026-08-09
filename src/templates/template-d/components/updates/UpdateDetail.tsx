@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import Photo from '../common/Photo'
-import { longDate } from '../../lib/format'
+import { longDate } from '@/shared/utils/format'
 
 /**
  * A single announcement or event, read as an article: narrow measure, serif
