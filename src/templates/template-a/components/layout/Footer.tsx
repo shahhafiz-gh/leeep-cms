@@ -22,6 +22,14 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
     .filter((n) => n.href !== '/login' && n.label.toLowerCase() !== 'login')
     .map((n) => ({ label: n.label, href: n.href }))
 
+  // "Get In Touch" is fully inline-editable, on the same `contact.*` paths the
+  // Contact page edits — so a change here shows there too. In the EDITOR an
+  // empty list still renders ONE blank row so the field can be filled in (the
+  // edit layer shows its placeholder hint); on the LIVE site empty values
+  // simply don't render.
+  const phones = (contact.phone ?? []).length ? contact.phone : editing ? [''] : []
+  const emails = (contact.email ?? []).length ? contact.email : editing ? [''] : []
+
   return (
     <footer
       className={`relative bg-[#0f1f13] ${isHomeRoute ? 'mt-20' : 'mt-12'} text-ta-inverse-on-surface overflow-visible font-(family-name:--font-ta-nunito)`}
@@ -117,30 +125,46 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               Get In Touch
             </h3>
             <ul className="space-y-4">
-              {contact.address && (
+              {(contact.address || editing) && (
                 <li className="flex items-start gap-3">
                   <Icon icon="lucide:map-pin" className="mt-1 text-ta-inverse-primary w-5 h-5" />
-                  <span className="text-ta-outline-variant text-sm">
+                  <span data-edit="contact.address" className="text-ta-outline-variant text-sm">
                     {contact.address}
                   </span>
                 </li>
               )}
-              {(contact.phone ?? []).map((p) => (
-                <li key={p} className="flex items-center gap-3">
+              {phones.map((p, pi) => (
+                <li key={`phone-${pi}`} className="flex items-center gap-3">
                   <Icon icon="lucide:smartphone" className="text-ta-inverse-primary w-5 h-5" />
-                  <a href={`tel:${p}`} className="text-ta-outline-variant text-sm hover:text-ta-inverse-primary transition-colors">
+                  <a
+                    href={p ? `tel:${p}` : undefined}
+                    data-edit={`contact.phone.${pi}`}
+                    className="text-ta-outline-variant text-sm hover:text-ta-inverse-primary transition-colors"
+                  >
                     {p}
                   </a>
                 </li>
               ))}
-              {(contact.email ?? []).map((e) => (
-                <li key={e} className="flex items-center gap-3">
+              {emails.map((e, ei) => (
+                <li key={`email-${ei}`} className="flex items-center gap-3">
                   <Icon icon="lucide:mail" className="text-ta-inverse-primary w-5 h-5" />
-                  <a href={`mailto:${e}`} className="text-ta-outline-variant text-sm underline underline-offset-4 hover:text-ta-inverse-primary transition-colors">
+                  <a
+                    href={e ? `mailto:${e}` : undefined}
+                    data-edit={`contact.email.${ei}`}
+                    className="text-ta-outline-variant text-sm underline underline-offset-4 hover:text-ta-inverse-primary transition-colors"
+                  >
                     {e}
                   </a>
                 </li>
               ))}
+              {(contact.workingHours || editing) && (
+                <li className="flex items-center gap-3">
+                  <Icon icon="lucide:clock" className="text-ta-inverse-primary w-5 h-5" />
+                  <span data-edit="contact.workingHours" className="text-ta-outline-variant text-sm">
+                    {contact.workingHours}
+                  </span>
+                </li>
+              )}
             </ul>
             <div className="pt-4">
               <Link

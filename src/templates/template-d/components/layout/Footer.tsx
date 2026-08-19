@@ -16,6 +16,14 @@ import { styleObject } from '@/lib/component-styles'
 export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   const contact = data.contact ?? { address: '', phone: [], email: [] }
 
+  // The brand block and "Get in touch" are fully inline-editable on the same
+  // `contact.*` paths the Contact page edits, so a change here shows there too.
+  // In the EDITOR an empty list still renders ONE blank row so the field can be
+  // filled in (the edit layer shows its placeholder hint); on the LIVE site an
+  // empty value simply doesn't render.
+  const phones = (contact.phone ?? []).length ? contact.phone : editing ? [''] : []
+  const emails = (contact.email ?? []).length ? contact.email : editing ? [''] : []
+
   const links = (data.navigation ?? [])
     .filter((n) => n.href !== '/login' && n.label.toLowerCase() !== 'login')
     .map((n) => ({ label: n.label, href: n.href }))
@@ -53,9 +61,11 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
             </span>
           </div>
           <div className="text-[14.5px] leading-[1.7] text-td-muted">
-            {contact.address && <div data-bind="contact.address">{contact.address}</div>}
-            {(contact.phone ?? []).map((p, i) => (
-              <div key={p} data-bind={`contact.phone.${i}`}>{p}</div>
+            {(contact.address || editing) && (
+              <div data-edit="contact.address">{contact.address}</div>
+            )}
+            {phones.map((p, i) => (
+              <div key={`phone-${i}`} data-edit={`contact.phone.${i}`}>{p}</div>
             ))}
           </div>
 
@@ -110,18 +120,18 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-td-faint">
             Get in touch
           </div>
-          {(contact.email ?? []).map((e, i) => (
+          {emails.map((e, i) => (
             <a
-              key={e}
-              href={`mailto:${e}`}
-              data-bind={`contact.email.${i}`}
+              key={`email-${i}`}
+              href={e ? `mailto:${e}` : undefined}
+              data-edit={`contact.email.${i}`}
               className="text-[15px] break-words text-td-body transition-colors hover:text-td-accent"
             >
               {e}
             </a>
           ))}
-          {contact.workingHours && (
-            <span data-bind="contact.workingHours" className="text-[15px] text-td-body">
+          {(contact.workingHours || editing) && (
+            <span data-edit="contact.workingHours" className="text-[15px] text-td-body">
               {contact.workingHours}
             </span>
           )}

@@ -42,7 +42,7 @@ export default function Header({ data }: { data: SchoolData }) {
               width={52}
               height={52}
               data-edit-img="logo"
-              className="h-[26px] w-[26px] shrink-0 rounded-md object-contain"
+              className="max-h-[30px] max-w-[30px] shrink-0 rounded-md object-contain"
             />
           ) : (
             <span data-edit-img="logo" className="block h-[26px] w-[26px] shrink-0 rounded-md bg-td-accent" />

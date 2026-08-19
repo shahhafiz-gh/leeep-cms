@@ -16,6 +16,13 @@ import { Container } from '../common/Bits'
 export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   const contact = data.contact ?? { address: '', phone: [], email: [] }
 
+  // The contact block is fully inline-editable on the same `contact.*` paths the
+  // Contact page edits, so a change here shows there too. In the EDITOR an empty
+  // list still renders ONE blank row so the field can be filled in (the edit
+  // layer shows its placeholder hint); live renders only what's actually set.
+  const phones = (contact.phone ?? []).length ? contact.phone : editing ? [''] : []
+  const emails = (contact.email ?? []).length ? contact.email : editing ? [''] : []
+
   const links = (data.navigation ?? [])
     .filter((n) => n.href !== '/login' && n.label.toLowerCase() !== 'login')
     .map((n) => ({ label: n.label, href: n.href }))
@@ -39,13 +46,18 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               {data.name}
             </div>
             <div className="text-[13.5px] leading-[1.7]">
-              {contact.address && <div data-bind="contact.address">{contact.address}</div>}
-              {(contact.phone ?? []).map((p, i) => (
-                <div key={p} data-bind={`contact.phone.${i}`}>{p}</div>
+              {(contact.address || editing) && (
+                <div data-edit="contact.address">{contact.address}</div>
+              )}
+              {phones.map((p, i) => (
+                <div key={`phone-${i}`} data-edit={`contact.phone.${i}`}>{p}</div>
               ))}
-              {(contact.email ?? []).map((e, i) => (
-                <div key={e} data-bind={`contact.email.${i}`}>{e}</div>
+              {emails.map((e, i) => (
+                <div key={`email-${i}`} data-edit={`contact.email.${i}`}>{e}</div>
               ))}
+              {(contact.workingHours || editing) && (
+                <div data-edit="contact.workingHours">{contact.workingHours}</div>
+              )}
             </div>
 
             {/* In the EDITOR every canonical platform renders (hidden, revealed
