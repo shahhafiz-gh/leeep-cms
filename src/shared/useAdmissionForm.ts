@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import {
   ageEligibilityError,
   fetchAdmissionPrograms,
@@ -33,8 +34,14 @@ import {
 export function useAdmissionForm() {
   const formRef = useRef<HTMLFormElement>(null)
 
+  // The admissions page hands over which intake (and often which class) the
+  // family chose, so the form opens where they left off instead of asking again.
+  const searchParams = useSearchParams()
+  const admissionFromUrl = searchParams?.get('admission') ?? ''
+  const programFromUrl = searchParams?.get('program') ?? ''
+
   const [programs, setPrograms] = useState<AdmissionCriteria[]>([])
-  const [program, setProgram] = useState('')
+  const [program, setProgram] = useState(programFromUrl)
   const [schema, setSchema] = useState<AdmissionSchema | null>(null)
 
   const [values, setValues] = useState<FormValues>({})
@@ -53,17 +60,24 @@ export function useAdmissionForm() {
   useEffect(() => {
     let cancelled = false
     ;(async () => {
-      const result = await fetchAdmissionPrograms()
+      const result = await fetchAdmissionPrograms(undefined, admissionFromUrl || undefined)
       if (cancelled) return
-      setPrograms(result?.programs ?? [])
-      // One open class is not a choice — skip straight to the questions.
-      if (result?.programs?.length === 1) setProgram(result.programs[0].program)
+      const open = result?.programs ?? []
+      setPrograms(open)
+      setProgram((current) => {
+        // Honour the class carried over from the admissions page, but only if it
+        // is genuinely still open — a stale or hand-edited link must not select
+        // a class the school is not admitting into.
+        if (current && open.some((entry) => entry.program === current)) return current
+        // One open class is not a choice; skip straight to the questions.
+        return open.length === 1 ? open[0].program : ''
+      })
       setLoadingPrograms(false)
     })()
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [admissionFromUrl])
 
   useEffect(() => {
     if (!program) {

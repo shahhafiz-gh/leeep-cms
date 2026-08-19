@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { Eyebrow } from '../common/Bits'
+import StartApplicationLink from '@/shared/StartApplicationLink'
 
 /**
  * Admissions opener — the process as a ruled timeline on the left, and a sticky
@@ -93,12 +94,11 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
           </ul>
         )}
 
-        <a
-          href="#admission-application-form"
+        <StartApplicationLink
+          label="Start the application"
           className="block rounded-full bg-td-accent py-[15px] text-center text-[15px] font-semibold text-white transition-opacity hover:opacity-90"
-        >
-          Start the application
-        </a>
+          closedClassName="m-0 rounded-full border border-td-border bg-td-paper py-[15px] text-center text-[14px] text-td-body"
+        />
         {phone && (
           <p className="m-0 mt-4 text-[12.5px] leading-[1.5] text-td-faint">
             Or call admissions on <span data-bind="contact.phone.0">{phone}</span>.

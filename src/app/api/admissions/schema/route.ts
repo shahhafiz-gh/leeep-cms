@@ -11,6 +11,7 @@ import { resolveBackend, resolveSchoolForRequest } from '../_resolve'
  * change on the website without a redeploy. See
  * `education/education/admission_form.py`.
  *
+ *   GET /api/admissions/schema?overview=1        -> open windows + class criteria
  *   GET /api/admissions/schema?programs=1        -> classes open for application
  *   GET /api/admissions/schema?program=Nursery   -> the field set for that class
  */
@@ -24,13 +25,21 @@ export async function GET(req: NextRequest) {
   }
 
   const sp = req.nextUrl.searchParams
+  const wantsOverview = sp.get('overview') === '1'
   const wantsPrograms = sp.get('programs') === '1'
-  const method = wantsPrograms ? 'get_admission_programs' : 'get_admission_form_schema'
+  const method = wantsOverview
+    ? 'get_admission_overview'
+    : wantsPrograms
+      ? 'get_admission_programs'
+      : 'get_admission_form_schema'
 
   const query = new URLSearchParams({ school })
   const academicYear = (sp.get('academic_year') ?? '').trim()
   if (academicYear) query.set('academic_year', academicYear)
-  if (!wantsPrograms) {
+  if (wantsPrograms) {
+    const studentAdmission = (sp.get('student_admission') ?? '').trim()
+    if (studentAdmission) query.set('student_admission', studentAdmission)
+  } else if (!wantsOverview) {
     const program = (sp.get('program') ?? '').trim()
     if (program) query.set('program', program)
     query.set('audience', 'public')

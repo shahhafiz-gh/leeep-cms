@@ -1,16 +1,23 @@
 import type { SchoolData } from '@/types/school.types'
 import AdmissionsHero from '../components/admissions/AdmissionsHero'
-import ApplicationForm from '../components/admissions/ApplicationForm'
+import AdmissionDetailsSection from '../components/admissions/AdmissionDetailsSection'
 import FaqSection from '../components/admissions/FaqSection'
 
-/** Template D ("Quill") — Admissions. */
+/**
+ * Template D ("Quill") — Admissions.
+ *
+ * An INFORMATION page: the process and the live admission details from
+ * `Student Admission` (which classes are open, their age windows and fees). The
+ * form is a separate page (`/admissions/apply`), so a school can keep this page
+ * useful even when it is not admitting.
+ */
 export default function AdmissionsView({ data }: { data: SchoolData }) {
   return (
     <>
       <AdmissionsHero data={data} />
-      {/* The form is the point of the page — but a school can switch it off and
-          keep the process, fees and FAQs as an information-only page. */}
-      {data.admissions?.formEnabled !== false && <ApplicationForm data={data} />}
+      {/* A school can switch the online form off and keep this an
+          information-only page. */}
+      {data.admissions?.formEnabled !== false && <AdmissionDetailsSection data={data} />}
       <FaqSection data={data} />
     </>
   )

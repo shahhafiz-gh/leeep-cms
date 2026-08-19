@@ -3,6 +3,7 @@ import HomeView from './views/HomeView'
 import AboutView from './views/AboutView'
 import AcademicsView from './views/AcademicsView'
 import AdmissionsView from './views/AdmissionsView'
+import AdmissionsApplyView from './views/AdmissionsApplyView'
 import ContactView from './views/ContactView'
 import UpdatesView from './views/UpdatesView'
 import Header from './components/layout/Header'
@@ -21,6 +22,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   about: AboutView,
   academics: AcademicsView,
   admissions: AdmissionsView,
+  'admissions-apply': AdmissionsApplyView,
   contact: ContactView,
   updates: UpdatesView, 
 }

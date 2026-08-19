@@ -108,6 +108,26 @@ export interface AdmissionPrograms {
   currency: string
 }
 
+/** One open admission window, with the classes it is admitting into. */
+export interface AdmissionWindow {
+  name: string
+  title: string
+  academic_year: string
+  admission_start_date: string | null
+  admission_end_date: string | null
+  age_as_on: string | null
+  /** School-authored rich text from the Student Admission record. */
+  introduction: string
+  programs: AdmissionCriteria[]
+}
+
+export interface AdmissionOverview {
+  /** False when the school is not admitting — the page says so and hides the form. */
+  open: boolean
+  currency: string
+  admissions: AdmissionWindow[]
+}
+
 /** A child-table answer: one object of column values per row. */
 export type ChildRows = Array<Record<string, string>>
 export type FormValue = string | number | ChildRows
@@ -156,10 +176,40 @@ async function getJson<T>(url: string): Promise<T | null> {
 }
 
 /** Classes currently open for application, with their own criteria. */
-export function fetchAdmissionPrograms(academicYear?: string) {
+export function fetchAdmissionPrograms(academicYear?: string, studentAdmission?: string) {
   return getJson<AdmissionPrograms>(
-    `/api/admissions/schema?${withSchoolParams({ programs: '1', academic_year: academicYear ?? '' })}`,
+    `/api/admissions/schema?${withSchoolParams({
+      programs: '1',
+      academic_year: academicYear ?? '',
+      student_admission: studentAdmission ?? '',
+    })}`,
   )
+}
+
+// Several things on an admissions page ask the same question ("are we
+// admitting?") — the details block and every "Start application" call to action.
+// One in-flight request is shared between them for the life of the page.
+const overviewCache = new Map<string, Promise<AdmissionOverview | null>>()
+
+/**
+ * Every open admission window with its class-wise criteria — what the public
+ * admissions page shows BEFORE the family commits to filling anything in.
+ */
+export function fetchAdmissionOverview(academicYear?: string): Promise<AdmissionOverview | null> {
+  const key = academicYear ?? ''
+  const cached = overviewCache.get(key)
+  if (cached) return cached
+
+  const request = getJson<AdmissionOverview>(
+    `/api/admissions/schema?${withSchoolParams({ overview: '1', academic_year: key })}`,
+  ).then((result) => {
+    // Don't cache a failure — a transient network blip would otherwise leave the
+    // page insisting admissions are closed until a reload.
+    if (result === null) overviewCache.delete(key)
+    return result
+  })
+  overviewCache.set(key, request)
+  return request
 }
 
 /** The field set for one class (or the generic set when no class is chosen). */
@@ -192,6 +242,10 @@ export interface SchemaStep {
  * Rebuild the DocType's own tab / section grouping from the flat field list, so
  * the public form reads the way the school laid the DocType out — and a section
  * they hid entirely takes its heading with it.
+ *
+ * Fields flagged `is_scope` (the class and its academic year) are dropped: the
+ * form's class picker already sets them, and it only offers classes that are
+ * genuinely open — which a raw Link control listing every Program would not.
  */
 export function groupSchemaFields(fields: SchemaField[]): SchemaStep[] {
   const steps: SchemaStep[] = []
@@ -221,6 +275,7 @@ export function groupSchemaFields(fields: SchemaField[]): SchemaStep[] {
     // Column breaks are a desk-layout concern; the public form flows in one
     // responsive grid, so they carry no meaning here.
     if (field.fieldtype === 'Column Break') continue
+    if (field.is_scope) continue
     section.fields.push(field)
   }
   flushStep()
@@ -309,7 +364,12 @@ export function initialValues(fields: SchemaField[]): FormValues {
   const values: FormValues = {}
   for (const field of fields) {
     if (STRUCTURAL_TYPES.has(field.fieldtype)) continue
-    if (field.default !== undefined && field.default !== '') values[field.fieldname] = field.default
+    if (field.default === undefined || field.default === '') continue
+    // A Check's default arrives as the STRING "0", and `eval:doc.has_previous_school`
+    // would read that as truthy — revealing every field that hangs off an
+    // unticked box. Checks are numbers here, as they are in the database.
+    values[field.fieldname] =
+      field.fieldtype === 'Check' ? Number(field.default) || 0 : field.default
   }
   return values
 }

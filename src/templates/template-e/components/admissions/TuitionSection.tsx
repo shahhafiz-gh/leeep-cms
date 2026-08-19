@@ -5,6 +5,7 @@ import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { Container } from '../common/Bits'
 import AddItemButton from '@/shared/AddItemButton'
+import StartApplicationLink from '@/shared/StartApplicationLink'
 
 /**
  * Tuition as a ruled price list, beside a tinted panel of what the school wants
@@ -86,12 +87,11 @@ export default function TuitionSection({ data }: { data: SchoolData }) {
                 </li>
               ))}
             </ul>
-            <a
-              href="#admission-application-form"
+            <StartApplicationLink
+              label="Start an application"
               className="mt-1 self-start bg-te-accent px-6 py-3 text-[14px] font-semibold tracking-[0.04em] text-te-paper transition-colors hover:bg-te-accent-ink"
-            >
-              Start an application
-            </a>
+              closedClassName="m-0 mt-1 self-start border border-te-rule px-6 py-3 text-[13px] text-te-muted"
+            />
             {phone && (
               <p className="m-0 text-[13px] text-te-muted">
                 Or call admissions on <span data-bind="contact.phone.0">{phone}</span>.

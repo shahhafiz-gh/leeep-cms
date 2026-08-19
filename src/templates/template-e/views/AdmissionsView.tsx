@@ -2,10 +2,16 @@ import type { SchoolData } from '@/types/school.types'
 import { Container, PageIntro } from '../components/common/Bits'
 import ProcessGrid from '../components/admissions/ProcessGrid'
 import TuitionSection from '../components/admissions/TuitionSection'
-import ApplicationForm from '../components/admissions/ApplicationForm'
+import AdmissionDetailsSection from '../components/admissions/AdmissionDetailsSection'
 import FaqSection from '../components/admissions/FaqSection'
 
-/** Template E ("Ledger") — Admissions. */
+/**
+ * Template E ("Ledger") — Admissions.
+ *
+ * An INFORMATION page: the process, tuition, and the live admission details from
+ * `Student Admission`. The form is a separate page (`/admissions/apply`), so a
+ * school can keep this page useful even when it is not admitting.
+ */
 export default function AdmissionsView({ data }: { data: SchoolData }) {
   return (
     <>
@@ -19,9 +25,9 @@ export default function AdmissionsView({ data }: { data: SchoolData }) {
       </Container>
       <ProcessGrid data={data} />
       <TuitionSection data={data} />
-      {/* The form is the point of the page — but a school can switch it off and
-          keep the process, fees and FAQs as an information-only page. */}
-      {data.admissions?.formEnabled !== false && <ApplicationForm data={data} />}
+      {/* A school can switch the online form off and keep this an
+          information-only page. */}
+      {data.admissions?.formEnabled !== false && <AdmissionDetailsSection data={data} />}
       <FaqSection data={data} />
     </>
   )

@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react'
 import { Icon } from '@iconify/react'
 import AdmissionFormFields, { type AdmissionFormStyles } from './AdmissionFormFields'
+import type { AdmissionInfoChrome } from './AdmissionInfoBody'
 import type { useAdmissionForm } from './useAdmissionForm'
 
 /**
@@ -14,25 +15,12 @@ import type { useAdmissionForm } from './useAdmissionForm'
  * own section markup, which is the part that should differ between designs.
  */
 
-export interface AdmissionChrome extends AdmissionFormStyles {
-  /** Small pill used for the class's criteria (age window, fee, closing date). */
-  chip: string
-  /** Primary and secondary actions. */
-  primaryButton: string
-  secondaryButton: string
-  /** Step navigation pills. */
-  stepActive: string
-  stepIdle: string
-  /** The declaration panel. */
-  panel: string
-  /** Step heading. */
-  heading: string
-  /** Body copy (intro, declaration, empty states). */
-  bodyText: string
-  /** Heading used by the empty / success states. */
-  stateTitle: string
+/**
+ * One template's complete admission look — shared by the information page and
+ * the form page, so a template defines its language once.
+ */
+export interface AdmissionChrome extends AdmissionFormStyles, AdmissionInfoChrome {
   errorText: string
-  accentIcon: string
 }
 
 export interface AdmissionFormBodyProps {

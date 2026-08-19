@@ -5,10 +5,7 @@ import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { useLiveList } from '@/shared/hooks/useLiveList'
-
-const scrollToForm = () => {
-  document.getElementById('admission-application-form')?.scrollIntoView({ behavior: 'smooth' })
-}
+import StartApplicationLink from '@/shared/StartApplicationLink'
 
 const handleDownloadForm = () => {
   window.print()
@@ -62,12 +59,11 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
             transition={{ delay: 0.4 }}
             className="flex flex-wrap gap-4 mb-8"
           >
-            <button
-              onClick={scrollToForm}
+            <StartApplicationLink
+              label="Start Application"
               className="inline-flex items-center gap-2 bg-ta-primary-container text-ta-on-primary font-(family-name:--font-ta-label-md) text-ta-label-md rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform px-8 py-4"
-            >
-              Start Application
-            </button>
+              closedClassName="inline-flex items-center rounded-full border border-ta-outline-variant bg-ta-surface-container px-6 py-4 font-(family-name:--font-ta-label-md) text-ta-label-md text-ta-on-surface-variant"
+            />
             <button
               onClick={handleDownloadForm}
               className="inline-flex items-center gap-2 border border-ta-outline text-ta-on-surface font-(family-name:--font-ta-label-md) text-ta-label-md rounded-full hover:bg-ta-surface-container transition-colors px-8 py-4"

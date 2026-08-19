@@ -5,7 +5,17 @@
 
 // ── Page & Template Identifiers ──
 
-export type PageType = 'home' | 'about' | 'academics' | 'admissions' | 'contact' | 'updates'
+// 'admissions' is the information page; 'admissions-apply' is the application
+// form on its own route, so the first page stays readable and can say the
+// school is not admitting without a dead form under it.
+export type PageType =
+  | 'home'
+  | 'about'
+  | 'academics'
+  | 'admissions'
+  | 'admissions-apply'
+  | 'contact'
+  | 'updates'
 
 export type TemplateId = 'template-a' | 'template-b' | 'template-c' | 'template-d' | 'template-e'
 

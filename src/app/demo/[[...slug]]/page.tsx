@@ -29,19 +29,21 @@ interface DemoProps {
   searchParams: Promise<RouteSearchParams>
 }
 
-/** Map the first URL segment under /demo to a template page. '' (no segment) → home. */
+/** Map the URL path under /demo to a template page. '' (no segment) → home. */
 const SLUG_TO_PAGE: Record<string, PageType> = {
   '': 'home',
   about: 'about',
   academics: 'academics',
   admissions: 'admissions',
+  // The application form is its own page, so the demo needs the nested path too.
+  'admissions/apply': 'admissions-apply',
   contact: 'contact',
   updates: 'updates',
 }
 
 function resolvePage(slug?: string[]): PageType | null {
   if (!slug || slug.length === 0) return 'home'
-  return SLUG_TO_PAGE[slug[0]] ?? null
+  return SLUG_TO_PAGE[slug.join('/')] ?? null
 }
 
 export async function generateMetadata({ searchParams }: DemoProps): Promise<Metadata> {
