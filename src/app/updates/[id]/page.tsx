@@ -18,6 +18,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const data = await getSiteData(resolveSchool(headersList, sp), 'published')
   const announcement = data.updates.announcements.find((a) => a.id === id)
   return buildMetadata({
+    favicon: data.config?.favicon,
     seo: data.seo,
     schoolName: data.name,
     title: announcement?.title ?? 'Update',

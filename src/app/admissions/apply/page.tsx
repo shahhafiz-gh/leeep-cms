@@ -22,6 +22,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const sp = await searchParams
   const data = await getSiteData(resolveSchool(headersList, sp), 'published')
   return buildMetadata({
+    favicon: data.config?.favicon,
     seo: data.seo,
     schoolName: data.name,
     title: 'Apply',

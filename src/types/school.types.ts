@@ -25,6 +25,13 @@ export interface TemplateConfig {
   template_id: TemplateId
   /** Curated colour preset id (Settings/Builder). Empty → the template default. */
   palette?: string
+  /**
+   * Browser-tab icon for the public site: the school's own logo from Education
+   * Settings (the same mark the school portal uses), falling back to the site's
+   * header logo. Server-owned — folded in by `get_site`, never stored in the
+   * content blob. Empty → the platform default favicon.
+   */
+  favicon?: string
 }
 
 // ── Website Identity (education.education.api.get_website_registration) ──

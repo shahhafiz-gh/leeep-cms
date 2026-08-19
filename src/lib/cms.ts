@@ -195,11 +195,19 @@ export function withEditorNavigation(data: SchoolData): SchoolData {
  */
 const FRAPPE_ASSET_PREFIXES = ['/files/', '/private/files/', '/assets/']
 
-/** Deep-rewrite any root-relative Frappe asset path to an absolute FRAPPE_URL. */
+/** Deep-rewrite any root-relative Frappe asset path to an absolute FRAPPE_URL.
+ *
+ * Spaces are percent-encoded on the way out: Frappe keeps an uploaded file's
+ * original name, so `/files/dpms logo (1).png` is entirely normal, and a raw
+ * space is not valid in a URL. Browsers paper over it in `src`/`href`, but
+ * anything else fetching the URL (link-preview bots, the favicon in a
+ * `<link>`, a fetch from server code) gets a malformed request. Only the space
+ * is touched, so an already-encoded path can never be double-encoded.
+ */
 function absolutizeAssetUrls<T>(node: T, base: string): T {
   if (typeof node === 'string') {
     return (FRAPPE_ASSET_PREFIXES.some((p) => node.startsWith(p))
-      ? base + node
+      ? base + node.replace(/ /g, '%20')
       : node) as unknown as T
   }
   if (Array.isArray(node)) {
