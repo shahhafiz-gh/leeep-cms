@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { MAX_TOTAL_UPLOAD_BYTES, MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from '@/shared/admission-form'
 
 /**
  * Server-side proxy for PUBLIC admission-form submissions.
@@ -39,6 +40,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Could not determine the school.' }, { status: 400 })
   }
 
+  // Reject an oversized submission from its Content-Length BEFORE `formData()`
+  // buffers the body — the templates cap every upload at MAX_UPLOAD_MB, but that
+  // check runs in the browser and a hand-rolled POST skips it entirely.
+  const declaredLength = Number(req.headers.get('content-length') ?? '')
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_TOTAL_UPLOAD_BYTES) {
+    return NextResponse.json(
+      { ok: false, error: `Your documents are too large. Each file must be under ${MAX_UPLOAD_MB}MB.` },
+      { status: 413 },
+    )
+  }
+
   // The form posts multipart (payload JSON + optional document files); a plain
   // JSON body (no files) is also accepted. Either way Frappe gets one request.
   let body: FormData | string
@@ -53,11 +65,27 @@ export async function POST(req: NextRequest) {
       const out = new FormData()
       out.set('school', school)
       out.set('application', application)
+      let totalBytes = application.length
       for (const [key, value] of incoming.entries()) {
         // Base document slots (`file_*`) plus school-defined file fields
         // (`custom_file_<i>`); anything else is not a known file part.
         const isFilePart = key.startsWith('file_') || /^custom_file_\d+$/.test(key)
         if (isFilePart && value instanceof File && value.size > 0) {
+          // Re-check the per-file cap here: this is the only size check the
+          // visitor's browser can't bypass, so nothing enormous reaches Frappe.
+          if (value.size > MAX_UPLOAD_BYTES) {
+            return NextResponse.json(
+              { ok: false, error: `"${value.name}" is larger than ${MAX_UPLOAD_MB}MB. Please upload a smaller file.` },
+              { status: 413 },
+            )
+          }
+          totalBytes += value.size
+          if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
+            return NextResponse.json(
+              { ok: false, error: 'Your documents are too large in total. Please upload smaller files.' },
+              { status: 413 },
+            )
+          }
           out.append(key, value, value.name)
         }
       }

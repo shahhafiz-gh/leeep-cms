@@ -85,9 +85,9 @@ export function customFileSlot(field: CustomFormField, index: number): DocumentS
     name: customFieldName(index),
     icon: 'lucide:file-up',
     title: field.label,
-    desc: 'PDF, JPG, PNG up to 5MB',
+    desc: `PDF, JPG, PNG up to ${MAX_UPLOAD_MB}MB`,
     accept: '.pdf,.jpg,.jpeg,.png',
-    maxMB: 5,
+    maxMB: MAX_UPLOAD_MB,
   }
 }
 
@@ -164,16 +164,35 @@ export interface DocumentSlot {
 }
 
 /**
+ * Hard per-file upload ceiling for the application form, in MB. Every upload
+ * box (base slots and school-defined "File upload" fields alike) is capped at
+ * this, so no visitor can push an enormous document at the backend. Enforced in
+ * three places: the UploadBox on pick, `submitAdmissionApplication` before the
+ * POST, and — the one that actually protects the backend, since the first two
+ * live in the browser — the `/api/admissions/apply` proxy route.
+ */
+export const MAX_UPLOAD_MB = 2
+export const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
+
+/**
+ * Ceiling for a whole submission (all document parts plus the payload). A form
+ * carries the 4 base slots plus however many file fields the school added, so
+ * this is deliberately roomier than a single file — it exists to stop one
+ * request from being unbounded, not to limit legitimate submissions.
+ */
+export const MAX_TOTAL_UPLOAD_BYTES = 25 * 1024 * 1024
+
+/**
  * The BASE document-upload slots, shared by both templates so the file-part
  * names always match what the backend expects (`_DOCUMENT_SLOTS` in
  * website_builder.py). `accept`/`maxMB` are enforced client-side per slot;
- * the server re-validates (pdf/jpg/png, 5MB hard cap) regardless.
+ * the server re-validates (pdf/jpg/png, size cap) regardless.
  */
 export const DOCUMENT_SLOTS: DocumentSlot[] = [
-  { name: 'file_birth_certificate', icon: 'lucide:file-up', title: 'Birth Certificate', desc: 'PDF, JPG, PNG up to 5MB', accept: '.pdf,.jpg,.jpeg,.png', maxMB: 5 },
-  { name: 'file_photo', icon: 'lucide:camera', title: 'Passport Size Photo', desc: 'JPG, PNG up to 2MB', accept: '.jpg,.jpeg,.png', maxMB: 2 },
-  { name: 'file_report_card', icon: 'lucide:file-text', title: 'Previous Year Report Card', desc: 'PDF up to 5MB', accept: '.pdf', maxMB: 5 },
-  { name: 'file_aadhar', icon: 'lucide:id-card', title: 'Aadhar Card', desc: 'PDF up to 5MB', accept: '.pdf', maxMB: 5 },
+  { name: 'file_birth_certificate', icon: 'lucide:file-up', title: 'Birth Certificate', desc: `PDF, JPG, PNG up to ${MAX_UPLOAD_MB}MB`, accept: '.pdf,.jpg,.jpeg,.png', maxMB: MAX_UPLOAD_MB },
+  { name: 'file_photo', icon: 'lucide:camera', title: 'Passport Size Photo', desc: `JPG, PNG up to ${MAX_UPLOAD_MB}MB`, accept: '.jpg,.jpeg,.png', maxMB: MAX_UPLOAD_MB },
+  { name: 'file_report_card', icon: 'lucide:file-text', title: 'Previous Year Report Card', desc: `PDF up to ${MAX_UPLOAD_MB}MB`, accept: '.pdf', maxMB: MAX_UPLOAD_MB },
+  { name: 'file_aadhar', icon: 'lucide:id-card', title: 'Aadhar Card', desc: `PDF up to ${MAX_UPLOAD_MB}MB`, accept: '.pdf', maxMB: MAX_UPLOAD_MB },
 ]
 
 export type SubmitResult = { ok: true } | { ok: false; error: string }
@@ -204,12 +223,17 @@ export async function submitAdmissionApplication(
       body.append(slot.name, file, file.name)
     }
   }
-  // School-defined file fields → `custom_file_<i>` parts.
-  customFields.forEach((field, index) => {
-    if (!isFileField(field)) return
+  // School-defined file fields → `custom_file_<i>` parts, same cap as the base
+  // slots (a school can add fields, it can't raise the ceiling).
+  for (const [index, field] of customFields.entries()) {
+    if (!isFileField(field)) continue
     const file = formData.get(customFieldName(index))
-    if (file instanceof File && file.size > 0) body.append(customFileName(index), file, file.name)
-  })
+    if (!(file instanceof File) || file.size === 0) continue
+    if (file.size > MAX_UPLOAD_BYTES) {
+      return { ok: false, error: `${field.label || 'Document'}: file is larger than ${MAX_UPLOAD_MB}MB.` }
+    }
+    body.append(customFileName(index), file, file.name)
+  }
 
   try {
     // Forward the current query string so the API route resolves the school the
