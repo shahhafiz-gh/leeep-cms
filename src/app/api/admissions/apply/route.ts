@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { MAX_TOTAL_UPLOAD_BYTES, MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from '@/shared/admission-form'
+import { MAX_TOTAL_UPLOAD_BYTES, MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from '@/shared/admission-schema'
 
 /**
  * Server-side proxy for PUBLIC admission-form submissions.

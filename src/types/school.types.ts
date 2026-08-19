@@ -242,8 +242,12 @@ export interface AdmissionsData {
   feeStructure?: FeeItem[]
   faqs?: FAQ[]
   /**
-   * School-defined EXTRA questions appended to the fixed base application
-   * form, per form part (see shared/admission-form.ts CustomFormField).
+   * DEPRECATED. Extra questions bolted onto the old fixed base form.
+   *
+   * The application form is now derived from the school's `Student Applicant`
+   * DocType and its `Admission Form Profile` (see shared/admission-schema.ts),
+   * so an extra question is a custom field on the doctype and needs no entry
+   * here. Kept only so existing site blobs still parse; nothing reads it.
    */
   formFields?: {
     section: string
