@@ -115,6 +115,39 @@
   --color-td-on-ink-muted: #b7ada2;   /* secondary on ink */
   --color-td-on-ink-faint: #8d837a;   /* eyebrows / captions on ink */
 
+  /* ── Template F Colors (Almanac — walnut brown on warm paper, editorial) ──
+   * Almanac takes Quill's editorial structure (paper / ink / accent triad, no
+   * MD3 role ladder) and commits the whole thing to ONE warm brown family: the
+   * accent, the ink and the paper are all browns, so the panels read as tinted
+   * paper rather than as white with a colour dropped on top.
+   *
+   * The neutrals are browns at low chroma, deliberately — a true grey next to
+   * this paper reads as unfinished rather than as a considered neutral. */
+  --color-tf-paper: #f7f2ea;          /* page background */
+  --color-tf-card: #fdfaf5;           /* raised card on paper */
+  --color-tf-panel: #ece2d4;          /* large sand panel */
+  --color-tf-rail: #e8ddcd;           /* pill track / hairline on paper */
+  --color-tf-border: #e0d3c0;         /* card + divider border */
+  --color-tf-border-strong: #d3c3ac;  /* input border */
+
+  --color-tf-ink: #241810;            /* headings + dark panels */
+  --color-tf-ink-soft: #302115;       /* card inside a dark panel */
+  --color-tf-ink-line: #43301f;       /* divider inside a dark panel */
+  --color-tf-ink-border: #55402c;     /* outline button on dark */
+
+  --color-tf-accent: #6b4423;         /* walnut — links, pills, CTAs */
+  --color-tf-accent-soft: #c99a68;    /* accent legible on ink */
+  --color-tf-accent-wash: #f0e4d3;    /* accent pill background on paper */
+
+  --color-tf-body: #5b4736;           /* body copy on paper */
+  --color-tf-muted: #6d5741;          /* secondary copy on paper */
+  --color-tf-faint: #9c8770;          /* captions / placeholders */
+
+  --color-tf-on-ink: #f8f1e7;         /* headings on ink */
+  --color-tf-on-ink-body: #ddceb9;    /* body on ink */
+  --color-tf-on-ink-muted: #bdaa91;   /* secondary on ink */
+  --color-tf-on-ink-faint: #97836c;   /* eyebrows / captions on ink */
+
   /* ── Template E Colors (Ledger — brick on warm paper, institutional) ──
    * A printed-prospectus palette: one paper, one ink, one brick accent, and a
    * ladder of hairline rules. Nothing here is a "surface container" — the design
@@ -271,6 +304,10 @@ body {
   /* Template D — Quill */
   --font-td-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
   --font-td-serif: var(--font-newsreader), Georgia, serif;
+  /* Almanac shares Quill's pairing: the grotesk carries the oversized display
+     line, the serif is opt-in for italic accents and pull-quotes. */
+  --font-tf-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
+  --font-tf-serif: var(--font-newsreader), Georgia, serif;
 
   /* Template E — Ledger */
   --font-te-serif: var(--font-lora), Georgia, serif;
@@ -511,6 +548,132 @@ body {
   --color-td-ink-soft: #171b24;
   --color-td-ink-line: #272d3a;
   --color-td-ink-border: #363d4d;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Template F — "Almanac" (Quill's editorial frame, committed to warm brown)
+ *
+ * Shares Quill's type rules — a LIGHT sans at large sizes with tight negative
+ * tracking — because the display treatment is what makes the frame work. What
+ * differs is colour (one brown family throughout) and the block set: a
+ * noticeboard, a drifting gallery, a social wall and a magazine shelf.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.template-f h1,
+.template-f h2,
+.template-f h3,
+.template-f h4 {
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  text-wrap: pretty;
+}
+
+/* Serif italic accent (pull-quotes, numerals, the hero's emphasised clause). */
+.template-f .tf-serif {
+  font-family: var(--font-tf-serif);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────────
+ * The noticeboard ticker and the gallery marquee both work by duplicating
+ * their track and translating it exactly -50%, so the seam is invisible and the
+ * loop never jumps. Both pause on hover (set by the component) so a visitor can
+ * actually read and click what is moving past.
+ *
+ * Durations are custom properties so a component can set speed per instance
+ * from the school's own `gallery.speed`, rather than needing a class per speed. */
+@keyframes tf-marquee-left  { from { transform: translateX(0);     } to { transform: translateX(-50%); } }
+@keyframes tf-marquee-right { from { transform: translateX(-50%);  } to { transform: translateX(0);    } }
+
+.tf-ticker      { animation: tf-marquee-left var(--tf-ticker-speed, 45s) linear infinite; }
+.tf-marquee-l   { animation: tf-marquee-left var(--tf-speed, 60s) linear infinite; }
+.tf-marquee-r   { animation: tf-marquee-right var(--tf-speed, 60s) linear infinite; }
+
+/* Fade the marquee out at both edges so tiles enter and leave rather than
+   being chopped off by the viewport. */
+.tf-marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+/* A drifting band of photos is exactly the kind of motion that causes trouble;
+   hold everything still when the visitor has asked for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .tf-ticker,
+  .tf-marquee-l,
+  .tf-marquee-r {
+    animation: none;
+  }
+}
+
+/* Almanac palettes — each preset re-maps ONLY the accent triad and the warm
+ * neutrals it must stay in tune with, so the paper/ink structure is identical
+ * across presets and a school cannot break the design. Default = walnut.
+ *
+ * Every preset is a BROWN: they shift where in the brown family the template
+ * sits (cooler and darker through to redder and lighter); they never leave it.
+ * Ids match TEMPLATE_PALETTES['template-f'] in the builder's config.ts — adding
+ * one here means adding it there too. */
+
+/* ── Chestnut (mid brown, a touch redder than walnut) ── */
+.template-f[data-palette="chestnut"] {
+  --color-tf-accent: #8a5a2b;
+  --color-tf-accent-soft: #d6a670;
+  --color-tf-accent-wash: #f3e7d6;
+  --color-tf-panel: #eee4d6;
+  --color-tf-rail: #eae0d0;
+  --color-tf-border: #e2d6c3;
+  --color-tf-border-strong: #d6c6b0;
+  --color-tf-ink: #2a1c11;
+  --color-tf-ink-soft: #362516;
+  --color-tf-ink-line: #493420;
+  --color-tf-ink-border: #5b442d;
+}
+
+/* ── Espresso (darkest, near-black brown — the quietest preset) ── */
+.template-f[data-palette="espresso"] {
+  --color-tf-accent: #43301f;
+  --color-tf-accent-soft: #b08a63;
+  --color-tf-accent-wash: #ebe0d1;
+  --color-tf-panel: #e7dccc;
+  --color-tf-rail: #e3d7c6;
+  --color-tf-border: #dbcdb8;
+  --color-tf-border-strong: #cebda4;
+  --color-tf-ink: #1b120a;
+  --color-tf-ink-soft: #26190f;
+  --color-tf-ink-line: #38271a;
+  --color-tf-ink-border: #493526;
+}
+
+/* ── Clay (lighter, warmer brown — the most open of the set) ── */
+.template-f[data-palette="clay"] {
+  --color-tf-accent: #a1622f;
+  --color-tf-accent-soft: #e0a973;
+  --color-tf-accent-wash: #f6e8d7;
+  --color-tf-panel: #f0e6d8;
+  --color-tf-rail: #ece2d2;
+  --color-tf-border: #e5d8c5;
+  --color-tf-border-strong: #d9c9b2;
+  --color-tf-ink: #2d1e12;
+  --color-tf-ink-soft: #3a2718;
+  --color-tf-ink-line: #4d3622;
+  --color-tf-ink-border: #5f462f;
+}
+
+/* ── Terracotta (a red-brown, the warmest end of the family) ── */
+.template-f[data-palette="terracotta"] {
+  --color-tf-accent: #c2502b;
+  --color-tf-accent-soft: #eda282;
+  --color-tf-accent-wash: #f9ece7;
+  --color-tf-panel: #f0e5da;
+  --color-tf-rail: #ecdfd3;
+  --color-tf-border: #e5d5c6;
+  --color-tf-border-strong: #d9c5b2;
+  --color-tf-ink: #2a1a13;
+  --color-tf-ink-soft: #37241a;
+  --color-tf-ink-line: #4a3226;
+  --color-tf-ink-border: #5c4133;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
