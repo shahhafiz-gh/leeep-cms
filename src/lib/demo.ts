@@ -14,7 +14,7 @@ import type { SchoolData, TemplateId } from '@/types/school.types'
  *  prospective schools, so nothing may resemble an existing client.
  * ──────────────────────────────────────────────────────────── */
 
-export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E'
+export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
 
 /** Build a sized Unsplash stock-photo URL from a (verified) photo id. */
 const img = (id: string, w = 1200) =>
@@ -62,6 +62,7 @@ export function resolveDemoTemplate(raw?: string | string[]): DemoTemplate {
   if (value === 'c' || value === 'template-c') return 'C'
   if (value === 'd' || value === 'template-d') return 'D'
   if (value === 'e' || value === 'template-e') return 'E'
+  if (value === 'f' || value === 'template-f') return 'F'
   return 'A'
 }
 
@@ -124,10 +125,13 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
           ? 'template-d'
           : template === 'E'
             ? 'template-e'
-            : 'template-a'
+            : template === 'F'
+              ? 'template-f'
+              : 'template-a'
   // Horizon defaults to its warm palette so the demo card shows its true look; an
   // explicit override (from ?palette=) lets the gallery preview any curated preset.
-  // Quill's built-in terracotta IS its default, so it needs no preset id.
+  // Quill's built-in terracotta and Almanac's walnut ARE their defaults, so
+  // neither needs a preset id.
   const palette = paletteOverride !== undefined ? paletteOverride : template === 'C' ? 'warm' : ''
   const q = `?template=${template}`
   /** Internal demo link helper, e.g. demoHref('/about') → '/demo/about?template=A'. */
@@ -395,10 +399,53 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
     },
 
     testimonials: [
-      { id: 'demo-t1', name: 'A. Sharma, Parent', role: 'Parent', content: 'Sample testimonial showing how a parent quote is presented. The teachers are wonderful.', rating: 5, avatar: avatar(12) },
+      { id: 'demo-t1', name: 'A. Sharma, Parent', role: 'Parent', content: 'Sample testimonial showing how a parent quote is presented. The teachers are wonderful.', rating: 5, avatar: avatar(12), image: avatar(12), featured: 'yes' },
       { id: 'demo-t2', name: 'R. Mehta, Parent', role: 'Parent', content: 'Placeholder review highlighting a caring environment and strong academics.', rating: 4, avatar: avatar(32) },
       { id: 'demo-t3', name: 'J. Verma, Alumni', role: 'Alumni', content: 'Demo alumni quote describing a positive, formative school experience.', rating: 5, avatar: avatar(13) },
     ],
+
+    testimonialsIntro: {
+      title: 'What families tell us',
+      subtitle: 'Testimonials',
+      layout: 'grid',
+    },
+
+    // Frame only — the notices themselves come from `updates.announcements`.
+    notifications: {
+      title: 'Latest notifications',
+      subtitle: 'Noticeboard',
+      limit: '5',
+      layout: 'ticker',
+      cta: { label: 'All updates' },
+      emptyText: 'Nothing new on the noticeboard just now.',
+    },
+
+    socialSpace: {
+      title: 'From the school feed',
+      subtitle: 'Social space',
+      handle: '@leeepschools',
+      posts: [
+        { image: STOCK.sports, caption: 'Sample post: the relay final, decided by half a second.', platform: 'instagram', date: '12 August', url: '#' },
+        { image: STOCK.scienceKids, caption: 'Sample post: science fair day, thirty-one projects and one hovercraft.', platform: 'facebook', date: '05 August', url: '#' },
+        { image: STOCK.library, caption: 'Sample post: the new library corner is open and already full.', platform: 'instagram', date: '29 July', url: '#' },
+        { image: STOCK.artClass, caption: 'Sample post: art week, and the corridor has never looked better.', platform: 'youtube', date: '21 July', url: '#' },
+        { image: STOCK.coding, caption: 'Sample post: our robotics team is off to the state finals.', platform: 'twitter', date: '14 July', url: '#' },
+        { image: STOCK.graduation, caption: 'Sample post: the class of 2026, on their last morning.', platform: 'instagram', date: '02 July', url: '#' },
+      ],
+    },
+
+    magazine: {
+      title: 'The school magazine',
+      subtitle: 'School magazine',
+      description:
+        'Written, edited and illustrated by students. Four issues a year, every one of them archived here.',
+      issues: [
+        { title: 'Sample issue — Monsoon 2026', cover: STOCK.booksDesk, issue: '14', date: 'Aug 2026', summary: 'Student journalism, the debate special, and a photo essay on the old library.', url: '#' },
+        { title: 'Sample issue — Spring 2026', cover: STOCK.library, issue: '13', date: 'Apr 2026', summary: 'Founders week, plus every winning entry from the poetry prize.', url: '#' },
+        { title: 'Sample issue — Winter 2025', cover: STOCK.childRead, issue: '12', date: 'Dec 2025', summary: 'Snow days, the science fair, and an interview with our longest-serving teacher.', url: '#' },
+        { title: 'Sample issue — Autumn 2025', cover: STOCK.kidsStudy, issue: '11', date: 'Sep 2025', summary: 'Sports day in full colour and the first of the ethics essays.', url: '#' },
+      ],
+    },
 
     stats: [
       { label: 'Students', value: '5000', suffix: '+', icon: 'lucide:graduation-cap' },
@@ -409,11 +456,19 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
 
     gallery: {
       title: 'Life at Leeep Schools',
+      subtitle:
+        'Two rows drifting the opposite way from each other. Hover to hold them still and read a caption.',
+      motion: 'marquee',
+      speed: 'medium',
       images: [
         { src: STOCK.students, alt: 'Sample campus photo' },
         { src: STOCK.classroom, alt: 'Sample classroom photo' },
-        { src: STOCK.sports, alt: 'Sample sports photo' },
+        { src: STOCK.sports, alt: 'Sample sports photo', eventId: 'demo-e1' },
         { src: STOCK.artClass, alt: 'Sample event photo' },
+        { src: STOCK.library, alt: 'Sample library photo' },
+        { src: STOCK.scienceKids, alt: 'Sample science fair photo' },
+        { src: STOCK.graduation, alt: 'Sample graduation photo' },
+        { src: STOCK.groupStudy, alt: 'Sample study group photo' },
       ],
     },
 

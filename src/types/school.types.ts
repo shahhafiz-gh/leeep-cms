@@ -17,7 +17,13 @@ export type PageType =
   | 'contact'
   | 'updates'
 
-export type TemplateId = 'template-a' | 'template-b' | 'template-c' | 'template-d' | 'template-e'
+export type TemplateId =
+  | 'template-a'
+  | 'template-b'
+  | 'template-c'
+  | 'template-d'
+  | 'template-e'
+  | 'template-f'
 
 // ── Template Configuration ──
 
@@ -88,6 +94,13 @@ export interface HeroSlide {
   image: string
   /** Optional video URL — when provided, renders a video hero background */
   video?: string
+  /**
+   * Where `video` plays in the hero. 'background' covers the whole hero panel;
+   * 'lead image' plays it inside the framed lead photo instead. Values are the
+   * builder's own select options (schema.ts `hero.slides.0.videoPlacement`), so
+   * they are compared as written there, spaces included.
+   */
+  videoPlacement?: 'background' | 'lead image'
   cta?: {
     label: string
     href: string
@@ -363,6 +376,12 @@ export interface TestimonialData {
    * coerce with `Number(...)` before arithmetic/array use.
    */
   rating?: number | string
+  /** Portrait. Named `image` to match the builder field; `avatar` above is the
+   *  older key and is still read as a fallback. */
+  image?: string
+  /** 'yes' pulls the quote to the front and sets it larger. String, not boolean:
+   *  it comes from a builder select. */
+  featured?: string
 }
 
 // ── Stats ──
@@ -379,10 +398,17 @@ export interface StatData {
 export interface GalleryImage {
   src: string
   alt: string
+  /** Optional Website Event id — makes the tile link to /updates#<id>. */
+  eventId?: string
 }
 
 export interface GalleryData {
   title?: string
+  subtitle?: string
+  /** 'marquee' drifts the photos sideways and pauses on hover; 'static grid'
+   *  holds them still. Empty/undefined keeps the template default (marquee). */
+  motion?: 'marquee' | 'static grid'
+  speed?: 'slow' | 'medium' | 'fast'
   images: GalleryImage[]
 }
 
@@ -451,6 +477,69 @@ export interface PortalLink {
 //  ROOT SCHOOL DATA SHAPE
 // ────────────────────────────────────────────
 
+/**
+ * Home "Latest notifications" band — the FRAME only.
+ *
+ * The notices themselves are never stored here: they are the same published
+ * Website Announcements the Updates page shows, folded onto `updates.announcements`
+ * by the server on every read. This block just controls the heading and how the
+ * band behaves, so a school writes a notice once and it appears in both places.
+ */
+export interface NotificationsData {
+  title?: string
+  subtitle?: string
+  /** How many to show. A builder select, so a STRING — coerce before slicing. */
+  limit?: number | string
+  layout?: 'ticker' | 'list' | 'cards'
+  cta?: { label?: string }
+  /** Shown instead of the band while there are no published announcements. */
+  emptyText?: string
+}
+
+export interface SocialPost {
+  image?: string
+  caption: string
+  platform?: 'instagram' | 'facebook' | 'twitter' | 'youtube' | 'linkedin' | string
+  url?: string
+  date?: string
+}
+
+/**
+ * "Social space" — a wall of AUTHORED posts, not an embed of a live third-party
+ * timeline. Nothing here loads an external script onto a school site, so the
+ * wall keeps working when a platform changes its embed rules.
+ */
+export interface SocialSpaceData {
+  title?: string
+  subtitle?: string
+  handle?: string
+  posts?: SocialPost[]
+}
+
+export interface MagazineIssue {
+  title: string
+  cover: string
+  issue?: string
+  date?: string
+  summary?: string
+  url: string
+}
+
+/** School magazine — issues a family can read or download, newest first. */
+export interface MagazineData {
+  title?: string
+  subtitle?: string
+  description?: string
+  issues?: MagazineIssue[]
+}
+
+/** Heading + layout for the testimonials block (the quotes are `testimonials`). */
+export interface TestimonialsIntroData {
+  title?: string
+  subtitle?: string
+  layout?: 'carousel' | 'grid' | 'marquee'
+}
+
 export interface SchoolData {
   name: string
   tagline: string
@@ -486,7 +575,16 @@ export interface SchoolData {
     description?: string
   }
   testimonials: TestimonialData[]
+  /** Heading/layout for the testimonials block. */
+  testimonialsIntro?: TestimonialsIntroData
   stats: StatData[]
+  /** Frame for the home "Latest notifications" band (items come from
+   *  `updates.announcements`). Quill shows this where other templates show stats. */
+  notifications?: NotificationsData
+  /** Authored social wall. */
+  socialSpace?: SocialSpaceData
+  /** School magazine issues. */
+  magazine?: MagazineData
   gallery: GalleryData
   faculty: FacultyMember[]
   alumni?: AlumniData[]

@@ -6,6 +6,7 @@ import TemplateB from '@/templates/template-b/TemplateB'
 import TemplateC from '@/templates/template-c/TemplateC'
 import TemplateD from '@/templates/template-d/TemplateD'
 import TemplateE from '@/templates/template-e/TemplateE'
+import TemplateF from '@/templates/template-f/TemplateF'
 
 /**
  * Render the correct template for a school's data.
@@ -33,7 +34,9 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
           ? 'D'
           : templateId === 'template-e'
             ? 'E'
-            : 'A',
+            : templateId === 'template-f'
+              ? 'F'
+              : 'A',
     )
     const renderData = withEditorNavigation(demo)
     // Social links are the school's real IDENTITY/config, not "content to write
@@ -61,6 +64,7 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
     if (templateId === 'template-c') return <TemplateC data={editorData} page={page} editing />
     if (templateId === 'template-d') return <TemplateD data={editorData} page={page} editing />
     if (templateId === 'template-e') return <TemplateE data={editorData} page={page} editing />
+    if (templateId === 'template-f') return <TemplateF data={editorData} page={page} editing />
     return <TemplateA data={editorData} page={page} editing />
   }
 
@@ -68,6 +72,7 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
   if (templateId === 'template-c') return <TemplateC data={data} page={page} />
   if (templateId === 'template-d') return <TemplateD data={data} page={page} />
   if (templateId === 'template-e') return <TemplateE data={data} page={page} />
+  if (templateId === 'template-f') return <TemplateF data={data} page={page} />
 
   if (templateId !== 'template-a') {
     console.warn(
