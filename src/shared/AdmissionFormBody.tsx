@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import AdmissionFormFields, { type AdmissionFormStyles } from './AdmissionFormFields'
 import type { AdmissionInfoChrome } from './AdmissionInfoBody'
@@ -62,15 +63,19 @@ export default function AdmissionFormBody({
     loadingPrograms,
     submitting,
     submitted,
+    applicationNumber,
     successMessage,
     error,
     eligibilityError,
     submit,
   } = form
 
+  // Final step. A confirmation that only says "thank you" leaves a family with
+  // nothing to do and nothing to keep; the application number and where to use
+  // it are the whole point of this screen.
   if (submitted) {
     return (
-      <div className="flex flex-col items-center gap-3 py-14 text-center">
+      <div className="flex flex-col items-center gap-4 py-14 text-center">
         <Icon icon="lucide:check-circle-2" className={`text-5xl ${chrome.accentIcon}`} />
         <h3 className={chrome.stateTitle}>{successTitle}</h3>
         <p className={`max-w-[52ch] ${chrome.bodyText}`}>
@@ -78,6 +83,27 @@ export default function AdmissionFormBody({
             successText ??
             `Thank you for applying to ${schoolName}. Our admissions team will review your application and contact you shortly.`}
         </p>
+
+        {applicationNumber && (
+          <div className={`${chrome.panel} mt-2 w-full max-w-[46ch] text-left`}>
+            <p className={`m-0 mb-1 text-[12px] uppercase tracking-[0.14em] ${chrome.bodyText}`}>
+              Your application number
+            </p>
+            {/* Selectable and monospaced: this is a reference a parent will copy
+                or write down, not decoration. */}
+            <p className="m-0 font-mono text-[22px] font-semibold break-all select-all">
+              {applicationNumber}
+            </p>
+            <p className={`m-0 mt-3 ${chrome.bodyText}`}>
+              Keep this number. You can check your application status any time with it and the
+              student&rsquo;s date of birth.
+            </p>
+            <Link href="/admissions/status" className={`${chrome.primaryButton} mt-4 inline-flex`}>
+              Check application status
+              <Icon icon="lucide:arrow-right" />
+            </Link>
+          </div>
+        )}
       </div>
     )
   }
@@ -117,6 +143,61 @@ export default function AdmissionFormBody({
   }
 
   const activeStep = steps[stepIndex]
+  const requiresTerms = Boolean(settings?.require_terms_acceptance)
+  // The gate only stands while there is something to agree TO and it has not
+  // been agreed yet; once accepted it never reappears, including on Back.
+  const showRulesGate = requiresTerms && !termsAccepted && Boolean(program)
+
+  if (showRulesGate) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div>
+          <h3 className={chrome.heading}>Admission rules</h3>
+          {settings?.terms_and_conditions ? (
+            <div
+              className={`${chrome.bodyText} [&_*]:my-1`}
+              dangerouslySetInnerHTML={{ __html: settings.terms_and_conditions }}
+            />
+          ) : (
+            <p className={chrome.bodyText}>
+              Please read these before you begin. By continuing you confirm that the information you
+              provide will be true and correct to the best of your knowledge, and you understand that
+              incorrect information may lead to the cancellation of admission.
+            </p>
+          )}
+        </div>
+
+        <div className={chrome.panel}>
+          <label className={`flex cursor-pointer items-start gap-2 ${chrome.label}`}>
+            <input
+              className={`mt-1 ${chrome.tick ?? ''}`}
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(event) => setTermsAccepted(event.target.checked)}
+            />
+            <span>
+              I have read and agree to abide by the rules and regulations of {schoolName}.
+              <span className="text-red-500"> *</span>
+            </span>
+          </label>
+
+          <div className="mt-6 flex justify-end">
+            {/* Disabled rather than hidden: the applicant can see what unlocks
+                the form, instead of a button appearing out of nowhere. */}
+            <button
+              type="button"
+              disabled={!termsAccepted}
+              onClick={() => setStepIndex(0)}
+              className={`${chrome.primaryButton} disabled:cursor-not-allowed disabled:opacity-50`}
+            >
+              Next
+              <Icon icon="lucide:arrow-right" />
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <form ref={formRef} className="flex flex-col gap-10" noValidate onSubmit={submit}>
@@ -185,27 +266,11 @@ export default function AdmissionFormBody({
 
       {!loading && activeStep && (
         <>
-          {/* One step per tab the school's doctype defines. */}
-          {steps.length > 1 && (
-            <div className="flex flex-wrap gap-2">
-              {steps.map((step, index) => (
-                <button
-                  key={step.label || index}
-                  type="button"
-                  onClick={() => setStepIndex(index)}
-                  className={index === stepIndex ? chrome.stepActive : chrome.stepIdle}
-                >
-                  {index + 1}. {step.label || 'Details'}
-                </button>
-              ))}
-            </div>
-          )}
-
+          {/* No numbered step strip: the doctype's tabs are an authoring detail,
+              and numbering them told an applicant how much was left without
+              letting them act on it. Back / Continue carry the navigation. */}
           <div>
-            <h3 className={chrome.heading}>
-              {steps.length > 1 ? `${stepIndex + 1}. ` : ''}
-              {activeStep.label || 'Application details'}
-            </h3>
+            <h3 className={chrome.heading}>{activeStep.label || 'Application details'}</h3>
             <AdmissionFormFields step={activeStep} values={values} onChange={setValue} styles={chrome} />
           </div>
         </>
@@ -213,34 +278,8 @@ export default function AdmissionFormBody({
 
       {!loading && program && (
         <div className={chrome.panel}>
-          {settings?.require_terms_acceptance && (
-            <>
-              <h3 className={chrome.heading}>Declaration</h3>
-              {settings.terms_and_conditions ? (
-                <div
-                  className={`${chrome.bodyText} mb-4 [&_*]:my-1`}
-                  dangerouslySetInnerHTML={{ __html: settings.terms_and_conditions }}
-                />
-              ) : (
-                <p className={`${chrome.bodyText} mb-4`}>
-                  I hereby declare that the information provided above is true and correct to the best of my
-                  knowledge. I understand that any false information may lead to the cancellation of admission.
-                </p>
-              )}
-              <label className={`flex items-start gap-2 cursor-pointer mb-6 ${chrome.label}`}>
-                <input
-                  className={`mt-1 ${chrome.tick ?? ''}`}
-                  type="checkbox"
-                  checked={termsAccepted}
-                  onChange={(event) => setTermsAccepted(event.target.checked)}
-                />
-                <span>
-                  I agree to abide by the rules and regulations of {schoolName}.
-                  <span className="text-red-500"> *</span>
-                </span>
-              </label>
-            </>
-          )}
+          {/* The declaration is asked up front, on the rules step, so it does not
+              reappear here. */}
 
           {/* Bots fill in everything they can see; a person never sees this. */}
           <input

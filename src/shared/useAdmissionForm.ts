@@ -53,6 +53,7 @@ export function useAdmissionForm() {
   const [loadingSchema, setLoadingSchema] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [applicationNumber, setApplicationNumber] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [showErrors, setShowErrors] = useState(false)
@@ -211,6 +212,10 @@ export function useAdmissionForm() {
         return
       }
       setSuccessMessage(result.message ?? settings?.success_message ?? null)
+      // `applicant` is the Student Applicant name — the application number the
+      // family quotes to check their status. Without it the confirmation step
+      // has nothing actionable to show.
+      setApplicationNumber(result.applicant ?? null)
       setSubmitted(true)
     },
     [submitting, schema, missingOn, eligibilityError, settings, termsAccepted, values, honeypot],
@@ -244,6 +249,7 @@ export function useAdmissionForm() {
     loadingPrograms,
     submitting,
     submitted,
+    applicationNumber,
     successMessage,
     error,
     showErrors,

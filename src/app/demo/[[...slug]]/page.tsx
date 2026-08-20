@@ -36,8 +36,10 @@ const SLUG_TO_PAGE: Record<string, PageType> = {
   about: 'about',
   academics: 'academics',
   admissions: 'admissions',
-  // The application form is its own page, so the demo needs the nested path too.
+  // The application form and the status lookup are their own pages, so the demo
+  // needs the nested paths too.
   'admissions/apply': 'admissions-apply',
+  'admissions/status': 'admissions-status',
   contact: 'contact',
   updates: 'updates',
 }
