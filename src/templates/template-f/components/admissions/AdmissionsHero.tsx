@@ -5,6 +5,7 @@ import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { Eyebrow } from '../common/Bits'
 import StartApplicationLink from '@/shared/StartApplicationLink'
+import Link from 'next/link'
 
 /**
  * Admissions opener — the process as a ruled timeline on the left, and a sticky
@@ -99,6 +100,16 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
           className="block rounded-full bg-tf-accent py-[15px] text-center text-[15px] font-semibold text-white transition-opacity hover:opacity-90"
           closedClassName="m-0 rounded-full border border-tf-border bg-tf-paper py-[15px] text-center text-[14px] text-tf-body"
         />
+
+        {/* Outside StartApplicationLink on purpose: that component hides itself
+            when no admission window is open, and checking a status is exactly
+            what a family does AFTER applications have closed. */}
+        <Link
+          href="/admissions/status"
+          className="mt-3 block rounded-full border border-tf-border-strong py-[14px] text-center text-[14.5px] font-medium text-tf-ink transition-colors hover:border-tf-accent hover:text-tf-accent"
+        >
+          Check application status
+        </Link>
         {phone && (
           <p className="m-0 mt-4 text-[12.5px] leading-[1.5] text-tf-faint">
             Or call admissions on <span data-bind="contact.phone.0">{phone}</span>.

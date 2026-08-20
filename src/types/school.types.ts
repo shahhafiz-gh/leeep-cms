@@ -14,6 +14,7 @@ export type PageType =
   | 'academics'
   | 'admissions'
   | 'admissions-apply'
+  | 'admissions-status'
   | 'contact'
   | 'updates'
 
@@ -591,6 +592,12 @@ export interface SchoolData {
   programs?: ProgramData[]
   /** Administrator / staff portal links shown on the login page. */
   portalLinks?: PortalLink[]
+  /**
+   * Section ids the school has switched OFF (see shared/section-visibility.ts).
+   * Absent or empty means everything is visible, so a site saved before this
+   * existed is unaffected.
+   */
+  hiddenSections?: string[]
   navigation: NavigationItem[]
   socialLinks: SocialLink[]
   footer: FooterData
