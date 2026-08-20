@@ -119,7 +119,7 @@ export default function Header({ data }: { data: SchoolData }) {
             href="/admissions"
             className="rounded-full bg-tf-ink px-5 py-[11px] text-[14.5px] font-semibold text-tf-on-ink transition-opacity hover:opacity-90"
           >
-            Book a visit
+            Apply now
           </Link>
         </div>
 
@@ -173,7 +173,7 @@ export default function Header({ data }: { data: SchoolData }) {
               onClick={() => setOpen(false)}
               className="rounded-full bg-tf-ink py-3.5 text-center text-[15px] font-semibold text-tf-on-ink"
             >
-              Book a visit
+              Apply now
             </Link>
             {loginLink && (
               <Link
