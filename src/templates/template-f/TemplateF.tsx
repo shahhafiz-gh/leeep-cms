@@ -16,7 +16,7 @@ interface TemplateProps {
   editing?: boolean
 }
 
-const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
+const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?: boolean }>> = {
   home: HomeView,
   about: AboutView,
   academics: AcademicsView,
@@ -49,7 +49,7 @@ export default function TemplateF({ data, page, editing = false }: TemplateProps
     >
       <Header data={data} />
       <main className="grow">
-        <PageComponent data={data} />
+        <PageComponent data={data} editing={editing} />
       </main>
       <Footer data={data} editing={editing} />
     </div>

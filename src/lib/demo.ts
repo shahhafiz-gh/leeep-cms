@@ -279,6 +279,7 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
         { icon: 'lucide:clock', label: 'Rolling admissions' },
       ],
       callout: { icon: 'lucide:users', label: 'Limited Seats', sublabel: 'Apply Early' },
+      rulesTitle: 'Admission rules',
       process: {
         title: 'How to Apply',
         steps: [

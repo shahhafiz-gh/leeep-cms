@@ -118,6 +118,7 @@ export const placeholderTemplateAData: SchoolData = {
       { icon: 'lucide:clock', label: 'Add a highlight' },
     ],
     callout: { icon: 'lucide:users', label: 'Limited Seats', sublabel: 'Apply Early' },
+    rulesTitle: 'Admission rules',
     process: {
       title: 'How to Apply',
       steps: [

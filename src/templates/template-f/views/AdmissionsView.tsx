@@ -1,24 +1,27 @@
 import type { SchoolData } from '@/types/school.types'
 import AdmissionsHero from '../components/admissions/AdmissionsHero'
-import AdmissionDetailsSection from '../components/admissions/AdmissionDetailsSection'
 import FaqSection from '../components/admissions/FaqSection'
 import { isSectionVisible } from '@/shared/section-visibility'
 
 /**
- * Template D ("Almanac") — Admissions.
+ * Template F ("Almanac") — Admissions.
  *
- * An INFORMATION page: the process and the live admission details from
- * `Student Admission` (which classes are open, their age windows and fees). The
- * form is a separate page (`/admissions/apply`), so a school can keep this page
- * useful even when it is not admitting.
+ * An INVITATION page: who to talk to, and a way in. The session's live
+ * admission details (which classes are open, their age windows, the rules) are
+ * NOT repeated here — they are the first step of the application itself
+ * (`/admissions/apply`), where a family reads them and accepts them in one
+ * move instead of scrolling past them twice.
  */
-export default function AdmissionsView({ data }: { data: SchoolData }) {
+export default function AdmissionsView({
+  data,
+  editing = false,
+}: {
+  data: SchoolData
+  editing?: boolean
+}) {
   return (
     <>
-      <AdmissionsHero data={data} />
-      {/* A school can switch the online form off and keep this an
-          information-only page. */}
-      {data.admissions?.formEnabled !== false && <AdmissionDetailsSection data={data} />}
+      <AdmissionsHero data={data} editing={editing} />
       {/* "Questions families ask" is the block schools most often want gone —
           it is the one whose content dates fastest. Hideable rather than
           deleted, so the answers survive being switched off. */}
