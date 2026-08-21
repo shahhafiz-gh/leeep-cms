@@ -530,7 +530,17 @@ export interface MagazineIssue {
   issue?: string
   date?: string
   summary?: string
+  /** Outbound link, used when the issue has no `pages` to read in place. */
   url: string
+  /**
+   * The issue scanned to one image per page, in reading order. When present the
+   * issue is read IN the site (see MagazineReader) instead of linking out, which
+   * is what a school that only has page images — not a hosted PDF — actually has.
+   * Absent or empty keeps the original link-out behaviour.
+   */
+  pages?: string[]
+  /** Optional "download the whole issue" file, offered alongside the reader. */
+  downloadUrl?: string
 }
 
 /** School magazine — issues a family can read or download, newest first. */

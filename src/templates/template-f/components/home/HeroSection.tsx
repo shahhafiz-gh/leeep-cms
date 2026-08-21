@@ -47,12 +47,16 @@ export default function HeroSection({ data }: { data: SchoolData }) {
       <h1 className="m-0 mb-8 max-w-[16ch] text-[42px] leading-[1.02] tracking-[-0.04em] text-tf-ink sm:text-[58px] lg:mb-9 lg:text-[76px] lg:leading-[0.98] lg:tracking-[-0.045em] xl:text-[94px]">
         <span data-edit="hero.slides.0.title">{slide.title}</span>
         {slide.subtitle && (
-          <>
-            {' '}
-            <span data-edit="hero.slides.0.subtitle" className="tf-serif italic text-tf-accent">
-              {slide.subtitle}
-            </span>
-          </>
+          // Its own line, and set noticeably smaller than the title: on a long
+          // school name the two clauses ran together at the same size and the
+          // headline read as one unbroken block. `block` forces the break;
+          // the sizes are ~55% of the title step at every breakpoint.
+          <span
+            data-edit="hero.slides.0.subtitle"
+            className="tf-serif block text-[24px] leading-[1.15] tracking-[-0.02em] text-tf-accent italic sm:text-[32px] lg:text-[42px] xl:text-[52px]"
+          >
+            {slide.subtitle}
+          </span>
         )}
       </h1>
 
