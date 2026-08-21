@@ -291,6 +291,13 @@ export interface AdmissionsData {
     title: string
     steps: { step: number; title: string; description: string }[]
   }
+  /**
+   * Heading over the admission rules a family accepts before the application
+   * form (Almanac shows them as step one of `/admissions/apply`). Editable copy,
+   * unlike the rules themselves, which come from `Student Admission`. Empty →
+   * "Admission rules".
+   */
+  rulesTitle?: string
   /** Trust badges shown in the admissions hero (icon + label). */
   highlights?: Badge[]
   /** Highlight callout card, e.g. "Limited Seats" / "Apply Early". */

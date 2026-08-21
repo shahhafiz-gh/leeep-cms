@@ -8,18 +8,29 @@ import StartApplicationLink from '@/shared/StartApplicationLink'
 import Link from 'next/link'
 
 /**
- * Admissions opener — the process as a ruled timeline on the left, and a sticky
- * card on the right that stays with the reader all the way down the steps.
+ * Admissions opener — the invitation on the left, and a sticky card on the right
+ * that stays with the reader.
  *
- * The card is deliberately NOT a second form: the real application lives further
- * down the page, so this one points to it and offers the phone number for
- * families who would rather talk to someone.
+ * The card is deliberately NOT a second form: the real application lives on its
+ * own page, so this one points to it. The admissions phone sits on the LEFT,
+ * under the invitation, as an editable field (`data-edit`) rather than a bound
+ * mirror — a school changing who answers the admissions line should be able to
+ * do it right here, on the page a family reads it from.
  */
-export default function AdmissionsHero({ data }: { data: SchoolData }) {
+export default function AdmissionsHero({
+  data,
+  editing = false,
+}: {
+  data: SchoolData
+  editing?: boolean
+}) {
   const admissions = data.admissions
-  const steps = useLiveList('admissions.process.steps', admissions?.process?.steps ?? [])
   const highlights = useLiveList('admissions.highlights', admissions?.highlights ?? [])
-  const phone = data.contact?.phone?.[0]
+  // In the EDITOR an unset number still renders its (blank) row so it can be
+  // filled in — the same rule the footer follows. On the live site an empty
+  // value simply doesn't render.
+  const phone = data.contact?.phone?.[0] ?? (editing ? '' : undefined)
+  const email = data.contact?.email?.[0] ?? (editing ? '' : undefined)
   if (!admissions) return null
 
   return (
@@ -39,33 +50,39 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
           {admissions.description}
         </p>
 
-        {steps.length > 0 && (
-          <div className="flex flex-col border-t border-tf-border">
-            {steps.map((step, i) => (
-              <div
-                key={i}
-                className="grid grid-cols-1 gap-2 border-b border-tf-border py-5 sm:grid-cols-[150px_1fr] sm:gap-6"
-              >
-                <div className="text-[14px] font-semibold tracking-[0.02em] text-tf-accent">
-                  Step {String(step.step ?? i + 1).padStart(2, '0')}
-                </div>
-                <div>
-                  <div
-                    data-edit={`admissions.process.steps.${i}.title`}
-                    className="mb-1 text-[18px] font-medium tracking-[-0.015em] text-tf-ink"
-                  >
-                    {step.title}
-                  </div>
-                  <div
-                    data-edit={`admissions.process.steps.${i}.description`}
-                    className="text-[15px] leading-[1.6] text-tf-muted"
-                  >
-                    {step.description}
-                  </div>
-                </div>
-              </div>
-            ))}
+        {(phone !== undefined || email !== undefined) && (
+        <div className="flex flex-col gap-5 border-t border-tf-border pt-8 sm:flex-row sm:gap-12">
+          {phone !== undefined && (
+          <div>
+            <div className="mb-1.5 text-[12px] uppercase tracking-[0.16em] text-tf-faint">
+              Admissions office
+            </div>
+            <a
+              href={phone ? `tel:${phone.replace(/\s+/g, '')}` : undefined}
+              className="flex items-center gap-2.5 text-[19px] tracking-[-0.02em] text-tf-ink transition-colors hover:text-tf-accent"
+            >
+              <Icon icon="lucide:phone" className="h-[17px] w-[17px] shrink-0 text-tf-accent" />
+              {/* Editable in place: the number families call is the one thing on
+                  this page a school changes without touching anything else. */}
+              <span data-edit="contact.phone.0">{phone}</span>
+            </a>
           </div>
+          )}
+          {email !== undefined && (
+            <div>
+              <div className="mb-1.5 text-[12px] uppercase tracking-[0.16em] text-tf-faint">
+                Write to us
+              </div>
+              <a
+                href={`mailto:${email}`}
+                className="flex items-center gap-2.5 text-[19px] tracking-[-0.02em] text-tf-ink transition-colors hover:text-tf-accent"
+              >
+                <Icon icon="lucide:mail" className="h-[17px] w-[17px] shrink-0 text-tf-accent" />
+                <span data-edit="contact.email.0">{email}</span>
+              </a>
+            </div>
+          )}
+        </div>
         )}
       </div>
 
@@ -110,11 +127,6 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
         >
           Check application status
         </Link>
-        {phone && (
-          <p className="m-0 mt-4 text-[12.5px] leading-[1.5] text-tf-faint">
-            Or call admissions on <span data-bind="contact.phone.0">{phone}</span>.
-          </p>
-        )}
       </aside>
     </section>
   )
