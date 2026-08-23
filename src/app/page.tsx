@@ -1,6 +1,6 @@
 import { headers } from 'next/headers'
 import type { Metadata } from 'next'
-import { getSiteData, resolveSchool, isEditPreview, type RouteSearchParams } from '@/lib/cms'
+import { getSiteData, resolveSchool, isEditPreview, resolvePreviewMode, resolvePreviewToken, type RouteSearchParams } from '@/lib/cms'
 import { renderTemplate } from '@/lib/render-template'
 import { buildMetadata } from '@/lib/metadata'
 import InlineEditLayer from '@/shared/InlineEditLayer'
@@ -20,10 +20,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   const sp = await searchParams
   const school = resolveSchool(headersList, sp)
   const editing = isEditPreview(sp)
-  // Content stays PUBLISHED even in editor preview for now — authenticated draft
-  // fetching is wired in prompt 3. The inline-edit layer is capture-only, so
-  // published content is a correct base to edit against.
-  const data = await getSiteData(school, 'published')
+  const data = await getSiteData(school, resolvePreviewMode(sp), resolvePreviewToken(sp))
   return (
     <>
       {renderTemplate(data, 'home', school, editing)}

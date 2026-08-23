@@ -9,6 +9,7 @@ import ContactView from './views/ContactView'
 import UpdatesView from './views/UpdatesView'
 import FacilitiesView from './views/FacilitiesView'
 import TeamView from '@/shared/views/TeamView'
+import { LedgerGalleryView } from '@/shared/views/GalleryViews'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import StyleHydrator from '@/shared/StyleHydrator'
@@ -30,6 +31,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   contact: ContactView,
   updates: UpdatesView,
   facilities: FacilitiesView,
+  gallery: LedgerGalleryView,
 }
 
 /**

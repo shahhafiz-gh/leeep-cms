@@ -123,10 +123,10 @@
    *
    * The neutrals are browns at low chroma, deliberately — a true grey next to
    * this paper reads as unfinished rather than as a considered neutral. */
-  --color-tf-paper: #f7f2ea;          /* page background */
+  --color-tf-paper: #e8ddcd;          /* page background (former navbar rail) */
   --color-tf-card: #fdfaf5;           /* raised card on paper */
   --color-tf-panel: #ece2d4;          /* large sand panel */
-  --color-tf-rail: #e8ddcd;           /* pill track / hairline on paper */
+  --color-tf-rail: #f7f2ea;           /* navbar rail and light separators */
   --color-tf-border: #e0d3c0;         /* card + divider border */
   --color-tf-border-strong: #d3c3ac;  /* input border */
 
@@ -152,10 +152,10 @@
    * A printed-prospectus palette: one paper, one ink, one brick accent, and a
    * ladder of hairline rules. Nothing here is a "surface container" — the design
    * separates things with 1px rules, not with fills or shadows. */
-  --color-te-paper: #eee9de;          /* page */
+  --color-te-paper: #f8f6f1;          /* page */
   --color-te-white: #ffffff;          /* form fields, inset cards */
   --color-te-panel: #f3efe5;          /* tinted band (stats, feature cells) */
-  --color-te-panel-alt: #f8f6f1;      /* navbar and alternate surface */
+  --color-te-panel-alt: #eee9de;      /* hover fill on ghost buttons */
   --color-te-rule: #d9d2c4;           /* the hairline that does all the work */
   --color-te-rule-strong: #b9b0a0;    /* input borders */
 
@@ -622,7 +622,8 @@ body {
   --color-tf-accent-soft: #d6a670;
   --color-tf-accent-wash: #f3e7d6;
   --color-tf-panel: #eee4d6;
-  --color-tf-rail: #eae0d0;
+  --color-tf-paper: #eae0d0;
+  --color-tf-rail: #f7f2ea;
   --color-tf-border: #e2d6c3;
   --color-tf-border-strong: #d6c6b0;
   --color-tf-ink: #2a1c11;
@@ -637,7 +638,8 @@ body {
   --color-tf-accent-soft: #b08a63;
   --color-tf-accent-wash: #ebe0d1;
   --color-tf-panel: #e7dccc;
-  --color-tf-rail: #e3d7c6;
+  --color-tf-paper: #e3d7c6;
+  --color-tf-rail: #f7f2ea;
   --color-tf-border: #dbcdb8;
   --color-tf-border-strong: #cebda4;
   --color-tf-ink: #1b120a;
@@ -652,7 +654,8 @@ body {
   --color-tf-accent-soft: #e0a973;
   --color-tf-accent-wash: #f6e8d7;
   --color-tf-panel: #f0e6d8;
-  --color-tf-rail: #ece2d2;
+  --color-tf-paper: #ece2d2;
+  --color-tf-rail: #f7f2ea;
   --color-tf-border: #e5d8c5;
   --color-tf-border-strong: #d9c9b2;
   --color-tf-ink: #2d1e12;
@@ -667,7 +670,8 @@ body {
   --color-tf-accent-soft: #eda282;
   --color-tf-accent-wash: #f9ece7;
   --color-tf-panel: #f0e5da;
-  --color-tf-rail: #ecdfd3;
+  --color-tf-paper: #ecdfd3;
+  --color-tf-rail: #f7f2ea;
   --color-tf-border: #e5d5c6;
   --color-tf-border-strong: #d9c5b2;
   --color-tf-ink: #2a1a13;
