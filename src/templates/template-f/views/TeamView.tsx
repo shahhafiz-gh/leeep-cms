@@ -13,6 +13,14 @@ export default function TeamView({ data }: { data: SchoolData }) {
 
   if (!team) return null
 
+  // A school's leader is commonly already present in the directory before a
+  // separate head's-desk portrait is uploaded. Reuse that official profile
+  // photo as a sensible fallback, while always preferring the dedicated image.
+  const headPortraitMember =
+    members.find((person) => /chair(man|person)/i.test(person.role)) ??
+    members.find((person) => /principal|head of school/i.test(person.role))
+  const headPortrait = team.message?.image || headPortraitMember?.image
+
   return (
     <>
       <section className="mx-auto max-w-[1400px] px-5 pb-14 pt-12 md:px-8 lg:px-12 lg:pb-20 lg:pt-18">
@@ -44,24 +52,24 @@ export default function TeamView({ data }: { data: SchoolData }) {
         <section className="bg-tf-ink text-tf-on-ink">
           <div className="mx-auto grid max-w-[1400px] grid-cols-1 lg:grid-cols-[0.82fr_1.18fr]">
             <Photo
-              src={team.message.image}
-              alt={team.message.name || 'School leader'}
+              src={headPortrait}
+              alt={headPortraitMember?.name || team.message.name || 'School leader'}
               caption="portrait — head of school"
               editPath="team.message.image"
               rounded="rounded-none"
               className="min-h-[360px] lg:min-h-[580px]"
               fill
             />
-            <div className="flex flex-col justify-center px-5 py-14 md:px-10 lg:px-16 lg:py-20">
-              <Eyebrow onInk className="mb-8">From the head&apos;s desk</Eyebrow>
-              <span className="tf-serif mb-4 text-[64px] leading-[0.5] text-tf-accent-soft" aria-hidden>“</span>
+            <div className="flex flex-col justify-center px-5 py-12 md:px-10 lg:px-12 lg:py-12">
+              <Eyebrow onInk className="mb-5">From the head&apos;s desk</Eyebrow>
+              <span className="tf-serif mb-3 text-[48px] leading-[0.5] text-tf-accent-soft" aria-hidden>“</span>
               <blockquote
                 data-edit="team.message.content"
-                className="m-0 max-w-[24ch] text-[27px] leading-[1.3] tracking-[-0.025em] text-tf-on-ink sm:text-[34px] lg:text-[42px]"
+                className="m-0 max-w-[42ch] whitespace-pre-line text-[21px] leading-[1.45] tracking-[-0.015em] text-tf-on-ink sm:text-[23px] lg:text-[20px]"
               >
                 {team.message.content}
               </blockquote>
-              <div className="mt-10 border-t border-tf-ink-line pt-6">
+              <div className="mt-6 border-t border-tf-ink-line pt-4">
                 <div data-edit="team.message.name" className="text-[16px] font-semibold text-tf-on-ink">
                   {team.message.name}
                 </div>

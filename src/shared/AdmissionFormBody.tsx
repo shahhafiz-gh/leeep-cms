@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import AdmissionFormFields, { type AdmissionFormStyles } from './AdmissionFormFields'
@@ -40,6 +40,8 @@ export default function AdmissionFormBody({
   successTitle = 'Application Submitted',
   successText,
 }: AdmissionFormBodyProps): ReactNode {
+  const successRef = useRef<HTMLDivElement>(null)
+  const applicationNumberRef = useRef<HTMLDivElement>(null)
   const {
     formRef,
     programs,
@@ -70,12 +72,45 @@ export default function AdmissionFormBody({
     submit,
   } = form
 
+  useEffect(() => {
+    if (!submitted) return
+
+    // The multi-step form is much taller than the confirmation. On mobile the
+    // browser preserves the old bottom scroll offset while React replaces it,
+    // which can leave the success message above the visible viewport. Wait for
+    // that layout change to settle, then focus and reveal the useful result.
+    let secondFrame = 0
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        const target = applicationNumberRef.current ?? successRef.current
+        if (!target) return
+        target.focus({ preventScroll: true })
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        target.scrollIntoView({
+          behavior: reduceMotion ? 'auto' : 'smooth',
+          block: applicationNumberRef.current ? 'center' : 'start',
+        })
+      })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame)
+      if (secondFrame) window.cancelAnimationFrame(secondFrame)
+    }
+  }, [submitted, applicationNumber])
+
   // Final step. A confirmation that only says "thank you" leaves a family with
   // nothing to do and nothing to keep; the application number and where to use
   // it are the whole point of this screen.
   if (submitted) {
     return (
-      <div className="flex flex-col items-center gap-4 py-14 text-center">
+      <div
+        ref={successRef}
+        tabIndex={-1}
+        role="status"
+        aria-live="polite"
+        className="flex scroll-mt-24 flex-col items-center gap-4 py-14 text-center outline-none"
+      >
         <Icon icon="lucide:check-circle-2" className={`text-5xl ${chrome.accentIcon}`} />
         <h3 className={chrome.stateTitle}>{successTitle}</h3>
         <p className={`max-w-[52ch] ${chrome.bodyText}`}>
@@ -85,7 +120,12 @@ export default function AdmissionFormBody({
         </p>
 
         {applicationNumber && (
-          <div className={`${chrome.panel} mt-2 w-full max-w-[46ch] text-left`}>
+          <div
+            ref={applicationNumberRef}
+            tabIndex={-1}
+            aria-label={`Your application number is ${applicationNumber}`}
+            className={`${chrome.panel} mt-2 w-full max-w-[46ch] scroll-mt-24 text-left outline-none`}
+          >
             <p className={`m-0 mb-1 text-[12px] uppercase tracking-[0.14em] ${chrome.bodyText}`}>
               Your application number
             </p>
