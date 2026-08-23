@@ -7,6 +7,10 @@ import { Container } from '../common/Bits'
 import AddItemButton from '@/shared/AddItemButton'
 import StartApplicationLink from '@/shared/StartApplicationLink'
 
+function contactValue(entry: string | { value?: string } | undefined) {
+  return typeof entry === 'string' ? entry : entry?.value || ''
+}
+
 /**
  * Tuition as a ruled price list, beside a tinted panel of what the school wants
  * a family to know before applying.
@@ -18,7 +22,7 @@ import StartApplicationLink from '@/shared/StartApplicationLink'
 export default function TuitionSection({ data }: { data: SchoolData }) {
   const fees = useLiveList('admissions.feeStructure', data.admissions?.feeStructure ?? [])
   const highlights = useLiveList('admissions.highlights', data.admissions?.highlights ?? [])
-  const phone = data.contact?.phone?.[0]
+  const phone = contactValue(data.contact?.phone?.[0])
   if (fees.length === 0 && highlights.length === 0) return null
 
   return (
@@ -94,7 +98,7 @@ export default function TuitionSection({ data }: { data: SchoolData }) {
             />
             {phone && (
               <p className="m-0 text-[13px] text-te-muted">
-                Or call admissions on <span data-bind="contact.phone.0">{phone}</span>.
+                Or call admissions on <span data-bind="contact.phone.0.value">{phone}</span>.
               </p>
             )}
           </div>

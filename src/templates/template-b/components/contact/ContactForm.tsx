@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
+import { contactEntryValue } from '@/lib/contact-entry'
 
 const inputClass =
   'w-full px-4 py-3 border-[1.5px] border-tb-line rounded-lg text-sm text-tb-heading bg-[#fafafa] placeholder:text-slate-400 outline-none focus:border-tb-primary-400 transition-colors'
@@ -51,14 +52,16 @@ export default function ContactForm({ data }: { data: SchoolData }) {
                   <span data-edit="contact.address">{contact.address}</span>
                 </InfoRow>
                 <InfoRow icon="lucide:phone" label="Phone">
-                  {contact.phone.map((p, i) => (
-                    <a key={i} href={`tel:${p.replace(/\s+/g, '')}`} className="block hover:text-white" data-edit={`contact.phone.${i}`}>{p}</a>
-                  ))}
+                  {contact.phone.map((p, i) => {
+                    const value = contactEntryValue(p)
+                    return <a key={i} href={`tel:${value.replace(/\s+/g, '')}`} className="block hover:text-white" data-edit={`contact.phone.${i}.value`}>{value}</a>
+                  })}
                 </InfoRow>
                 <InfoRow icon="lucide:mail" label="Email">
-                  {contact.email.map((e, i) => (
-                    <a key={i} href={`mailto:${e}`} className="block hover:text-white" data-edit={`contact.email.${i}`}>{e}</a>
-                  ))}
+                  {contact.email.map((e, i) => {
+                    const value = contactEntryValue(e)
+                    return <a key={i} href={`mailto:${value}`} className="block hover:text-white" data-edit={`contact.email.${i}.value`}>{value}</a>
+                  })}
                 </InfoRow>
                 <InfoRow icon="lucide:clock" label="Office Hours">
                   <span data-edit="contact.workingHours">{contact.workingHours ?? 'Mon – Sat: 9 AM – 5 PM'}</span>

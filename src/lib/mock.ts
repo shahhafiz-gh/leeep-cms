@@ -171,6 +171,19 @@ export const placeholderTemplateAData: SchoolData = {
     ],
   },
 
+  facilities: {
+    title: 'Spaces Made for Learning',
+    subtitle: 'Our Campus',
+    description: 'Introduce the spaces, resources, and services that support your students every day.',
+    heroImage: '',
+    items: [
+      { name: 'Smart Classrooms', description: 'Describe your classrooms, teaching technology, and learning environment.', image: '', highlights: ['Interactive learning', 'Comfortable spaces'] },
+      { name: 'School Library', description: 'Describe your reading collection, study areas, and library programme.', image: '', highlights: ['Books and periodicals', 'Quiet study'] },
+      { name: 'Computer Lab', description: 'Describe the equipment and digital skills students develop here.', image: '', highlights: ['Modern systems', 'Supervised access'] },
+      { name: 'Sports Facilities', description: 'Describe the indoor and outdoor opportunities available to students.', image: '', highlights: ['Team sports', 'Physical education'] },
+    ],
+  },
+
   updates: {
     announcements: [
       {
@@ -470,6 +483,20 @@ export const mockKcgsData: SchoolData = {
     email: ['info@kashmircambridge.in'],
     workingHours: 'Mon – Sat: 9 AM – 5 PM',
     mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3295.0!2d74.82!3d33.72!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDQzJzEyLjAiTiA3NMKwNDknMTIuMCJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin',
+  },
+
+  facilities: {
+    title: 'A Campus Built for Discovery',
+    subtitle: 'Campus Facilities',
+    description: 'Purposeful spaces for study, creativity, movement, and the everyday life of our school community.',
+    heroImage: '/assets/kcs/images/about/kc-building-2.webp',
+    items: [
+      { name: 'Smart Classrooms', description: 'Bright, comfortable classrooms equipped with modern teaching aids for collaborative and engaging lessons.', image: '/assets/kcs/images/campus-life/student-life.webp', highlights: ['Interactive teaching', 'Age-appropriate spaces'] },
+      { name: 'Science & Computer Labs', description: 'Dedicated practical spaces where students investigate, experiment, and build confidence with technology.', image: '/assets/kcs/images/campus-life/art-culture.webp', highlights: ['Hands-on learning', 'Modern equipment'] },
+      { name: 'School Library', description: 'A calm reading and research space with books, reference material, and room for independent study.', image: '/assets/kcs/images/about/kc-building.webp', highlights: ['Curated collection', 'Reading programme'] },
+      { name: 'Sports & Activity Areas', description: 'Indoor and outdoor spaces that support physical education, team sports, events, and creative activities.', image: '/assets/kcs/images/campus-life/athletics.webp', highlights: ['Outdoor games', 'Student activities'] },
+      { name: 'Transportation', description: 'Supervised school transport serving key routes with student safety at the centre of every journey.', image: '/assets/kcs/images/campus-life/campus-life-hero.webp', highlights: ['Supervised routes', 'Reliable service'] },
+    ],
   },
 
   updates: {

@@ -2,6 +2,7 @@
 
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
+import { contactEntryValue } from '@/lib/contact-entry'
 import { useLiveValue } from '@/shared/hooks/useLiveValue'
 import { toMapEmbedUrl } from '@/shared/map-embed'
 
@@ -57,11 +58,11 @@ export default function MapSection({ data }: { data: SchoolData }) {
                   </div>
                   <div className="flex items-center gap-2.5">
                     <Icon icon="lucide:phone" className="text-tb-secondary text-[15px] w-[18px] shrink-0" />
-                    <span data-edit="contact.phone.0" className="text-[13px] text-slate-600">{contact.phone[0]}</span>
+                    <span data-edit="contact.phone.0.value" className="text-[13px] text-slate-600">{contactEntryValue(contact.phone[0])}</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <Icon icon="lucide:mail" className="text-tb-secondary text-[15px] w-[18px] shrink-0" />
-                    <span data-edit="contact.email.0" className="text-[13px] text-slate-600 truncate">{contact.email[0]}</span>
+                    <span data-edit="contact.email.0.value" className="text-[13px] text-slate-600 truncate">{contactEntryValue(contact.email[0])}</span>
                   </div>
                 </div>
               </div>

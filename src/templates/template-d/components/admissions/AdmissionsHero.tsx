@@ -2,6 +2,7 @@
 
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
+import { contactEntryValue } from '@/lib/contact-entry'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { Eyebrow } from '../common/Bits'
 import StartApplicationLink from '@/shared/StartApplicationLink'
@@ -18,7 +19,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
   const admissions = data.admissions
   const steps = useLiveList('admissions.process.steps', admissions?.process?.steps ?? [])
   const highlights = useLiveList('admissions.highlights', admissions?.highlights ?? [])
-  const phone = data.contact?.phone?.[0]
+  const phone = contactEntryValue(data.contact?.phone?.[0])
   if (!admissions) return null
 
   return (
@@ -101,7 +102,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
         />
         {phone && (
           <p className="m-0 mt-4 text-[12.5px] leading-[1.5] text-td-faint">
-            Or call admissions on <span data-bind="contact.phone.0">{phone}</span>.
+            Or call admissions on <span data-bind="contact.phone.0.value">{phone}</span>.
           </p>
         )}
       </aside>

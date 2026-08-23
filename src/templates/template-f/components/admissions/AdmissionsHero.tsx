@@ -2,6 +2,7 @@
 
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
+import { contactEntryValue } from '@/lib/contact-entry'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { Eyebrow } from '../common/Bits'
 import StartApplicationLink from '@/shared/StartApplicationLink'
@@ -29,8 +30,8 @@ export default function AdmissionsHero({
   // In the EDITOR an unset number still renders its (blank) row so it can be
   // filled in — the same rule the footer follows. On the live site an empty
   // value simply doesn't render.
-  const phone = data.contact?.phone?.[0] ?? (editing ? '' : undefined)
-  const email = data.contact?.email?.[0] ?? (editing ? '' : undefined)
+  const phone = contactEntryValue(data.contact?.phone?.[0]) || (editing ? '' : undefined)
+  const email = contactEntryValue(data.contact?.email?.[0]) || (editing ? '' : undefined)
   if (!admissions) return null
 
   return (
@@ -64,7 +65,7 @@ export default function AdmissionsHero({
               <Icon icon="lucide:phone" className="h-[17px] w-[17px] shrink-0 text-tf-accent" />
               {/* Editable in place: the number families call is the one thing on
                   this page a school changes without touching anything else. */}
-              <span data-edit="contact.phone.0">{phone}</span>
+              <span data-edit="contact.phone.0.value">{phone}</span>
             </a>
           </div>
           )}
@@ -78,7 +79,7 @@ export default function AdmissionsHero({
                 className="flex items-center gap-2.5 text-[19px] tracking-[-0.02em] text-tf-ink transition-colors hover:text-tf-accent"
               >
                 <Icon icon="lucide:mail" className="h-[17px] w-[17px] shrink-0 text-tf-accent" />
-                <span data-edit="contact.email.0">{email}</span>
+                <span data-edit="contact.email.0.value">{email}</span>
               </a>
             </div>
           )}

@@ -17,6 +17,7 @@ export type PageType =
   | 'admissions-status'
   | 'contact'
   | 'updates'
+  | 'facilities'
 
 export type TemplateId =
   | 'template-a'
@@ -39,6 +40,25 @@ export interface TemplateConfig {
    * content blob. Empty → the platform default favicon.
    */
   favicon?: string
+  /** Whether the optional public page set is enabled for this school. */
+  extended_pages?: boolean
+}
+
+// ── Facilities ──
+
+export interface FacilityItem {
+  name: string
+  description: string
+  image?: string
+  highlights?: string[]
+}
+
+export interface FacilitiesData {
+  title: string
+  subtitle?: string
+  description?: string
+  heroImage?: string
+  items?: FacilityItem[]
 }
 
 // ── Website Identity (education.education.api.get_website_registration) ──
@@ -315,8 +335,8 @@ export interface ContactData {
   /** Campus photo shown in the Contact page hero. */
   image?: string
   address: string
-  phone: string[]
-  email: string[]
+  phone: (string | { label?: string; value: string })[]
+  email: (string | { label?: string; value: string })[]
   mapUrl?: string
   mapEmbedUrl?: string
   coordinates?: {
@@ -582,6 +602,8 @@ export interface SchoolData {
   admissions: AdmissionsData
   contact: ContactData
   updates: UpdatesData
+  /** Optional campus facilities page, enabled through Website Management. */
+  facilities?: FacilitiesData
   /**
    * Updates PAGE header copy. Lives OUTSIDE `updates` because that key is
    * server-owned (announcements/events are folded into it on every read,
