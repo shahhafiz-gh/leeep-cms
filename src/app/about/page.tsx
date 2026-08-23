@@ -1,6 +1,6 @@
 import { headers } from 'next/headers'
 import type { Metadata } from 'next'
-import { getSiteData, resolveSchool, isEditPreview, type RouteSearchParams } from '@/lib/cms'
+import { getSiteData, resolveSchool, isEditPreview, resolvePreviewMode, resolvePreviewToken, type RouteSearchParams } from '@/lib/cms'
 import { renderTemplate } from '@/lib/render-template'
 import { buildMetadata } from '@/lib/metadata'
 import InlineEditLayer from '@/shared/InlineEditLayer'
@@ -24,7 +24,7 @@ export default async function AboutPage({ searchParams }: PageProps) {
   // fetching is wired later. The inline-edit layer is capture-only, so published
   // content is a correct base to edit against (mirrors the home route). In the
   // editor, renderTemplate swaps in full demo content (see renderTemplate).
-  const data = await getSiteData(school, 'published')
+  const data = await getSiteData(school, resolvePreviewMode(sp), resolvePreviewToken(sp))
   return (
     <>
       {renderTemplate(data, 'about', school, editing)}

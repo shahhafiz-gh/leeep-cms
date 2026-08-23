@@ -1,7 +1,7 @@
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getSiteData, resolveSchool, isEditPreview, type RouteSearchParams } from '@/lib/cms'
+import { getSiteData, resolveSchool, isEditPreview, resolvePreviewMode, resolvePreviewToken, type RouteSearchParams } from '@/lib/cms'
 import { renderTemplate } from '@/lib/render-template'
 import { buildMetadata } from '@/lib/metadata'
 import InlineEditLayer from '@/shared/InlineEditLayer'
@@ -26,7 +26,7 @@ export default async function TeamPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const school = resolveSchool(headersList, sp)
   const editing = isEditPreview(sp)
-  const data = await getSiteData(school, 'published')
+  const data = await getSiteData(school, resolvePreviewMode(sp), resolvePreviewToken(sp))
 
   // The backend exposes this navigation item only for schools that opted into
   // the extended page set. Keep direct URL access governed by that same flag.

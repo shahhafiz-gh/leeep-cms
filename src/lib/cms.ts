@@ -98,6 +98,13 @@ export function resolvePreviewMode(searchParams?: RouteSearchParams): SiteMode {
   return isEditPreview(searchParams) ? 'draft' : 'published'
 }
 
+/** Return the signed token only for a validated editor-preview request. */
+export function resolvePreviewToken(searchParams?: RouteSearchParams): string | undefined {
+  if (!isEditPreview(searchParams)) return undefined
+  const raw = searchParams?.token
+  return Array.isArray(raw) ? raw[0] : raw
+}
+
 /**
  * Whether the request is an editor PREVIEW — `?preview=1&token=<signed token>`.
  * This is the SAME token mechanism as `resolvePreviewMode`; it is exposed
@@ -112,10 +119,9 @@ export function resolvePreviewMode(searchParams?: RouteSearchParams): SiteMode {
  * signature naming the school being previewed. The secret never reaches a
  * browser; leaked preview URLs go stale on expiry.
  *
- * Why decoupled from the content fetch: fetching draft content requires
- * server-side auth to Frappe (the editor's session), which is wired in a later
- * step. Until then the editor preview renders PUBLISHED content with the edit
- * layer on top — capture only, nothing is saved.
+ * The validated token is also forwarded server-to-server to Frappe when draft
+ * content is requested. Frappe validates the same short-lived proof before it
+ * returns any unpublished data.
  */
 export function isEditPreview(searchParams?: RouteSearchParams): boolean {
   const previewRaw = searchParams?.preview
@@ -251,7 +257,7 @@ function pickLocalMock(school: string): SchoolData {
  * fetch per render (same `school`/`mode`).
  */
 export const getSiteData = cache(
-  async (school: string, mode: SiteMode = 'published'): Promise<SchoolData> => {
+  async (school: string, mode: SiteMode = 'published', previewToken?: string): Promise<SchoolData> => {
     if (process.env.USE_LOCAL_DATA === 'true') {
       return pickLocalMock(school)
     }
@@ -259,7 +265,8 @@ export const getSiteData = cache(
     const backend = await resolveBackend()
     const url =
       `${backend}/api/method/${GET_SITE_METHOD}` +
-      `?school=${encodeURIComponent(school)}&mode=${encodeURIComponent(mode)}`
+      `?school=${encodeURIComponent(school)}&mode=${encodeURIComponent(mode)}` +
+      (previewToken ? `&token=${encodeURIComponent(previewToken)}` : '')
 
     try {
       const res = await fetch(url, {

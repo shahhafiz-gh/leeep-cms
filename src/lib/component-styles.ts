@@ -38,6 +38,9 @@ export function styleObject(data: SchoolData, path: string): CSSProperties {
     const def = STYLE_PROPS[prop]
     const value = def?.options[String(id)]
     if (def && value) out[def.css as string] = value
+    else if (prop === 'fontSize' && /^\d+(?:\.\d+)?px$/.test(String(id))) {
+      out.fontSize = String(id)
+    }
   }
   return out as CSSProperties
 }
