@@ -11,6 +11,7 @@
 export type PageType =
   | 'home'
   | 'about'
+  | 'team'
   | 'academics'
   | 'admissions'
   | 'admissions-apply'
@@ -59,6 +60,8 @@ export interface FacilitiesData {
   description?: string
   heroImage?: string
   items?: FacilityItem[]
+  /** Server-owned switch for the optional facilities/team/downloads page set. */
+  extended_pages?: boolean
 }
 
 // ── Website Identity (education.education.api.get_website_registration) ──
@@ -192,6 +195,30 @@ export interface AboutData {
     description: string
     items: { title: string; description: string; image?: string }[]
   }
+}
+
+// ── Team ──
+
+export interface TeamMember {
+  name: string
+  role: string
+  department?: string
+  image?: string
+  qualification?: string
+  bio?: string
+}
+
+export interface TeamData {
+  title: string
+  subtitle?: string
+  description?: string
+  message?: {
+    name?: string
+    role?: string
+    image?: string
+    content?: string
+  }
+  members?: TeamMember[]
 }
 
 /** Home-only "About our school" teaser content (Template A). Separate from
@@ -595,6 +622,8 @@ export interface SchoolData {
 
   hero: HeroData
   about: AboutData
+  /** Optional About → Team page, enabled by `config.extended_pages`. */
+  team?: TeamData
   /** Home-only "About our school" teaser (Template A) — independent of the
    *  About page so editing it never changes the About page. */
   homeAbout?: HomeAboutData

@@ -212,6 +212,28 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
       ],
     },
 
+    team: {
+      title: 'The people who make learning personal',
+      subtitle: 'Our people',
+      description:
+        'We are educators, mentors, specialists, and school leaders brought together by one shared belief: children flourish when they are known, challenged, and cared for. Our different experiences make the school stronger; our common purpose keeps us moving in the same direction.',
+      message: {
+        name: 'Dr. P. Rao',
+        role: 'Principal',
+        image: avatar(60),
+        content:
+          'A school is built one relationship at a time. Our work is to create the trust, curiosity, and sense of belonging that let every learner do their best work.',
+      },
+      members: [
+        { name: 'Dr. P. Rao', role: 'Principal', department: 'Leadership', image: avatar(60), qualification: 'Ph.D. · M.Ed.', bio: 'Leads the school community with a focus on thoughtful teaching and student wellbeing.' },
+        { name: 'Ms. S. Iyer', role: 'Head of Science', department: 'Academics', image: avatar(45), qualification: 'M.Sc. · B.Ed.', bio: 'Builds inquiry-led science experiences that turn questions into confident discovery.' },
+        { name: 'Mr. K. Nair', role: 'Sports Coordinator', department: 'Student Life', image: avatar(51), qualification: 'B.P.Ed.', bio: 'Helps students grow through movement, teamwork, resilience, and joyful competition.' },
+        { name: 'Ms. A. Sen', role: 'Early Years Lead', department: 'Early Years', image: avatar(47), qualification: 'M.A. · ECCE', bio: 'Creates warm, play-rich classrooms where young learners feel safe to explore.' },
+        { name: 'Mr. R. Das', role: 'School Counsellor', department: 'Student Support', image: avatar(12), qualification: 'M.A. Psychology', bio: 'Works alongside families and teachers to support every student’s sense of belonging.' },
+        { name: 'Ms. N. Kapoor', role: 'Arts Lead', department: 'Creative Arts', image: avatar(32), qualification: 'M.F.A.', bio: 'Makes the arts a vivid part of daily school life and a language for self-expression.' },
+      ],
+    },
+
     academics: {
       title: 'Academics',
       subtitle: 'Curiosity meets rigour',
@@ -498,7 +520,14 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
     navigation: [
       { label: 'Home', href: demoHref('') },
       { label: 'Updates', href: demoHref('/updates') },
-      { label: 'About', href: demoHref('/about') },
+      {
+        label: 'About',
+        href: demoHref('/about'),
+        children: [
+          { label: 'About School', href: demoHref('/about') },
+          { label: 'Team', href: demoHref('/about/team') },
+        ],
+      },
       { label: 'Academics', href: demoHref('/academics') },
       { label: 'Admissions', href: demoHref('/admissions') },
       { label: 'Contact', href: demoHref('/contact') },
