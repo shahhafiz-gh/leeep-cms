@@ -19,6 +19,7 @@ export type PageType =
   | 'contact'
   | 'updates'
   | 'facilities'
+  | 'gallery'
 
 export type TemplateId =
   | 'template-a'
@@ -467,6 +468,22 @@ export interface GalleryData {
   images: GalleryImage[]
 }
 
+export interface GalleryAlbum {
+  title: string
+  date?: string
+  cover?: string
+  images?: GalleryImage[]
+}
+
+export interface GalleryPageData {
+  title?: string
+  subtitle?: string
+  description?: string
+  showEventPhotos?: 'yes' | 'no' | ''
+  images?: GalleryImage[]
+  albums?: GalleryAlbum[]
+}
+
 // ── Faculty ──
 
 export interface FacultyMember {
@@ -655,6 +672,8 @@ export interface SchoolData {
   /** School magazine issues. */
   magazine?: MagazineData
   gallery: GalleryData
+  /** Optional standalone gallery page, enabled with the extended page set. */
+  galleryPage?: GalleryPageData
   faculty: FacultyMember[]
   alumni?: AlumniData[]
   programs?: ProgramData[]

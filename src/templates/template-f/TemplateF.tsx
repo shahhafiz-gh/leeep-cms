@@ -9,6 +9,7 @@ import AdmissionsStatusView from './views/AdmissionsStatusView'
 import ContactView from './views/ContactView'
 import UpdatesView from './views/UpdatesView'
 import FacilitiesView from './views/FacilitiesView'
+import { AlmanacGalleryView } from '@/shared/views/GalleryViews'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import StyleHydrator from '@/shared/StyleHydrator'
@@ -30,6 +31,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
   contact: ContactView,
   updates: UpdatesView,
   facilities: FacilitiesView,
+  gallery: AlmanacGalleryView,
 }
 
 /**
