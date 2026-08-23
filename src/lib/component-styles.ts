@@ -13,11 +13,20 @@ import type { SchoolData } from '@/types/school.types'
 export const STYLE_PROPS: Record<string, { css: keyof CSSProperties; options: Record<string, string> }> = {
   align: { css: 'textAlign', options: { left: 'left', center: 'center', right: 'right' } },
   wrap: { css: 'whiteSpace', options: { on: 'normal', off: 'nowrap' } },
+  fontSize: {
+    css: 'fontSize',
+    options: {
+      small: '0.875em',
+      medium: '1em',
+      large: '1.125em',
+      xlarge: '1.25em',
+    },
+  },
 }
 
 /** Which style paths are styleable, and with which props. */
 export const STYLEABLE: Record<string, string[]> = {
-  name: ['align', 'wrap'],
+  name: ['align', 'wrap', 'fontSize'],
 }
 
 /** Resolve a component's saved style ids into an inline-style object. */

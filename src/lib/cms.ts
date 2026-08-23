@@ -170,12 +170,15 @@ const EDITOR_NAV: { label: string; href: string }[] = [
  */
 export function withEditorNavigation(data: SchoolData): SchoolData {
   const existing = data.navigation ?? []
+  const editorNav = data.config?.extended_pages
+    ? [...EDITOR_NAV, { label: 'Facilities', href: '/facilities' }]
+    : EDITOR_NAV
   const norm = (href: string) => href.replace(/\/+$/, '') || '/'
   const byHref = new Map(existing.map((item) => [norm(item.href), item]))
   // Canonical pages first — reuse the school's own entry when it has one.
-  const ordered = EDITOR_NAV.map((page) => byHref.get(norm(page.href)) ?? page)
+  const ordered = editorNav.map((page) => byHref.get(norm(page.href)) ?? page)
   // Keep any non-standard custom links the school added, after the canonical set.
-  const canonical = new Set(EDITOR_NAV.map((page) => norm(page.href)))
+  const canonical = new Set(editorNav.map((page) => norm(page.href)))
   const extras = existing.filter((item) => !canonical.has(norm(item.href)))
   return { ...data, navigation: [...ordered, ...extras] }
 }

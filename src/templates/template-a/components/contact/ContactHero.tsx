@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
+import { contactEntryValue } from '@/lib/contact-entry'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 
@@ -12,8 +13,8 @@ export default function ContactHero({ data }: { data: SchoolData }) {
   // immediately (data-edit patching alone can't create/remove DOM nodes).
   const highlights = useLiveList('contact.highlights', contact.highlights ?? [])
   const quickInfo = [
-    { icon: 'lucide:phone', label: contact.phone[0], path: 'contact.phone.0' },
-    { icon: 'lucide:mail', label: contact.email[0], path: 'contact.email.0' },
+    { icon: 'lucide:phone', label: contactEntryValue(contact.phone[0]), path: 'contact.phone.0.value' },
+    { icon: 'lucide:mail', label: contactEntryValue(contact.email[0]), path: 'contact.email.0.value' },
     { icon: 'lucide:clock', label: contact.workingHours ?? 'Mon-Sat: 9AM - 4PM', path: 'contact.workingHours' },
   ].filter((i) => i.label)
 

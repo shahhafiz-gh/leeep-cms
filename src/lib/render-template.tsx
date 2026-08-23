@@ -1,3 +1,4 @@
+import type React from 'react'
 import type { PageType, SchoolData } from '@/types/school.types'
 import { withEditorNavigation } from '@/lib/cms'
 import { getEditorDemoData } from '@/lib/demo'
@@ -7,6 +8,36 @@ import TemplateC from '@/templates/template-c/TemplateC'
 import TemplateD from '@/templates/template-d/TemplateD'
 import TemplateE from '@/templates/template-e/TemplateE'
 import TemplateF from '@/templates/template-f/TemplateF'
+import { styleObject } from '@/lib/component-styles'
+
+function styleSelector(path: string) {
+  const escaped = path.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+  return `[data-style="${escaped}"],[data-edit="${escaped}"],[data-bind="${escaped}"]`
+}
+
+function styleCss(data: SchoolData) {
+  return Object.keys(data.styles ?? {})
+    .map((path) => {
+      const styles = styleObject(data, path) as Record<string, string | number>
+      const declarations = Object.entries(styles)
+        .map(([key, value]) => `${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}:${value}`)
+        .join(';')
+      return declarations ? `${styleSelector(path)}{${declarations}}` : ''
+    })
+    .filter(Boolean)
+    .join('\n')
+}
+
+function withSavedStyles(node: React.ReactNode, data: SchoolData) {
+  const css = styleCss(data)
+  if (!css) return node
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      {node}
+    </>
+  )
+}
 
 /**
  * Render the correct template for a school's data.
@@ -60,19 +91,19 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
     // Carry over saved per-component style overrides so the scaffold reflects them
     // on load (the builder also re-applies them live via apply-style).
     if (data.styles) editorData.styles = data.styles
-    if (templateId === 'template-b') return <TemplateB data={editorData} page={page} editing />
-    if (templateId === 'template-c') return <TemplateC data={editorData} page={page} editing />
-    if (templateId === 'template-d') return <TemplateD data={editorData} page={page} editing />
-    if (templateId === 'template-e') return <TemplateE data={editorData} page={page} editing />
-    if (templateId === 'template-f') return <TemplateF data={editorData} page={page} editing />
-    return <TemplateA data={editorData} page={page} editing />
+    if (templateId === 'template-b') return withSavedStyles(<TemplateB data={editorData} page={page} editing />, editorData)
+    if (templateId === 'template-c') return withSavedStyles(<TemplateC data={editorData} page={page} editing />, editorData)
+    if (templateId === 'template-d') return withSavedStyles(<TemplateD data={editorData} page={page} editing />, editorData)
+    if (templateId === 'template-e') return withSavedStyles(<TemplateE data={editorData} page={page} editing />, editorData)
+    if (templateId === 'template-f') return withSavedStyles(<TemplateF data={editorData} page={page} editing />, editorData)
+    return withSavedStyles(<TemplateA data={editorData} page={page} editing />, editorData)
   }
 
-  if (templateId === 'template-b') return <TemplateB data={data} page={page} />
-  if (templateId === 'template-c') return <TemplateC data={data} page={page} />
-  if (templateId === 'template-d') return <TemplateD data={data} page={page} />
-  if (templateId === 'template-e') return <TemplateE data={data} page={page} />
-  if (templateId === 'template-f') return <TemplateF data={data} page={page} />
+  if (templateId === 'template-b') return withSavedStyles(<TemplateB data={data} page={page} />, data)
+  if (templateId === 'template-c') return withSavedStyles(<TemplateC data={data} page={page} />, data)
+  if (templateId === 'template-d') return withSavedStyles(<TemplateD data={data} page={page} />, data)
+  if (templateId === 'template-e') return withSavedStyles(<TemplateE data={data} page={page} />, data)
+  if (templateId === 'template-f') return withSavedStyles(<TemplateF data={data} page={page} />, data)
 
   if (templateId !== 'template-a') {
     console.warn(
@@ -80,5 +111,5 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
         `school="${school}"; defaulting to template-a.`,
     )
   }
-  return <TemplateA data={data} page={page} />
+  return withSavedStyles(<TemplateA data={data} page={page} />, data)
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import type { SchoolData } from '@/types/school.types'
+import { contactEntryValue } from '@/lib/contact-entry'
 import { useLiveValue } from '@/shared/hooks/useLiveValue'
 import { toMapEmbedUrl } from '@/shared/map-embed'
 import Photo from '../common/Photo'
@@ -20,8 +21,8 @@ export default function ContactSection({ data }: { data: SchoolData }) {
 
   const mapUrl = toMapEmbedUrl(rawMap)
   const rows = [
-    ...(contact.phone ?? []).map((p, i) => ({ label: 'Telephone', value: p, path: `contact.phone.${i}`, href: `tel:${p}` })),
-    ...(contact.email ?? []).map((e, i) => ({ label: 'Email', value: e, path: `contact.email.${i}`, href: `mailto:${e}` })),
+    ...(contact.phone ?? []).map((p, i) => ({ label: 'Telephone', value: contactEntryValue(p), path: `contact.phone.${i}.value`, href: `tel:${contactEntryValue(p)}` })),
+    ...(contact.email ?? []).map((e, i) => ({ label: 'Email', value: contactEntryValue(e), path: `contact.email.${i}.value`, href: `mailto:${contactEntryValue(e)}` })),
     ...(contact.visitingHours ?? []).map((v, i) => ({
       label: v.label,
       value: v.time,

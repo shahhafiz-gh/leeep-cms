@@ -7,6 +7,16 @@ import { toMapEmbedUrl } from '@/shared/map-embed'
 import Photo from '../common/Photo'
 import { Container } from '../common/Bits'
 
+type ContactEntry = string | { label?: string; value?: string }
+
+function entryValue(entry: ContactEntry) {
+  return typeof entry === 'string' ? entry : entry?.value || ''
+}
+
+function entryLabel(entry: ContactEntry) {
+  return typeof entry === 'string' ? '' : entry?.label || ''
+}
+
 /**
  * Contact — an address block and a ruled department register beside the map.
  *
@@ -33,16 +43,28 @@ export default function ContactSection({ data }: { data: SchoolData }) {
           <div className="text-[15.5px] leading-[1.8] text-te-body">
             <div data-bind="name" className="text-te-ink">{data.name}</div>
             <div data-edit="contact.address" className="whitespace-pre-line">{contact.address}</div>
-            {(contact.phone ?? []).map((p, i) => (
-              <div key={p}>
-                <a href={`tel:${p}`} data-bind={`contact.phone.${i}`} className="text-te-accent hover:underline">{p}</a>
+            {(contact.phone ?? []).map((p, i) => {
+              const value = entryValue(p)
+              const label = entryLabel(p)
+              if (!value && !label) return null
+              return (
+              <div key={`phone-${i}`} className="flex flex-wrap gap-x-2">
+                {label && <span data-edit={`contact.phone.${i}.label`} className="text-te-ink">{label}:</span>}
+                <a href={`tel:${value}`} data-bind={`contact.phone.${i}.value`} className="text-te-accent hover:underline">{value}</a>
               </div>
-            ))}
-            {(contact.email ?? []).map((e, i) => (
-              <div key={e}>
-                <a href={`mailto:${e}`} data-bind={`contact.email.${i}`} className="break-words text-te-accent hover:underline">{e}</a>
+              )
+            })}
+            {(contact.email ?? []).map((e, i) => {
+              const value = entryValue(e)
+              const label = entryLabel(e)
+              if (!value && !label) return null
+              return (
+              <div key={`email-${i}`} className="flex flex-wrap gap-x-2">
+                {label && <span data-edit={`contact.email.${i}.label`} className="text-te-ink">{label}:</span>}
+                <a href={`mailto:${value}`} data-bind={`contact.email.${i}.value`} className="break-words text-te-accent hover:underline">{value}</a>
               </div>
-            ))}
+              )
+            })}
           </div>
 
           {hours.length > 0 && (

@@ -129,13 +129,12 @@ export default function InlineEditLayer() {
         })
       })
     }
-    // Per-component STYLE overrides (align / wrap / …) keyed by style path, applied
-    // as inline styles on [data-style="<path>"]. Re-asserted like text so a
-    // framework re-render doesn't drop them.
+    // Per-component/text STYLE overrides keyed by style path, applied as inline
+    // styles on explicit style hooks and ordinary editable text hooks.
     const styleOverrides = new Map<string, Record<string, string>>()
     const reassertStyle = () => {
       styleOverrides.forEach((styleObj, path) => {
-        document.querySelectorAll<HTMLElement>(`[data-style="${path}"]`).forEach((el) => {
+        document.querySelectorAll<HTMLElement>(`[data-style="${path}"],[data-edit="${path}"],[data-bind="${path}"]`).forEach((el) => {
           Object.assign(el.style, styleObj)
         })
       })
@@ -652,13 +651,15 @@ export default function InlineEditLayer() {
         return
       }
 
-      // Per-component STYLE override (curated align / wrap / … presets) → apply
-      // as inline styles on every [data-style="<path>"] element, and remember it
-      // so a re-render can't drop it.
+      // Per-component/text STYLE override (curated presets) → apply as inline
+      // styles and remember it so a re-render can't drop it.
       if (msg.type === 'apply-style') {
         const styleObj = (msg.value && typeof msg.value === 'object') ? (msg.value as Record<string, string>) : {}
         styleOverrides.set(msg.path, styleObj)
-        document.querySelectorAll<HTMLElement>(sel('data-style')).forEach((el) => {
+        document.querySelectorAll<HTMLElement>(`${sel('data-style')},${sel('data-edit')},${sel('data-bind')}`).forEach((el) => {
+          el.style.fontSize = ''
+          el.style.textAlign = ''
+          el.style.whiteSpace = ''
           Object.assign(el.style, styleObj)
         })
         return

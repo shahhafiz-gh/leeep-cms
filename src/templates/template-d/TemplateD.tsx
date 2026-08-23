@@ -7,9 +7,11 @@ import AdmissionsApplyView from './views/AdmissionsApplyView'
 import AdmissionsStatusView from './views/AdmissionsStatusView'
 import ContactView from './views/ContactView'
 import UpdatesView from './views/UpdatesView'
+import FacilitiesView from './views/FacilitiesView'
 import TeamView from '@/shared/views/TeamView'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+import StyleHydrator from '@/shared/StyleHydrator'
 
 interface TemplateProps {
   data: SchoolData
@@ -27,6 +29,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   'admissions-status': AdmissionsStatusView,
   contact: ContactView,
   updates: UpdatesView,
+  facilities: FacilitiesView,
 }
 
 /**
@@ -54,6 +57,7 @@ export default function TemplateD({ data, page, editing = false }: TemplateProps
         <PageComponent data={data} />
       </main>
       <Footer data={data} editing={editing} />
+      <StyleHydrator data={data} />
     </div>
   )
 }

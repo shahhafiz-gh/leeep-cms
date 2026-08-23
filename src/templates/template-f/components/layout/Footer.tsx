@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { styleObject } from '@/lib/component-styles'
+import { contactEntryValue } from '@/lib/contact-entry'
 
 /**
  * Almanac footer — a hairline rule, a brand block, and link columns.
@@ -65,7 +66,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               <div data-edit="contact.address">{contact.address}</div>
             )}
             {phones.map((p, i) => (
-              <div key={`phone-${i}`} data-edit={`contact.phone.${i}`}>{p}</div>
+              <div key={`phone-${i}`} data-edit={`contact.phone.${i}.value`}>{contactEntryValue(p)}</div>
             ))}
           </div>
 
@@ -123,11 +124,11 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
           {emails.map((e, i) => (
             <a
               key={`email-${i}`}
-              href={e ? `mailto:${e}` : undefined}
-              data-edit={`contact.email.${i}`}
+              href={contactEntryValue(e) ? `mailto:${contactEntryValue(e)}` : undefined}
+              data-edit={`contact.email.${i}.value`}
               className="text-[15px] break-words text-tf-body transition-colors hover:text-tf-accent"
             >
-              {e}
+              {contactEntryValue(e)}
             </a>
           ))}
           {(contact.workingHours || editing) && (

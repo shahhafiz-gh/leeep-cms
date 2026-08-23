@@ -11,9 +11,11 @@ import AdmissionsApplyView from '../template-a/views/AdmissionsApplyView'
 import AdmissionsStatusView from '../template-a/views/AdmissionsStatusView'
 import ContactView from '../template-a/views/ContactView'
 import UpdatesView from '../template-a/views/UpdatesView'
+import FacilitiesView from '../template-a/views/FacilitiesView'
 import TeamView from '@/shared/views/TeamView'
 import Header from '../template-a/components/layout/Header'
 import Footer from '../template-a/components/layout/Footer'
+import StyleHydrator from '@/shared/StyleHydrator'
 
 interface TemplateProps {
   data: SchoolData
@@ -31,6 +33,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   'admissions-status': AdmissionsStatusView,
   contact: ContactView,
   updates: UpdatesView,
+  facilities: FacilitiesView,
 }
 
 /**
@@ -53,6 +56,7 @@ export default function TemplateC({ data, page, editing = false }: TemplateProps
         <PageComponent data={data} />
       </main>
       <Footer data={data} editing={editing} />
+      <StyleHydrator data={data} />
     </div>
   )
 }

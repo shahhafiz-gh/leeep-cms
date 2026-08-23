@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { styleObject } from '@/lib/component-styles'
+import { contactEntryValue } from '@/lib/contact-entry'
 
 export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   const isHomeRoute = usePathname() === '/'
@@ -137,11 +138,11 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
                 <li key={`phone-${pi}`} className="flex items-center gap-3">
                   <Icon icon="lucide:smartphone" className="text-ta-inverse-primary w-5 h-5" />
                   <a
-                    href={p ? `tel:${p}` : undefined}
-                    data-edit={`contact.phone.${pi}`}
+                    href={contactEntryValue(p) ? `tel:${contactEntryValue(p)}` : undefined}
+                    data-edit={`contact.phone.${pi}.value`}
                     className="text-ta-outline-variant text-sm hover:text-ta-inverse-primary transition-colors"
                   >
-                    {p}
+                    {contactEntryValue(p)}
                   </a>
                 </li>
               ))}
@@ -149,11 +150,11 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
                 <li key={`email-${ei}`} className="flex items-center gap-3">
                   <Icon icon="lucide:mail" className="text-ta-inverse-primary w-5 h-5" />
                   <a
-                    href={e ? `mailto:${e}` : undefined}
-                    data-edit={`contact.email.${ei}`}
+                    href={contactEntryValue(e) ? `mailto:${contactEntryValue(e)}` : undefined}
+                    data-edit={`contact.email.${ei}.value`}
                     className="text-ta-outline-variant text-sm underline underline-offset-4 hover:text-ta-inverse-primary transition-colors"
                   >
-                    {e}
+                    {contactEntryValue(e)}
                   </a>
                 </li>
               ))}
