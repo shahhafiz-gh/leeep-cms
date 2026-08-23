@@ -152,10 +152,10 @@
    * A printed-prospectus palette: one paper, one ink, one brick accent, and a
    * ladder of hairline rules. Nothing here is a "surface container" — the design
    * separates things with 1px rules, not with fills or shadows. */
-  --color-te-paper: #f8f6f1;          /* page */
+  --color-te-paper: #eee9de;          /* page */
   --color-te-white: #ffffff;          /* form fields, inset cards */
   --color-te-panel: #f3efe5;          /* tinted band (stats, feature cells) */
-  --color-te-panel-alt: #eee9de;      /* hover fill on ghost buttons */
+  --color-te-panel-alt: #f8f6f1;      /* navbar and alternate surface */
   --color-te-rule: #d9d2c4;           /* the hairline that does all the work */
   --color-te-rule-strong: #b9b0a0;    /* input borders */
 
