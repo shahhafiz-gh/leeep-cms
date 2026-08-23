@@ -34,6 +34,7 @@ interface DemoProps {
 const SLUG_TO_PAGE: Record<string, PageType> = {
   '': 'home',
   about: 'about',
+  'about/team': 'team',
   academics: 'academics',
   admissions: 'admissions',
   // The application form and the status lookup are their own pages, so the demo

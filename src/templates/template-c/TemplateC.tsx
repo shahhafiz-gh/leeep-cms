@@ -11,6 +11,7 @@ import AdmissionsApplyView from '../template-a/views/AdmissionsApplyView'
 import AdmissionsStatusView from '../template-a/views/AdmissionsStatusView'
 import ContactView from '../template-a/views/ContactView'
 import UpdatesView from '../template-a/views/UpdatesView'
+import TeamView from '@/shared/views/TeamView'
 import Header from '../template-a/components/layout/Header'
 import Footer from '../template-a/components/layout/Footer'
 
@@ -23,6 +24,7 @@ interface TemplateProps {
 const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   home: HomeView,
   about: AboutView,
+  team: TeamView,
   academics: AcademicsView,
   admissions: AdmissionsView,
   'admissions-apply': AdmissionsApplyView,

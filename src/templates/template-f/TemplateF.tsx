@@ -1,6 +1,7 @@
 import type { SchoolData, PageType } from '@/types/school.types'
 import HomeView from './views/HomeView'
 import AboutView from './views/AboutView'
+import TeamView from './views/TeamView'
 import AcademicsView from './views/AcademicsView'
 import AdmissionsView from './views/AdmissionsView'
 import AdmissionsApplyView from './views/AdmissionsApplyView'
@@ -19,6 +20,7 @@ interface TemplateProps {
 const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?: boolean }>> = {
   home: HomeView,
   about: AboutView,
+  team: TeamView,
   academics: AcademicsView,
   admissions: AdmissionsView,
   'admissions-apply': AdmissionsApplyView,
