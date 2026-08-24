@@ -1,7 +1,7 @@
 'use client'
 
 import type { SchoolData } from '@/types/school.types'
-import { contactEntryValue } from '@/lib/contact-entry'
+import { contactEntryLabel, contactEntryValue } from '@/lib/contact-entry'
 import { useLiveValue } from '@/shared/hooks/useLiveValue'
 import { toMapEmbedUrl } from '@/shared/map-embed'
 import Photo from '../common/Photo'
@@ -21,10 +21,23 @@ export default function ContactSection({ data }: { data: SchoolData }) {
 
   const mapUrl = toMapEmbedUrl(rawMap)
   const rows = [
-    ...(contact.phone ?? []).map((p, i) => ({ label: 'Telephone', value: contactEntryValue(p), path: `contact.phone.${i}.value`, href: `tel:${contactEntryValue(p)}` })),
-    ...(contact.email ?? []).map((e, i) => ({ label: 'Email', value: contactEntryValue(e), path: `contact.email.${i}.value`, href: `mailto:${contactEntryValue(e)}` })),
+    ...(contact.phone ?? []).map((p, i) => ({
+      label: contactEntryLabel(p) || 'Telephone',
+      labelPath: `contact.phone.${i}.label`,
+      value: contactEntryValue(p),
+      path: `contact.phone.${i}.value`,
+      href: `tel:${contactEntryValue(p)}`,
+    })),
+    ...(contact.email ?? []).map((e, i) => ({
+      label: contactEntryLabel(e) || 'Email',
+      labelPath: `contact.email.${i}.label`,
+      value: contactEntryValue(e),
+      path: `contact.email.${i}.value`,
+      href: `mailto:${contactEntryValue(e)}`,
+    })),
     ...(contact.visitingHours ?? []).map((v, i) => ({
       label: v.label,
+      labelPath: `contact.visitingHours.${i}.label`,
       value: v.time,
       path: `contact.visitingHours.${i}.time`,
       href: undefined,
@@ -57,7 +70,7 @@ export default function ContactSection({ data }: { data: SchoolData }) {
                 key={`${row.path}-${i}`}
                 className="grid grid-cols-1 gap-1 border-b border-tf-border py-5 sm:grid-cols-[190px_1fr] sm:gap-6"
               >
-                <div className="text-[14px] font-semibold text-tf-ink">{row.label}</div>
+                <div data-edit={row.labelPath} className="text-[14px] font-semibold text-tf-ink">{row.label}</div>
                 {row.href ? (
                   <a href={row.href} data-bind={row.path} className="text-[15px] text-tf-accent break-words">
                     {row.value}

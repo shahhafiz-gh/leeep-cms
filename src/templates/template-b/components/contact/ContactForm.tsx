@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
-import { contactEntryValue } from '@/lib/contact-entry'
+import { contactEntryLabel, contactEntryValue } from '@/lib/contact-entry'
 
 const inputClass =
   'w-full px-4 py-3 border-[1.5px] border-tb-line rounded-lg text-sm text-tb-heading bg-[#fafafa] placeholder:text-slate-400 outline-none focus:border-tb-primary-400 transition-colors'
@@ -14,14 +14,14 @@ const SOCIAL_ICONS: Record<string, string> = {
   linkedin: 'lucide:linkedin',
 }
 
-function InfoRow({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
+function InfoRow({ icon, label, labelPath, children }: { icon: string; label: string; labelPath?: string; children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-3 mb-4">
       <div className="w-11 h-11 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
         <Icon icon={icon} className="text-white text-lg" />
       </div>
       <div>
-        <p className="text-white font-semibold text-[13px] uppercase tracking-wider mb-0.5">{label}</p>
+        <p data-edit={labelPath} className="text-white font-semibold text-[13px] uppercase tracking-wider mb-0.5">{label}</p>
         <div className="text-white/85 text-[15px]">{children}</div>
       </div>
     </div>
@@ -51,18 +51,24 @@ export default function ContactForm({ data }: { data: SchoolData }) {
                   <br />
                   <span data-edit="contact.address">{contact.address}</span>
                 </InfoRow>
-                <InfoRow icon="lucide:phone" label="Phone">
-                  {contact.phone.map((p, i) => {
-                    const value = contactEntryValue(p)
-                    return <a key={i} href={`tel:${value.replace(/\s+/g, '')}`} className="block hover:text-white" data-edit={`contact.phone.${i}.value`}>{value}</a>
-                  })}
-                </InfoRow>
-                <InfoRow icon="lucide:mail" label="Email">
-                  {contact.email.map((e, i) => {
-                    const value = contactEntryValue(e)
-                    return <a key={i} href={`mailto:${value}`} className="block hover:text-white" data-edit={`contact.email.${i}.value`}>{value}</a>
-                  })}
-                </InfoRow>
+                {contact.phone.map((p, i) => {
+                  const value = contactEntryValue(p)
+                  const label = contactEntryLabel(p) || 'Phone'
+                  return (
+                    <InfoRow key={`phone-${i}`} icon="lucide:phone" label={label} labelPath={`contact.phone.${i}.label`}>
+                      <a href={`tel:${value.replace(/\s+/g, '')}`} className="block hover:text-white" data-edit={`contact.phone.${i}.value`}>{value}</a>
+                    </InfoRow>
+                  )
+                })}
+                {contact.email.map((e, i) => {
+                  const value = contactEntryValue(e)
+                  const label = contactEntryLabel(e) || 'Email'
+                  return (
+                    <InfoRow key={`email-${i}`} icon="lucide:mail" label={label} labelPath={`contact.email.${i}.label`}>
+                      <a href={`mailto:${value}`} className="block hover:text-white" data-edit={`contact.email.${i}.value`}>{value}</a>
+                    </InfoRow>
+                  )
+                })}
                 <InfoRow icon="lucide:clock" label="Office Hours">
                   <span data-edit="contact.workingHours">{contact.workingHours ?? 'Mon – Sat: 9 AM – 5 PM'}</span>
                   <span className="block text-white/55 text-[13px]">Sunday: Closed</span>
