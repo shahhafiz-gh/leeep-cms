@@ -28,7 +28,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
   const posted = longDate(announcement?.published_date ?? event?.date)
   const summary = announcement?.short_description ?? event?.description ?? ''
   const image = announcement?.thumbnail ?? event?.image
-  const body = announcement?.content
+  const body = announcement?.content ?? event?.content
 
   return (
     <Container className="py-10 lg:py-14">
@@ -58,7 +58,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
 
         {body ? (
           <div
-            className="mt-6 flex flex-col gap-4 text-[16px] leading-[1.75] text-te-body [&_a]:text-te-accent [&_a]:underline [&_h2]:font-(family-name:--font-te-serif) [&_h2]:text-[24px] [&_h2]:text-te-ink [&_h3]:font-(family-name:--font-te-serif) [&_h3]:text-[20px] [&_h3]:text-te-ink [&_li]:ml-5 [&_li]:list-disc"
+            className="website-rich-content mt-6 text-[16px] leading-[1.75] text-te-body [&_a]:text-te-accent [&_h2]:font-(family-name:--font-te-serif) [&_h2]:text-[24px] [&_h2]:text-te-ink [&_h3]:font-(family-name:--font-te-serif) [&_h3]:text-[20px] [&_h3]:text-te-ink"
             dangerouslySetInnerHTML={{ __html: body }}
           />
         ) : (

@@ -405,6 +405,8 @@ export interface SchoolEvent {
   id: string
   title: string
   description?: string | null
+  /** Formatted full event body; the list only uses the short description. */
+  content?: string | null
   date: string
   end_date?: string | null
   location?: string | null

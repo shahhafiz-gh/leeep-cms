@@ -31,7 +31,7 @@ import {
  *   2. fill the steps the DocType's tabs define
  *   3. accept the declaration and submit
  */
-export function useAdmissionForm() {
+export function useAdmissionForm(contactPhone?: string) {
   const formRef = useRef<HTMLFormElement>(null)
 
   // The admissions page hands over which intake (and often which class) the
@@ -41,7 +41,7 @@ export function useAdmissionForm() {
   const programFromUrl = searchParams?.get('program') ?? ''
 
   const [programs, setPrograms] = useState<AdmissionCriteria[]>([])
-  const [program, setProgram] = useState(programFromUrl)
+  const [program, setProgramState] = useState(programFromUrl)
   const [schema, setSchema] = useState<AdmissionSchema | null>(null)
 
   const [values, setValues] = useState<FormValues>({})
@@ -57,6 +57,12 @@ export function useAdmissionForm() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [showErrors, setShowErrors] = useState(false)
+  const [eligibilityDialogOpen, setEligibilityDialogOpen] = useState(false)
+
+  const setProgram = useCallback((value: string) => {
+    setProgramState(value)
+    if (!value) setSchema(null)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -65,7 +71,7 @@ export function useAdmissionForm() {
       if (cancelled) return
       const open = result?.programs ?? []
       setPrograms(open)
-      setProgram((current) => {
+      setProgramState((current) => {
         // Honour the class carried over from the admissions page, but only if it
         // is genuinely still open — a stale or hand-edited link must not select
         // a class the school is not admitting into.
@@ -81,13 +87,10 @@ export function useAdmissionForm() {
   }, [admissionFromUrl])
 
   useEffect(() => {
-    if (!program) {
-      setSchema(null)
-      return
-    }
+    if (!program) return
     let cancelled = false
-    setLoadingSchema(true)
     ;(async () => {
+      setLoadingSchema(true)
       const criteria = programs.find((entry) => entry.program === program)
       const result = await fetchAdmissionSchema(program, criteria?.academic_year)
       if (cancelled) return
@@ -112,6 +115,10 @@ export function useAdmissionForm() {
 
   const setValue = useCallback((fieldname: string, value: FormValue) => {
     setValues((current) => ({ ...current, [fieldname]: value }))
+    if (fieldname === 'date_of_birth') {
+      setEligibilityDialogOpen(false)
+      setError(null)
+    }
   }, [])
 
   /**
@@ -149,8 +156,8 @@ export function useAdmissionForm() {
 
   /** The class's own age rule, checked while the family is still filling in. */
   const eligibilityError = useMemo(
-    () => ageEligibilityError(criteria, values.date_of_birth as string | undefined),
-    [criteria, values.date_of_birth],
+    () => ageEligibilityError(criteria, values.date_of_birth as string | undefined, contactPhone),
+    [criteria, values.date_of_birth, contactPhone],
   )
 
   const goNext = useCallback(() => {
@@ -162,6 +169,7 @@ export function useAdmissionForm() {
     }
     if (eligibilityError) {
       setError(eligibilityError)
+      setEligibilityDialogOpen(true)
       return
     }
     setError(null)
@@ -189,6 +197,7 @@ export function useAdmissionForm() {
       }
       if (eligibilityError) {
         setError(eligibilityError)
+        setEligibilityDialogOpen(true)
         return
       }
       if (settings?.require_terms_acceptance && !termsAccepted) {
@@ -254,6 +263,8 @@ export function useAdmissionForm() {
     error,
     showErrors,
     eligibilityError,
+    eligibilityDialogOpen,
+    dismissEligibilityDialog: () => setEligibilityDialogOpen(false),
     submit,
   }
 }

@@ -88,7 +88,7 @@ export default function EventsList({ data }: { data: SchoolData }) {
                 </div>
 
                 <div className="mt-auto inline-flex items-center gap-2 text-xs font-bold text-ta-on-surface group-hover:text-ta-primary transition-colors uppercase tracking-wider">
-                  Learn More
+                  Click here to read more
                   <Icon icon="lucide:arrow-right" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>

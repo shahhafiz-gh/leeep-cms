@@ -83,7 +83,7 @@ export default function NewsList({ data }: { data: SchoolData }) {
                   href={`/updates/${featured.id}`}
                   className="inline-flex items-center gap-2 text-tb-primary-400 font-bold text-sm uppercase tracking-wider hover:gap-3 transition-all duration-300"
                 >
-                  Read More <span>→</span>
+                  Click here to read more <span>→</span>
                 </Link>
               </div>
             </div>
@@ -123,6 +123,7 @@ export default function NewsList({ data }: { data: SchoolData }) {
                     <h5 className="font-bold text-[15px] leading-snug text-tb-secondary group-hover:text-tb-primary-400 transition-colors duration-300 line-clamp-2 m-0">
                       {item.title}
                     </h5>
+                    <span className="mt-1 block text-xs font-bold text-tb-primary-400">Click here to read more →</span>
                   </div>
                 </Link>
               ))}

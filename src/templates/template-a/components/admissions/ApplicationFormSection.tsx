@@ -4,6 +4,7 @@ import type { SchoolData } from '@/types/school.types'
 import AdmissionFormBody from '@/shared/AdmissionFormBody'
 import { chrome } from './chrome'
 import { useAdmissionForm } from '@/shared/useAdmissionForm'
+import { contactEntryValue } from '@/lib/contact-entry'
 
 /**
  * Template A's admission application form.
@@ -17,7 +18,7 @@ import { useAdmissionForm } from '@/shared/useAdmissionForm'
  */
 
 export default function ApplicationFormSection({ data }: { data: SchoolData }) {
-  const form = useAdmissionForm()
+  const form = useAdmissionForm(contactEntryValue(data.contact?.phone?.[0]))
 
   return (
     <section id="admission-application-form" className="bg-ta-surface-container-lowest py-16 md:py-24">

@@ -32,9 +32,10 @@ export default function NewsSection({ data }: { data: SchoolData }) {
             <span className="text-[20px] leading-[1.28] font-medium tracking-[-0.02em] text-tf-ink">
               {item.title}
             </span>
-            <span className="text-[14.5px] leading-[1.6] text-tf-muted">
+            <span className="line-clamp-2 text-[14.5px] leading-[1.6] text-tf-muted">
               {item.short_description || item.content?.replace(/<[^>]+>/g, '').slice(0, 140) || ''}
             </span>
+            <span className="mt-auto text-[13.5px] font-semibold text-tf-accent">Click here to read more →</span>
           </Link>
         ))}
       </div>

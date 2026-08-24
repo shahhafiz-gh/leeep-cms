@@ -43,7 +43,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
   const postedDate = formatDate(announcement?.published_date ?? event?.date)
   const summary = announcement?.short_description ?? event?.description ?? ''
   const image = announcement?.thumbnail ?? event?.image
-  const htmlContent = announcement?.content
+  const htmlContent = announcement?.content ?? event?.content
 
   return (
     <main className="bg-ta-surface min-h-screen pt-32 md:pt-40">
@@ -95,7 +95,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
 
             <div className="space-y-6 text-ta-on-surface-variant font-(family-name:--font-ta-body-lg) leading-relaxed">
               {htmlContent ? (
-                <div dangerouslySetInnerHTML={{ __html: htmlContent }} className="prose max-w-none" />
+                <div dangerouslySetInnerHTML={{ __html: htmlContent }} className="website-rich-content prose max-w-none" />
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 px-4 bg-ta-surface-container-low/50 rounded-2xl border-2 border-ta-outline-variant/30 border-dashed">
                   <Icon icon="lucide:file-text" className="text-4xl text-ta-on-surface-variant/40 mb-3" />

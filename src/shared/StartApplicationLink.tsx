@@ -31,9 +31,14 @@ export default function StartApplicationLink({
   const { loading, isOpen, active } = useAdmissionOverview()
   const href = useApplyHref({ admission: active?.name })
 
-  // Say nothing until we know — a button that appears and then vanishes reads
-  // as a glitch, and a premature "closed" would be a lie half the time.
-  if (loading) return null
+  if (loading) {
+    return (
+      <span className={className} role="status" aria-live="polite">
+        <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-2px]" />
+        Checking admissions…
+      </span>
+    )
+  }
 
   if (!isOpen) {
     if (hideWhenClosed) return null

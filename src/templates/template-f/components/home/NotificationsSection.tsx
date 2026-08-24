@@ -72,7 +72,7 @@ export default function NotificationsSection({ data }: { data: SchoolData }) {
         {items.map((n, i) => (
           <Link
             key={`${n.id}-${i}`}
-            href={`/updates#${n.id}`}
+            href={`/updates/${n.id}`}
             tabIndex={clone ? -1 : undefined}
             className="flex items-baseline gap-3 border-r border-tf-border px-6 py-4 text-[14.5px] whitespace-nowrap text-tf-ink transition-colors hover:bg-tf-panel"
           >
@@ -139,7 +139,7 @@ export default function NotificationsSection({ data }: { data: SchoolData }) {
           {items.map((n, i) => (
             <Link
               key={`${n.id}-${i}`}
-              href={`/updates#${n.id}`}
+              href={`/updates/${n.id}`}
               className="flex flex-col gap-3 rounded-[18px] bg-tf-panel p-7 transition-opacity hover:opacity-90"
             >
               <span className="text-[12.5px] tracking-[0.04em] text-tf-faint tabular-nums">
@@ -149,10 +149,11 @@ export default function NotificationsSection({ data }: { data: SchoolData }) {
                 {n.title}
               </span>
               {n.short_description && (
-                <span className="text-[14.5px] leading-[1.55] text-tf-muted">
+                <span className="line-clamp-2 text-[14.5px] leading-[1.55] text-tf-muted">
                   {n.short_description}
                 </span>
               )}
+              <span className="mt-auto text-[13px] font-semibold text-tf-accent">Click here to read more →</span>
             </Link>
           ))}
         </div>
@@ -161,7 +162,7 @@ export default function NotificationsSection({ data }: { data: SchoolData }) {
           {items.map((n, i) => (
             <Link
               key={`${n.id}-${i}`}
-              href={`/updates#${n.id}`}
+              href={`/updates/${n.id}`}
               className="grid grid-cols-[auto_1fr] items-baseline gap-x-5 gap-y-1 border-b border-tf-border px-1 py-5 transition-colors hover:bg-tf-panel sm:grid-cols-[7rem_1fr]"
             >
               <span className="text-[13px] tracking-[0.04em] text-tf-faint tabular-nums">

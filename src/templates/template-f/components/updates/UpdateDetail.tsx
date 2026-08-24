@@ -35,7 +35,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
   const posted = longDate(announcement?.published_date ?? event?.date)
   const summary = announcement?.short_description ?? event?.description ?? ''
   const image = announcement?.thumbnail ?? event?.image
-  const body = announcement?.content
+  const body = announcement?.content ?? event?.content
 
   return (
     <article className="mx-auto max-w-[1400px] px-5 pb-20 pt-12 md:px-8 lg:px-12 lg:pt-16">
@@ -84,7 +84,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
         )}
         {body ? (
           <div
-            className="flex flex-col gap-5 text-[16.5px] leading-[1.7] text-tf-body [&_a]:text-tf-accent [&_h2]:text-[26px] [&_h2]:text-tf-ink [&_h3]:text-[21px] [&_h3]:text-tf-ink [&_li]:ml-5 [&_li]:list-disc"
+            className="website-rich-content text-[16.5px] leading-[1.7] text-tf-body [&_a]:text-tf-accent [&_h2]:text-[26px] [&_h2]:text-tf-ink [&_h3]:text-[21px] [&_h3]:text-tf-ink"
             dangerouslySetInnerHTML={{ __html: body }}
           />
         ) : (

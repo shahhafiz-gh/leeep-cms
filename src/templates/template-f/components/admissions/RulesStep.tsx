@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
-import { fetchAdmissionSchema, type AdmissionCriteria } from '@/shared/admission-schema'
+import { fetchAdmissionSchema } from '@/shared/admission-schema'
 import { useAdmissionOverview } from '@/shared/useAdmissionOverview'
 import type { AdmissionChrome } from '@/shared/AdmissionFormBody'
 import type { SchoolData } from '@/types/school.types'
@@ -40,7 +40,7 @@ export default function RulesStep({
   onAcceptedChange: (value: boolean) => void
   onContinue: () => void
 }) {
-  const { loading, active, currency } = useAdmissionOverview()
+  const { loading, active } = useAdmissionOverview()
   const genericTerms = useGenericTerms(terms === undefined)
   const rules = terms || genericTerms
   const title = data.admissions?.rulesTitle || 'Admission rules'
@@ -94,42 +94,6 @@ export default function RulesStep({
           />
         )}
       </div>
-
-      {/* Class-wise criteria, straight from Student Admission Program. No
-          "Apply" column: choosing the class is the next step, not this one. */}
-      {active && active.programs.length > 0 && (
-        <div>
-          <h4 className={chrome.sectionTitle}>Classes open for admission</h4>
-          <div className="mt-3 overflow-x-auto">
-            <table className={chrome.table}>
-              <thead>
-                <tr>
-                  <th className={chrome.tableHead}>Class</th>
-                  <th className={chrome.tableHead}>Age</th>
-                  <th className={chrome.tableHead}>Application fee</th>
-                  <th className={chrome.tableHead}>Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {active.programs.map((entry) => (
-                  <tr key={entry.program}>
-                    <td className={`${chrome.tableCell} font-semibold`}>{entry.label}</td>
-                    <td className={chrome.tableCell}>{ageLabel(entry)}</td>
-                    <td className={chrome.tableCell}>
-                      {entry.application_fee > 0 ? `${currency} ${entry.application_fee}` : '—'}
-                    </td>
-                    <td className={chrome.tableCell}>{entry.description || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className={`${chrome.help} mt-3`}>
-            Age is checked against the date shown above, so an applicant just outside a class&apos;s
-            range cannot be submitted into it.
-          </p>
-        </div>
-      )}
 
       <div>
         <h4 className={chrome.sectionTitle}>Terms and conditions</h4>
@@ -212,10 +176,4 @@ function formatDate(value: string | null): string {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
   return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-}
-
-function ageLabel(entry: AdmissionCriteria): string {
-  if (!entry.min_age && !entry.max_age) return '—'
-  if (entry.min_age && entry.max_age) return `${entry.min_age} – ${entry.max_age} yrs`
-  return entry.min_age ? `${entry.min_age}+ yrs` : `under ${entry.max_age} yrs`
 }

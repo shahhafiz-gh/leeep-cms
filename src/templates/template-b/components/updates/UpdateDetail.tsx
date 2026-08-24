@@ -32,7 +32,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
   const date = formatDate(announcement?.published_date ?? event?.date)
   const category = announcement?.category ?? (isEvent ? 'Event' : 'Announcement')
   const image = announcement?.thumbnail ?? event?.image
-  const htmlContent = announcement?.content
+  const htmlContent = announcement?.content ?? event?.content
   const summary = announcement?.short_description ?? event?.description ?? ''
 
   return (
@@ -76,7 +76,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
           </div>
 
           {/* Article body */}
-          <div className="prose prose-lg max-w-none text-slate-600 leading-relaxed">
+          <div className="website-rich-content prose prose-lg max-w-none text-slate-600 leading-relaxed">
             {htmlContent ? (
               <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
             ) : (
