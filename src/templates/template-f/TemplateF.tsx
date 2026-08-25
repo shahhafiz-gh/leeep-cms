@@ -38,9 +38,10 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
  * Template D — "Almanac"
  *
  * An editorial template with its OWN component set (unlike Horizon, which
- * re-themes Willow): oversized grotesk display type with serif italic accents,
- * a terracotta-on-ivory palette, and a composition built from full-bleed sand
- * and ink panels rather than the card grids the other templates use.
+ * re-themes Willow): oversized slab-serif display type, a terracotta-on-ivory
+ * palette, and a composition built from full-bleed sand and ink panels rather
+ * than the card grids the other templates use. Website Management can switch
+ * its typeface between BioRhyme and Roboto Slab.
  *
  * Palette defaults to the built-in terracotta; `config.palette` can switch it to
  * any curated preset (sage / plum / cobalt — see globals.css).
@@ -48,11 +49,13 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
 export default function TemplateF({ data, page, editing = false }: TemplateProps) {
   const PageComponent = pageMap[page]
   const palette = data.config?.palette || ''
+  const font = data.config?.font_family === 'roboto-slab' ? 'roboto-slab' : 'biorhyme'
 
   return (
     <div
       className="template-f flex min-h-screen flex-col bg-tf-paper font-(family-name:--font-tf-sans) text-tf-ink"
       data-palette={palette || undefined}
+      data-font={font}
     >
       <Header data={data} />
       <main className="grow">

@@ -35,6 +35,8 @@ export interface TemplateConfig {
   template_id: TemplateId
   /** Curated colour preset id (Settings/Builder). Empty → the template default. */
   palette?: string
+  /** Curated Google Font id. Empty/legacy records default to BioRhyme. */
+  font_family?: 'biorhyme' | 'roboto-slab'
   /**
    * Browser-tab icon for the public site: the school's own logo from Education
    * Settings (the same mark the school portal uses), falling back to the site's

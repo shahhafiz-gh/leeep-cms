@@ -304,10 +304,10 @@ body {
   /* Template D — Quill */
   --font-td-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
   --font-td-serif: var(--font-newsreader), Georgia, serif;
-  /* Almanac shares Quill's pairing: the grotesk carries the oversized display
-     line, the serif is opt-in for italic accents and pull-quotes. */
-  --font-tf-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
-  --font-tf-serif: var(--font-newsreader), Georgia, serif;
+  /* Almanac defaults to BioRhyme. Website Management can switch both its main
+     and accent faces to another curated Google Font. */
+  --font-tf-sans: var(--font-biorhyme), Georgia, serif;
+  --font-tf-serif: var(--font-biorhyme), Georgia, serif;
 
   /* Template E — Ledger */
   --font-te-serif: var(--font-lora), Georgia, serif;
@@ -553,9 +553,9 @@ body {
 /* ═══════════════════════════════════════════════════════════════════════════
  * Template F — "Almanac" (Quill's editorial frame, committed to warm brown)
  *
- * Shares Quill's type rules — a LIGHT sans at large sizes with tight negative
- * tracking — because the display treatment is what makes the frame work. What
- * differs is colour (one brown family throughout) and the block set: a
+ * Keeps Quill's large-scale display treatment and tight negative tracking, but
+ * uses the school-selected slab serif (BioRhyme by default). What differs is
+ * colour (one brown family throughout) and the block set: a
  * noticeboard, a drifting gallery, a social wall and a magazine shelf.
  * ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -566,6 +566,11 @@ body {
   font-weight: 500;
   letter-spacing: -0.035em;
   text-wrap: pretty;
+}
+
+.template-f[data-font="roboto-slab"] {
+  --font-tf-sans: var(--font-roboto-slab), Georgia, serif;
+  --font-tf-serif: var(--font-roboto-slab), Georgia, serif;
 }
 
 /* Serif italic accent (pull-quotes, numerals, the hero's emphasised clause). */

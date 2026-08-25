@@ -141,7 +141,7 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
     name: 'Leeep Public School',
     tagline: 'Where curious minds grow',
     logo: '/assets/demo/logo.svg', // generic demo emblem — not a real client logo
-    config: { template_id: templateId, palette },
+    config: { template_id: templateId, palette, font_family: 'biorhyme' },
 
     hero: {
       // Single hero (not a slider).
