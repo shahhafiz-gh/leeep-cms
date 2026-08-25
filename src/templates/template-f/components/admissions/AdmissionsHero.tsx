@@ -2,7 +2,7 @@
 
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
-import { contactEntryValue } from '@/lib/contact-entry'
+import { contactEntryLabel, contactEntryValue } from '@/lib/contact-entry'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { Eyebrow } from '../common/Bits'
 import StartApplicationLink from '@/shared/StartApplicationLink'
@@ -30,8 +30,12 @@ export default function AdmissionsHero({
   // In the EDITOR an unset number still renders its (blank) row so it can be
   // filled in — the same rule the footer follows. On the live site an empty
   // value simply doesn't render.
-  const phone = contactEntryValue(data.contact?.phone?.[0]) || (editing ? '' : undefined)
-  const email = contactEntryValue(data.contact?.email?.[0]) || (editing ? '' : undefined)
+  const phoneEntry = data.contact?.phone?.[0]
+  const emailEntry = data.contact?.email?.[0]
+  const phone = contactEntryValue(phoneEntry) || (editing ? '' : undefined)
+  const email = contactEntryValue(emailEntry) || (editing ? '' : undefined)
+  const phoneLabel = contactEntryLabel(phoneEntry) || 'Admissions office'
+  const emailLabel = contactEntryLabel(emailEntry) || 'Write to us'
   if (!admissions) return null
 
   return (
@@ -55,8 +59,8 @@ export default function AdmissionsHero({
         <div className="flex flex-col gap-5 border-t border-tf-border pt-8 sm:flex-row sm:gap-12">
           {phone !== undefined && (
           <div>
-            <div className="mb-1.5 text-[12px] uppercase tracking-[0.16em] text-tf-faint">
-              Admissions office
+            <div data-edit="contact.phone.0.label" className="mb-1.5 text-[12px] uppercase tracking-[0.16em] text-tf-faint">
+              {phoneLabel}
             </div>
             <a
               href={phone ? `tel:${phone.replace(/\s+/g, '')}` : undefined}
@@ -71,8 +75,8 @@ export default function AdmissionsHero({
           )}
           {email !== undefined && (
             <div>
-              <div className="mb-1.5 text-[12px] uppercase tracking-[0.16em] text-tf-faint">
-                Write to us
+              <div data-edit="contact.email.0.label" className="mb-1.5 text-[12px] uppercase tracking-[0.16em] text-tf-faint">
+                {emailLabel}
               </div>
               <a
                 href={`mailto:${email}`}
