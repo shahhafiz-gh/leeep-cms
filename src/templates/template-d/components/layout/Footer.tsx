@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { styleObject } from '@/lib/component-styles'
-import { contactEntryValue, contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
+import { contactEntryLabel, contactEntryValue, contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
 
 /**
  * Quill footer — a hairline rule, a brand block, and link columns.
@@ -66,14 +66,23 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               <div data-edit="contact.address">{contact.address}</div>
             )}
             {phones.map((p, i) => (
-              <a
-                key={`phone-${i}`}
-                href={contactPhoneHref(p)}
-                data-edit={`contact.phone.${i}.value`}
-                className="block transition-colors hover:text-td-accent"
-              >
-                {contactPhoneDisplay(p)}
-              </a>
+              <div key={`phone-${i}`}>
+                {(contactEntryLabel(p) || editing) && (
+                  <>
+                    <span data-edit={`contact.phone.${i}.label`} className="font-semibold text-td-body">
+                      {contactEntryLabel(p)}
+                    </span>
+                    {contactEntryLabel(p) ? ': ' : ''}
+                  </>
+                )}
+                <a
+                  href={contactPhoneHref(p)}
+                  data-edit={`contact.phone.${i}.value`}
+                  className="transition-colors hover:text-td-accent"
+                >
+                  {contactPhoneDisplay(p)}
+                </a>
+              </div>
             ))}
           </div>
 

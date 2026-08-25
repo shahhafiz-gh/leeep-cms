@@ -18,6 +18,7 @@ export default function MissionSection({ data }: { data: SchoolData }) {
         alt={about.title}
         caption="portrait — head of school"
         editPath="about.image"
+        fit="contain"
         className="h-[300px] w-full lg:h-[400px]"
       />
 

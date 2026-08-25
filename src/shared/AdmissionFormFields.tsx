@@ -195,7 +195,13 @@ function ChildTable({
   onChange: (rows: ChildRows) => void
   styles: AdmissionFormStyles
 }) {
-  const columns = field.child_fields ?? []
+  const isSiblingTable = field.fieldname === 'siblings'
+  // The enclosing Student Applicant field already establishes that every row
+  // represents a sibling studying at this school. Keep the backend field in the
+  // payload, but do not make parents answer the same question a second time.
+  const columns = (field.child_fields ?? []).filter(
+    (column) => !isSiblingTable || column.fieldname !== 'studies_here',
+  )
   if (!columns.length) return null
 
   const update = (index: number, column: string, value: string) => {
@@ -221,11 +227,19 @@ function ChildTable({
                   onChange={(event) => update(index, column.fieldname, event.target.value)}
                 >
                   <option value="">Select</option>
-                  {selectChoices(column).map((choice) => (
-                    <option key={choice} value={choice}>
-                      {choice}
-                    </option>
-                  ))}
+                  {selectChoices(column)
+                    .filter(
+                      (choice) =>
+                        !isSiblingTable ||
+                        column.fieldname !== 'relationship' ||
+                        choice === 'Brother' ||
+                        choice === 'Sister',
+                    )
+                    .map((choice) => (
+                      <option key={choice} value={choice}>
+                        {choice}
+                      </option>
+                    ))}
                 </select>
               ) : column.fieldtype === 'Link' ? (
                 <select
@@ -266,7 +280,11 @@ function ChildTable({
           </button>
         </div>
       ))}
-      <button type="button" className={styles.subtleButton} onClick={() => onChange([...rows, {}])}>
+      <button
+        type="button"
+        className={styles.subtleButton}
+        onClick={() => onChange([...rows, isSiblingTable ? { studies_here: '1' } : {}])}
+      >
         + Add {field.label.replace(/s$/, '')}
       </button>
     </div>

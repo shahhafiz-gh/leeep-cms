@@ -17,6 +17,9 @@ interface PhotoProps {
   className?: string
   /** Rounding, kept separate so callers can square off a photo inside a card. */
   rounded?: string
+  /** How a supplied image fits its frame. About-page editorial images can use
+   *  `contain` so unusually tall or wide uploads remain fully visible. */
+  fit?: 'cover' | 'contain'
   /**
    * Fill the space the layout gives this slot, rather than sizing to the image.
    *
@@ -46,8 +49,10 @@ export default function Photo({
   editPath,
   className = '',
   rounded = 'rounded-[20px]',
+  fit = 'cover',
   fill = false,
 }: PhotoProps) {
+  const fitClass = fit === 'contain' ? 'object-contain' : 'object-cover'
   const hatch =
     'bg-[repeating-linear-gradient(100deg,var(--color-td-panel)_0_15px,var(--color-td-border)_15px_30px)]'
 
@@ -67,7 +72,7 @@ export default function Photo({
             src={src}
             alt={alt}
             data-edit-img={editPath}
-            className="absolute inset-0 h-full w-full object-cover"
+            className={`absolute inset-0 h-full w-full ${fitClass}`}
           />
         ) : (
           <div data-edit-img={editPath} className={`absolute inset-0 flex items-end p-5 ${hatch}`}>
@@ -85,7 +90,7 @@ export default function Photo({
         src={src}
         alt={alt}
         data-edit-img={editPath}
-        className={`object-cover ${rounded} ${className}`}
+        className={`${fitClass} ${rounded} ${className}`}
       />
     )
   }
