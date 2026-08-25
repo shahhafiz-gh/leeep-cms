@@ -292,6 +292,9 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
       subtitle: 'Sample Session 2025–26',
       description:
         'Join the Leeep Schools demo family. This is sample copy showing how your admissions invitation and process will appear to families.',
+      applicationCardTitle: 'Ready when you are',
+      applicationCardDescription:
+        'The application takes about ten minutes. You can save nothing halfway, so gather documents first.',
       image: STOCK.aboutAlt,
       homeImage: STOCK.graduation,
       requirementsImage: STOCK.groupStudy,
@@ -336,7 +339,7 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
       subtitle: 'Get In Touch',
       image: STOCK.building2,
       address: '123 Demo Road, Sample City, 000000',
-      phone: ['+91 00000 00000'],
+      phone: ['00000 00000'],
       email: ['hello@leeepschool.example'],
       workingHours: 'Mon – Sat: 9 AM – 4 PM',
       mapEmbedUrl: '',

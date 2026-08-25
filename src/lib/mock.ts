@@ -109,6 +109,9 @@ export const placeholderTemplateAData: SchoolData = {
     subtitle: 'Admissions subtitle here',
     description:
       'Add a short introduction to your admissions process here, inviting families to apply.',
+    applicationCardTitle: 'Ready when you are',
+    applicationCardDescription:
+      'The application takes about ten minutes. You can save nothing halfway, so gather documents first.',
     image: '',
     homeImage: '',
     requirementsImage: '',
@@ -450,6 +453,9 @@ export const mockKcgsData: SchoolData = {
     title: 'Admissions Open',
     subtitle: 'Session 2025–26',
     description: 'Join the Kashmir Cambridge family. We welcome students from Nursery to Class 12. Apply online or visit our campus at Tukroo, Shopian.',
+    applicationCardTitle: 'Ready when you are',
+    applicationCardDescription:
+      'The application takes about ten minutes. You can save nothing halfway, so gather documents first.',
     image: '/assets/kcs/images/about/kc-building-2.webp',
     homeImage: '/assets/kcs/images/campus-life/athletics.webp',
     requirementsImage: '/assets/kcs/images/campus-life/student-life.webp',

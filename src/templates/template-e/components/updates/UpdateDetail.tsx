@@ -3,6 +3,7 @@ import type { SchoolData } from '@/types/school.types'
 import Photo from '../common/Photo'
 import { Action, Container } from '../common/Bits'
 import { longDate } from '@/shared/utils/format'
+import MarkdownContent from '@/shared/MarkdownContent'
 
 /**
  * A single announcement or event, set as an article on a narrow measure. One id
@@ -57,9 +58,9 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
         )}
 
         {body ? (
-          <div
+          <MarkdownContent
+            source={body}
             className="website-rich-content mt-6 text-[16px] leading-[1.75] text-te-body [&_a]:text-te-accent [&_h2]:font-(family-name:--font-te-serif) [&_h2]:text-[24px] [&_h2]:text-te-ink [&_h3]:font-(family-name:--font-te-serif) [&_h3]:text-[20px] [&_h3]:text-te-ink"
-            dangerouslySetInnerHTML={{ __html: body }}
           />
         ) : (
           !summary && (

@@ -133,7 +133,12 @@ function firstServerMessage(raw: string | undefined): string | null {
     for (const entry of entries) {
       const parsed = typeof entry === 'string' ? JSON.parse(entry) : entry
       const message = (parsed as { message?: string })?.message
-      if (message) return String(message).replace(/<[^>]*>/g, '').trim()
+      if (message) {
+        return String(message)
+          .replace(/<br\s*\/?\s*>/gi, '\n')
+          .replace(/<[^>]*>/g, '')
+          .trim()
+      }
     }
   } catch {
     /* not the shape we expected — fall through to the generic message */

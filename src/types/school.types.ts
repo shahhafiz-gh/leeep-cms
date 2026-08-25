@@ -209,6 +209,13 @@ export interface TeamMember {
   image?: string
   qualification?: string
   bio?: string
+  email?: string
+  phone?: string
+  facebook?: string
+  instagram?: string
+  linkedin?: string
+  /** X profile URL; kept as `twitter` for compatibility with existing social data. */
+  twitter?: string
 }
 
 export interface TeamData {
@@ -313,6 +320,10 @@ export interface AdmissionsData {
   title: string
   subtitle?: string
   description: string
+  /** Editable heading in the application call-to-action card. */
+  applicationCardTitle?: string
+  /** Editable supporting copy in the application call-to-action card. */
+  applicationCardDescription?: string
   /** Hero image on the Admissions page. */
   image?: string
   /** Image used in the Admissions teaser/CTA section on the HOME page. */

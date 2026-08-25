@@ -185,11 +185,13 @@ function UploadBox({
 function ChildTable({
   field,
   rows,
+  required,
   onChange,
   styles,
 }: {
   field: SchemaField
   rows: ChildRows
+  required: boolean
   onChange: (rows: ChildRows) => void
   styles: AdmissionFormStyles
 }) {
@@ -203,7 +205,10 @@ function ChildTable({
 
   return (
     <div className="space-y-3">
-      <p className={styles.label}>{field.label}</p>
+      <p className={styles.label}>
+        {field.label}
+        {required && <Req />}
+      </p>
       {rows.map((row, index) => (
         <div key={index} className="flex flex-wrap items-end gap-3">
           {columns.map((column) => (
@@ -294,6 +299,7 @@ export function AdmissionField({
       <ChildTable
         field={field}
         rows={childRows(values, field.fieldname)}
+        required={required}
         onChange={(rows) => onChange(field.fieldname, rows)}
         styles={styles}
       />

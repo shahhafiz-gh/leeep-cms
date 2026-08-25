@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type FocusEvent, type ReactNode } from 'react'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import AdmissionFormFields, { type AdmissionFormStyles } from './AdmissionFormFields'
@@ -33,6 +33,27 @@ export interface AdmissionFormBodyProps {
   successText?: string
 }
 
+/** Keep the focused form control inside the part of the page left visible by
+ * mobile software keyboards. VisualViewport is absent on older browsers, where
+ * the browser's native focus scrolling remains the fallback. */
+function revealFocusedControl(form: HTMLFormElement | null) {
+  const viewport = window.visualViewport
+  const focused = document.activeElement
+  if (!viewport || !form || !(focused instanceof HTMLElement) || !form.contains(focused)) return
+
+  const keyboardInset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)
+  if (keyboardInset < 80) return
+
+  const rect = focused.getBoundingClientRect()
+  const visibleTop = viewport.offsetTop + 16
+  const visibleBottom = viewport.offsetTop + viewport.height - 24
+  if (rect.bottom > visibleBottom) {
+    window.scrollBy({ top: rect.bottom - visibleBottom, behavior: 'auto' })
+  } else if (rect.top < visibleTop) {
+    window.scrollBy({ top: rect.top - visibleTop, behavior: 'auto' })
+  }
+}
+
 export default function AdmissionFormBody({
   form,
   chrome,
@@ -41,9 +62,10 @@ export default function AdmissionFormBody({
   successText,
 }: AdmissionFormBodyProps): ReactNode {
   const successRef = useRef<HTMLDivElement>(null)
-  const applicationNumberRef = useRef<HTMLDivElement>(null)
+  const activeStepRef = useRef<HTMLDivElement>(null)
   const classSelectorRef = useRef<HTMLDivElement>(null)
   const didRevealClassSelector = useRef(false)
+  const [keyboardInset, setKeyboardInset] = useState(0)
   const {
     formRef,
     programs,
@@ -75,6 +97,47 @@ export default function AdmissionFormBody({
     dismissEligibilityDialog,
     submit,
   } = form
+  const activeStep = steps[stepIndex]
+  const previousStepIndex = useRef(stepIndex)
+
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+
+    let frame = 0
+    const updateKeyboardSpace = () => {
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        const inset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)
+        setKeyboardInset(inset >= 80 ? inset : 0)
+        if (inset >= 80) revealFocusedControl(formRef.current)
+      })
+    }
+
+    updateKeyboardSpace()
+    viewport.addEventListener('resize', updateKeyboardSpace)
+    viewport.addEventListener('scroll', updateKeyboardSpace)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      viewport.removeEventListener('resize', updateKeyboardSpace)
+      viewport.removeEventListener('scroll', updateKeyboardSpace)
+    }
+  }, [formRef])
+
+  const keyboardStyle = keyboardInset
+    ? ({
+        paddingBottom: `${keyboardInset + 24}px`,
+        scrollPaddingBottom: `${keyboardInset + 24}px`,
+      } as CSSProperties)
+    : undefined
+
+  const handleFormFocus = (event: FocusEvent<HTMLFormElement>) => {
+    if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return
+    // The keyboard viewport resize is asynchronous on iOS. This delayed pass
+    // complements the VisualViewport resize listener when focus moves between
+    // controls while the keyboard is already open.
+    window.setTimeout(() => revealFocusedControl(formRef.current), 250)
+  }
 
   useEffect(() => {
     if (loadingPrograms || !programs.length || didRevealClassSelector.current) return
@@ -94,19 +157,58 @@ export default function AdmissionFormBody({
     if (!submitted) return
 
     // The multi-step form is much taller than the confirmation. On mobile the
-    // browser preserves the old bottom scroll offset while React replaces it,
-    // which can leave the success message above the visible viewport. Wait for
-    // that layout change to settle, then focus and reveal the useful result.
+    // browser can preserve the old bottom scroll offset AND calculate its first
+    // smooth scroll against the still-open keyboard. Blur the field/button,
+    // reveal the TOP of the confirmation, then re-anchor after the visual
+    // viewport has settled so the result cannot remain above the screen.
+    const activeElement = document.activeElement
+    if (activeElement instanceof HTMLElement) activeElement.blur()
+
     let secondFrame = 0
+    let settleTimer = 0
+    const reveal = (behavior: ScrollBehavior) => {
+      const target = successRef.current
+      if (!target) return
+      target.scrollIntoView({ behavior, block: 'start' })
+    }
     const firstFrame = window.requestAnimationFrame(() => {
       secondFrame = window.requestAnimationFrame(() => {
-        const target = applicationNumberRef.current ?? successRef.current
+        const target = successRef.current
         if (!target) return
         target.focus({ preventScroll: true })
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        const mobile = window.matchMedia('(max-width: 640px)').matches
+        reveal(reduceMotion || mobile ? 'auto' : 'smooth')
+        // Mobile Safari/Chrome resize the visual viewport only after the
+        // software keyboard finishes closing. One final non-animated anchor is
+        // intentionally boring and reliable.
+        settleTimer = window.setTimeout(() => reveal('auto'), 450)
+      })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame)
+      if (secondFrame) window.cancelAnimationFrame(secondFrame)
+      if (settleTimer) window.clearTimeout(settleTimer)
+    }
+  }, [submitted, applicationNumber])
+
+  useEffect(() => {
+    if (previousStepIndex.current === stepIndex) return
+    previousStepIndex.current = stepIndex
+
+    // Continue/Back replaces one potentially tall group of questions with the
+    // next. Return the reader to that group's heading instead of leaving mobile
+    // users beside the navigation buttons at the bottom of the new step.
+    let secondFrame = 0
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        const target = activeStepRef.current
+        if (!target) return
+        target.focus({ preventScroll: true })
         target.scrollIntoView({
-          behavior: reduceMotion ? 'auto' : 'smooth',
-          block: applicationNumberRef.current ? 'center' : 'start',
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          block: 'start',
         })
       })
     })
@@ -115,7 +217,7 @@ export default function AdmissionFormBody({
       window.cancelAnimationFrame(firstFrame)
       if (secondFrame) window.cancelAnimationFrame(secondFrame)
     }
-  }, [submitted, applicationNumber])
+  }, [stepIndex])
 
   // Final step. A confirmation that only says "thank you" leaves a family with
   // nothing to do and nothing to keep; the application number and where to use
@@ -141,10 +243,8 @@ export default function AdmissionFormBody({
 
         {applicationNumber && (
           <div
-            ref={applicationNumberRef}
-            tabIndex={-1}
             aria-label={`Your application number is ${applicationNumber}`}
-            className={`${chrome.panel} mt-2 w-full max-w-[46ch] scroll-mt-24 text-left outline-none`}
+            className={`${chrome.panel} mt-2 w-full max-w-[46ch] text-left`}
           >
             <p className={`m-0 mb-1 text-[12px] uppercase tracking-[0.14em] ${chrome.bodyText}`}>
               Your application number
@@ -202,7 +302,6 @@ export default function AdmissionFormBody({
     )
   }
 
-  const activeStep = steps[stepIndex]
   const requiresTerms = Boolean(settings?.require_terms_acceptance)
   // The gate only stands while there is something to agree TO and it has not
   // been agreed yet; once accepted it never reappears, including on Back.
@@ -260,7 +359,14 @@ export default function AdmissionFormBody({
   }
 
   return (
-    <form ref={formRef} className="flex flex-col gap-10" noValidate onSubmit={submit}>
+    <form
+      ref={formRef}
+      className="flex flex-col gap-10"
+      style={keyboardStyle}
+      noValidate
+      onFocusCapture={handleFormFocus}
+      onSubmit={submit}
+    >
       {/* Which class — it decides the age window, the fee, and (when the school
           scopes a form profile to it) the questions themselves. */}
       <div ref={classSelectorRef} id="admission-class-selector" className="scroll-mt-28">
@@ -279,7 +385,6 @@ export default function AdmissionFormBody({
               {programs.map((entry) => (
                 <option key={`${entry.program}-${entry.academic_year}`} value={entry.program}>
                   {entry.label}
-                  {entry.academic_year ? ` — ${entry.academic_year}` : ''}
                 </option>
               ))}
             </select>
@@ -329,7 +434,7 @@ export default function AdmissionFormBody({
           {/* No numbered step strip: the doctype's tabs are an authoring detail,
               and numbering them told an applicant how much was left without
               letting them act on it. Back / Continue carry the navigation. */}
-          <div>
+          <div ref={activeStepRef} tabIndex={-1} className="scroll-mt-28 outline-none">
             <h3 className={chrome.heading}>{activeStep.label || 'Application details'}</h3>
             <AdmissionFormFields step={activeStep} values={values} onChange={setValue} styles={chrome} />
           </div>
@@ -354,7 +459,7 @@ export default function AdmissionFormBody({
 
           <div className="flex flex-col items-end gap-3">
             {(error || eligibilityError) && (
-              <p className={`self-stretch text-right ${chrome.errorText}`} role="alert">
+              <p className={`self-stretch whitespace-pre-line text-left ${chrome.errorText}`} role="alert">
                 {error || eligibilityError}
               </p>
             )}
@@ -401,7 +506,7 @@ export default function AdmissionFormBody({
             <h3 id="eligibility-dialog-title" className="m-0 text-xl font-semibold text-slate-950">
               Applicant is not eligible
             </h3>
-            <p id="eligibility-dialog-description" className="mt-3 text-[15px] leading-7 text-slate-700">
+            <p id="eligibility-dialog-description" className="mt-3 whitespace-pre-line text-[15px] leading-7 text-slate-700">
               {eligibilityError}
             </p>
             <button

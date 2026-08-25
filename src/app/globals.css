@@ -591,7 +591,7 @@ body {
 @keyframes tf-marquee-left  { from { transform: translateX(0);     } to { transform: translateX(-50%); } }
 @keyframes tf-marquee-right { from { transform: translateX(-50%);  } to { transform: translateX(0);    } }
 
-.tf-ticker      { animation: tf-marquee-left var(--tf-ticker-speed, 45s) linear infinite; }
+.tf-ticker      { animation: tf-marquee-left var(--tf-ticker-speed, 90s) linear infinite; }
 .tf-marquee-l   { animation: tf-marquee-left var(--tf-speed, 60s) linear infinite; }
 .tf-marquee-r   { animation: tf-marquee-right var(--tf-speed, 60s) linear infinite; }
 
@@ -776,12 +776,12 @@ body {
 }
 
 /* Rich bodies authored in Website management (announcements and events). */
-.website-rich-content p { margin: 0 0 1.1em; }
+.website-rich-content p { margin: 0 0 0.55em; }
 .website-rich-content h1,
 .website-rich-content h2,
-.website-rich-content h3 { margin: 1.5em 0 0.55em; line-height: 1.2; }
+.website-rich-content h3 { margin: 1em 0 0.4em; line-height: 1.2; }
 .website-rich-content ul,
-.website-rich-content ol { margin: 0 0 1.1em; padding-left: 1.5em; }
+.website-rich-content ol { margin: 0 0 0.65em; padding-left: 1.5em; }
 .website-rich-content ul { list-style: disc; }
 .website-rich-content ol { list-style: decimal; }
 .website-rich-content blockquote { margin: 1.4em 0; border-left: 3px solid currentColor; padding-left: 1em; opacity: 0.85; }

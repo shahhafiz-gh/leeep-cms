@@ -88,12 +88,18 @@ export default function AdmissionsHero({
       </div>
 
       <aside className="rounded-[24px] bg-tf-panel p-8 lg:sticky lg:top-[104px] lg:p-9">
-        <h2 className="m-0 mb-1.5 text-[24px] tracking-[-0.028em] text-tf-ink lg:text-[27px]">
-          Ready when you are
+        <h2
+          data-edit="admissions.applicationCardTitle"
+          className="m-0 mb-1.5 text-[24px] tracking-[-0.028em] text-tf-ink lg:text-[27px]"
+        >
+          {admissions.applicationCardTitle || 'Ready when you are'}
         </h2>
-        <p className="m-0 mb-6 text-[14.5px] leading-[1.55] text-tf-muted">
-          The application takes about fifteen minutes. You can save nothing halfway, so gather
-          documents first.
+        <p
+          data-edit="admissions.applicationCardDescription"
+          className="m-0 mb-6 text-[14.5px] leading-[1.55] text-tf-muted"
+        >
+          {admissions.applicationCardDescription ||
+            'The application takes about ten minutes. You can save nothing halfway, so gather documents first.'}
         </p>
 
         {highlights.length > 0 && (

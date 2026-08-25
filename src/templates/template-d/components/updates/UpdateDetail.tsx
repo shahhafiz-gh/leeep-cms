@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import Photo from '../common/Photo'
 import { longDate } from '@/shared/utils/format'
+import MarkdownContent from '@/shared/MarkdownContent'
 
 /**
  * A single announcement or event, read as an article: narrow measure, serif
@@ -83,9 +84,9 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
           </p>
         )}
         {body ? (
-          <div
+          <MarkdownContent
+            source={body}
             className="website-rich-content text-[16.5px] leading-[1.7] text-td-body [&_a]:text-td-accent [&_h2]:text-[26px] [&_h2]:text-td-ink [&_h3]:text-[21px] [&_h3]:text-td-ink"
-            dangerouslySetInnerHTML={{ __html: body }}
           />
         ) : (
           !summary && (
