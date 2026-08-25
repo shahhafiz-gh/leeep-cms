@@ -4,13 +4,8 @@ import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { styleObject } from '@/lib/component-styles'
+import { contactEntryValue, contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
 import { Container } from '../common/Bits'
-
-type ContactEntry = string | { label?: string; value?: string }
-
-function entryValue(entry: ContactEntry) {
-  return typeof entry === 'string' ? entry : entry?.value || ''
-}
 
 /**
  * Ledger footer — a full-bleed ink band, the one place the design inverts.
@@ -56,10 +51,17 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
                 <div data-edit="contact.address">{contact.address}</div>
               )}
               {phones.map((p, i) => (
-                <div key={`phone-${i}`} data-edit={`contact.phone.${i}.value`}>{entryValue(p)}</div>
+                <a
+                  key={`phone-${i}`}
+                  href={contactPhoneHref(p)}
+                  data-edit={`contact.phone.${i}.value`}
+                  className="block transition-colors hover:text-white"
+                >
+                  {contactPhoneDisplay(p)}
+                </a>
               ))}
               {emails.map((e, i) => (
-                <div key={`email-${i}`} data-edit={`contact.email.${i}.value`}>{entryValue(e)}</div>
+                <div key={`email-${i}`} data-edit={`contact.email.${i}.value`}>{contactEntryValue(e)}</div>
               ))}
               {(contact.workingHours || editing) && (
                 <div data-edit="contact.workingHours">{contact.workingHours}</div>

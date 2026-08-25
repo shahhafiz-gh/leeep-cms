@@ -1,8 +1,30 @@
 'use client'
 
+import { Icon } from '@iconify/react'
 import type { SchoolData, TeamMember } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import AddItemButton from '@/shared/AddItemButton'
+
+const memberLinks = [
+  { key: 'email', label: 'Email', icon: 'lucide:mail', kind: 'email' },
+  { key: 'phone', label: 'Phone', icon: 'lucide:phone', kind: 'phone' },
+  { key: 'facebook', label: 'Facebook', icon: 'ri:facebook-fill', kind: 'social' },
+  { key: 'instagram', label: 'Instagram', icon: 'ri:instagram-line', kind: 'social' },
+  { key: 'linkedin', label: 'LinkedIn', icon: 'ri:linkedin-fill', kind: 'social' },
+  { key: 'twitter', label: 'X', icon: 'ri:twitter-x-fill', kind: 'social' },
+] as const
+
+function memberHref(kind: 'email' | 'phone' | 'social', value?: string) {
+  const trimmed = value?.trim()
+  if (!trimmed) return ''
+  if (kind === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) ? `mailto:${trimmed}` : ''
+  if (kind === 'phone') {
+    const digits = trimmed.replace(/\D/g, '')
+    const number = `${trimmed.startsWith('+') ? '+' : ''}${digits}`
+    return digits.length >= 5 ? `tel:${number}` : ''
+  }
+  return /^https?:\/\//i.test(trimmed) ? trimmed : ''
+}
 
 /**
  * Neutral Team page for templates that do not yet have their own composition.
@@ -81,6 +103,24 @@ export default function TeamView({ data }: { data: SchoolData }) {
                 <h3 data-edit={`team.members.${index}.name`} className="mt-5 text-xl">{person.name}</h3>
                 <p data-edit={`team.members.${index}.role`} className="mt-1 text-sm font-semibold opacity-60">{person.role}</p>
                 {person.department && <p data-edit={`team.members.${index}.department`} className="mt-1 text-sm opacity-50">{person.department}</p>}
+                {memberLinks.some((link) => memberHref(link.kind, person[link.key])) && <div className="mt-4 flex items-center gap-2">
+                  {memberLinks.map((link) => {
+                    const href = memberHref(link.kind, person[link.key])
+                    if (!href) return null
+                    return (
+                      <a
+                        key={link.key}
+                        href={href}
+                        target={link.kind === 'social' ? '_blank' : undefined}
+                        rel={link.kind === 'social' ? 'noopener noreferrer' : undefined}
+                        aria-label={`${link.label} ${person.name}`}
+                        className="rounded-full border border-black/15 p-2 opacity-60 transition hover:border-black/40 hover:opacity-100"
+                      >
+                        <Icon icon={link.icon} className="h-4 w-4" aria-hidden />
+                      </a>
+                    )
+                  })}
+                </div>}
               </article>
             ))}
           </div>

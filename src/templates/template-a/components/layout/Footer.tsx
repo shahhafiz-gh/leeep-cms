@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { styleObject } from '@/lib/component-styles'
-import { contactEntryValue } from '@/lib/contact-entry'
+import { contactEntryValue, contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
 
 export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   const isHomeRoute = usePathname() === '/'
@@ -138,11 +138,11 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
                 <li key={`phone-${pi}`} className="flex items-center gap-3">
                   <Icon icon="lucide:smartphone" className="text-ta-inverse-primary w-5 h-5" />
                   <a
-                    href={contactEntryValue(p) ? `tel:${contactEntryValue(p)}` : undefined}
+                    href={contactPhoneHref(p)}
                     data-edit={`contact.phone.${pi}.value`}
                     className="text-ta-outline-variant text-sm hover:text-ta-inverse-primary transition-colors"
                   >
-                    {contactEntryValue(p)}
+                    {contactPhoneDisplay(p)}
                   </a>
                 </li>
               ))}

@@ -391,10 +391,16 @@ export function ageEligibilityError(
   contactPhone?: string,
 ): string | null {
   if (!criteria || !dateOfBirth) return null
-  const dob = new Date(dateOfBirth)
+  const asLocalDate = (value: string) => {
+    const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+    return iso
+      ? new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]))
+      : new Date(value)
+  }
+  const dob = asLocalDate(dateOfBirth)
   if (Number.isNaN(dob.getTime())) return null
 
-  const asOn = criteria.age_as_on ? new Date(criteria.age_as_on) : new Date()
+  const asOn = criteria.age_as_on ? asLocalDate(criteria.age_as_on) : new Date()
   if (Number.isNaN(asOn.getTime())) return null
 
   const onBirthday = (years: number) => {
@@ -402,15 +408,28 @@ export function ageEligibilityError(
     date.setFullYear(date.getFullYear() + years)
     return date
   }
-  const asOnLabel = asOn.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-  const dobLabel = dob.toLocaleDateString('en-GB')
+  const dobLabel = [dob.getDate(), dob.getMonth() + 1, dob.getFullYear()]
+    .map((part, index) => index < 2 ? String(part).padStart(2, '0') : String(part))
+    .join('/')
+  const day = asOn.getDate()
+  const suffix = day % 100 >= 11 && day % 100 <= 13
+    ? 'th'
+    : ({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[day % 10] ?? 'th'
+  const asOnLabel = `${day}${suffix} ${asOn.toLocaleDateString('en-GB', {
+    month: 'short',
+    year: 'numeric',
+  })}`
   const contact = contactPhone ? `at ${contactPhone}` : 'through the school office'
+  const message = (ageRule: string) =>
+    `Not eligible for ${criteria.label}.\n\n` +
+    `The Date of Birth entered by you is ${dobLabel}. The applicant must be ${ageRule} as on ${asOnLabel}.\n\n` +
+    `Please contact the Admission In-charge ${contact} to complete the offline registration of your ward`
 
   if (criteria.min_age && asOn < onBirthday(criteria.min_age)) {
-    return `Not eligible for ${criteria.label}. The applicant must be at least ${criteria.min_age} years old as on ${asOnLabel}. The Date of Birth entered by you is ${dobLabel}. Please contact the Admission In-charge ${contact} to complete the offline registration of your ward.`
+    return message(`at least ${criteria.min_age} years old`)
   }
   if (criteria.max_age && asOn >= onBirthday(criteria.max_age)) {
-    return `Not eligible for ${criteria.label}. The applicant must be under ${criteria.max_age} years as on ${asOnLabel}. The Date of Birth entered by you is ${dobLabel}. Please contact the Admission In-charge ${contact} to complete the offline registration of your ward.`
+    return message(`under ${criteria.max_age} years old`)
   }
   return null
 }

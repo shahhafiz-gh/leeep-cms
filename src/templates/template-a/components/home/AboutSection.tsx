@@ -4,14 +4,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
-import { contactEntryValue } from '@/lib/contact-entry'
+import { contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
 import StaggerChildren from '@/shared/animations/stagger-children'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 
 export default function AboutSection({ data }: { data: SchoolData }) {
   // Home-only teaser content — independent of the About page.
   const homeAbout = data.homeAbout ?? {}
-  const phone = contactEntryValue(data.contact?.phone?.[0])
+  const phoneEntry = data.contact?.phone?.[0]
+  const phone = contactPhoneDisplay(phoneEntry)
+  const phoneHref = contactPhoneHref(phoneEntry)
   return (
     <section className="py-10 md:py-20 bg-ta-surface overflow-hidden">
       <div className="container my-10 mx-auto px-4 md:px-6">
@@ -88,7 +90,7 @@ export default function AboutSection({ data }: { data: SchoolData }) {
                     <Icon icon="lucide:phone" className="text-ta-primary" />
                   </div>
                   <a
-                    href={`tel:${phone}`}
+                    href={phoneHref}
                     data-edit="contact.phone.0.value"
                     className="font-(family-name:--font-ta-label-md) text-ta-label-md font-bold text-ta-on-surface hover:text-ta-primary transition-colors"
                   >

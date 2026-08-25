@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { Eyebrow } from '../common/Bits'
@@ -67,6 +68,13 @@ export default function NotificationsSection({ data }: { data: SchoolData }) {
      The duplicate is aria-hidden and untabbable: a screen reader and the tab
      order should each meet every notice once, not twice. */
   if (layout === 'ticker') {
+    // A fixed duration makes a long track move much faster than a short one.
+    // Scale the duration with the authored text so the reading speed stays
+    // comfortably consistent, with a generous minimum for short lists.
+    const titleCharacters = items.reduce((total, item) => total + item.title.length, 0)
+    const tickerDuration = Math.max(75, titleCharacters * 0.25 + items.length * 10)
+    const tickerStyle = { '--tf-ticker-speed': `${tickerDuration}s` } as CSSProperties
+
     const row = (clone = false) => (
       <div key={clone ? 'clone' : 'original'} className="flex shrink-0" aria-hidden={clone || undefined}>
         {items.map((n, i) => (
@@ -97,7 +105,10 @@ export default function NotificationsSection({ data }: { data: SchoolData }) {
             Latest
           </div>
           <div className="relative flex min-w-0 flex-1 items-center overflow-hidden">
-            <div className="tf-ticker flex w-max group-hover:[animation-play-state:paused]">
+            <div
+              className="tf-ticker flex w-max group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]"
+              style={tickerStyle}
+            >
               {row()}
               {row(true)}
             </div>

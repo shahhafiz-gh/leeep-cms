@@ -134,7 +134,7 @@ export default function AdmissionStatusBody({
             className={chrome.input}
             value={application}
             onChange={(event) => setApplication(event.target.value)}
-            placeholder="e.g. EDU-APP-0001"
+            placeholder="e.g. 2026-101"
             autoComplete="off"
             // Application numbers are printed on the confirmation screen; a
             // pasted value often arrives with stray spacing, so it is trimmed
