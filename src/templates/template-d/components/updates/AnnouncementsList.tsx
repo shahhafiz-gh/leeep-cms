@@ -29,9 +29,10 @@ export default function AnnouncementsList({ data }: { data: SchoolData }) {
             <h2 className="m-0 text-[28px] leading-[1.1] text-td-ink sm:text-[34px] lg:text-[40px]">
               {featured.title}
             </h2>
-            <p className="m-0 text-[16px] leading-[1.62] text-td-body lg:text-[16.5px]">
+            <p className="m-0 line-clamp-3 text-[16px] leading-[1.62] text-td-body lg:text-[16.5px]">
               {featured.short_description || featured.content?.replace(/<[^>]+>/g, '').slice(0, 260) || ''}
             </p>
+            <span className="text-[14px] font-semibold text-td-accent">Click here to read more →</span>
           </div>
           <Photo
             fill
@@ -67,9 +68,10 @@ export default function AnnouncementsList({ data }: { data: SchoolData }) {
                   <span className="text-[20px] leading-[1.28] font-medium tracking-[-0.022em] text-td-ink">
                     {item.title}
                   </span>
-                  <span className="text-[14.5px] leading-[1.6] text-td-muted">
-                    {item.short_description || ''}
+                  <span className="line-clamp-2 text-[14.5px] leading-[1.6] text-td-muted">
+                    {item.short_description || item.content?.replace(/<[^>]+>/g, '').slice(0, 160) || ''}
                   </span>
+                  <span className="text-[13.5px] font-semibold text-td-accent">Click here to read more →</span>
                 </div>
               </Link>
             ))}

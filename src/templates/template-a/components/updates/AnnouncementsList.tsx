@@ -63,7 +63,7 @@ export default function AnnouncementsList({ data }: { data: SchoolData }) {
             </p>
 
             <div className="text-xs font-bold text-ta-on-surface uppercase tracking-wider flex items-center gap-2 group-hover:text-ta-primary transition-colors mt-auto">
-              Read More
+              Click here to read more
               <Icon icon="lucide:arrow-right" className="group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>
@@ -101,8 +101,9 @@ export default function AnnouncementsList({ data }: { data: SchoolData }) {
                       {item.title}
                     </h4>
                     <p className="font-(family-name:--font-ta-body-md) text-ta-on-surface-variant leading-relaxed line-clamp-2 text-sm mt-1">
-                      {item.short_description || ''}
+                      {item.short_description || item.content?.replace(/<[^>]+>/g, '').slice(0, 150) || ''}
                     </p>
+                    <span className="mt-1 text-xs font-bold text-ta-primary">Click here to read more →</span>
                   </div>
                 </Link>
               ))}

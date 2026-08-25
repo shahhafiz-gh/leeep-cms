@@ -40,7 +40,7 @@ export default function EventsList({ data }: { data: SchoolData }) {
                     {event.title}
                   </span>
                   {event.description && (
-                    <span className="text-[15px] leading-[1.6] text-tf-body">{event.description}</span>
+                    <span className="line-clamp-2 text-[15px] leading-[1.6] text-tf-body">{event.description}</span>
                   )}
                   <span className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[13.5px] text-tf-muted">
                     <span className="inline-flex items-center gap-1.5">
@@ -53,6 +53,9 @@ export default function EventsList({ data }: { data: SchoolData }) {
                         {event.location}
                       </span>
                     )}
+                  </span>
+                  <span className="mt-1 text-[13.5px] font-semibold text-tf-accent group-hover:underline">
+                    Click here to read more →
                   </span>
                 </div>
               </Link>

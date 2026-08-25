@@ -755,3 +755,31 @@ body {
   --color-tb-secondary: #0c1f18;
   --color-tb-footer: #0a1a14;
 }
+
+@keyframes admission-success-pop {
+  0% { opacity: 0; transform: scale(0.35) rotate(-18deg); }
+  65% { opacity: 1; transform: scale(1.16) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+.admission-success-tick {
+  animation: admission-success-pop 650ms cubic-bezier(.2,.9,.25,1.25) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admission-success-tick { animation: none; }
+}
+
+/* Rich bodies authored in Website management (announcements and events). */
+.website-rich-content p { margin: 0 0 1.1em; }
+.website-rich-content h1,
+.website-rich-content h2,
+.website-rich-content h3 { margin: 1.5em 0 0.55em; line-height: 1.2; }
+.website-rich-content ul,
+.website-rich-content ol { margin: 0 0 1.1em; padding-left: 1.5em; }
+.website-rich-content ul { list-style: disc; }
+.website-rich-content ol { list-style: decimal; }
+.website-rich-content blockquote { margin: 1.4em 0; border-left: 3px solid currentColor; padding-left: 1em; opacity: 0.85; }
+.website-rich-content img,
+.website-rich-content video { max-width: 100%; height: auto; border-radius: 0.75rem; }
+.website-rich-content a { text-decoration: underline; text-underline-offset: 0.18em; }

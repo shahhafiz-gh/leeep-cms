@@ -32,11 +32,14 @@ export default function EventsList({ data }: { data: SchoolData }) {
               <div className="flex flex-col gap-1">
                 <span className="text-[16px] text-te-ink group-hover:underline">{event.title}</span>
                 {event.description && (
-                  <span className="text-[14px] leading-[1.6] text-te-body">{event.description}</span>
+                  <span className="line-clamp-2 text-[14px] leading-[1.6] text-te-body">{event.description}</span>
                 )}
                 <span className="text-[13px] text-te-muted">
                   {longDate(event.date)}
                   {event.location ? ` · ${event.location}` : ''}
+                </span>
+                <span className="mt-1 text-[13px] font-semibold text-te-accent group-hover:underline">
+                  Click here to read more →
                 </span>
               </div>
             </Link>

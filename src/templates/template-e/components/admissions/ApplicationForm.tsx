@@ -4,6 +4,7 @@ import type { SchoolData } from '@/types/school.types'
 import AdmissionFormBody from '@/shared/AdmissionFormBody'
 import { chrome } from './chrome'
 import { useAdmissionForm } from '@/shared/useAdmissionForm'
+import { contactEntryValue } from '@/lib/contact-entry'
 import { Container } from '../common/Bits'
 
 /**
@@ -16,7 +17,7 @@ import { Container } from '../common/Bits'
  */
 
 export default function ApplicationForm({ data }: { data: SchoolData }) {
-  const form = useAdmissionForm()
+  const form = useAdmissionForm(contactEntryValue(data.contact?.phone?.[0]))
 
   return (
     <div

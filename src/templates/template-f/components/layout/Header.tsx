@@ -73,7 +73,7 @@ export default function Header({ data }: { data: SchoolData }) {
                   href={link.href}
                   aria-haspopup={children.length > 0 || undefined}
                   className={`flex items-center gap-1 rounded-full px-4 py-[9px] text-[14.5px] font-medium whitespace-nowrap transition-colors ${
-                    active ? 'bg-tf-paper text-tf-ink' : 'text-tf-body hover:text-tf-ink'
+                    active ? 'bg-tf-ink text-tf-on-ink shadow-sm' : 'text-tf-body hover:text-tf-ink'
                   }`}
                 >
                   {link.label}

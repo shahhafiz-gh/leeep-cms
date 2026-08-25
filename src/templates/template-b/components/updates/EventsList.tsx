@@ -65,7 +65,7 @@ export default function EventsList({ data }: { data: SchoolData }) {
 
                 {/* Footer link */}
                 <div className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-tb-secondary hover:text-tb-primary-400 transition-colors uppercase tracking-wide">
-                  Learn More
+                  Click here to read more
                   <Icon icon="lucide:arrow-right" className="w-4 h-4" />
                 </div>
               </Link>

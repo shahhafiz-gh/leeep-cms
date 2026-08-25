@@ -38,10 +38,11 @@ export default function NewsList({ data }: { data: SchoolData }) {
                 {item.title}
               </h2>
               {(item.short_description || item.content) && (
-                <p className="m-0 mt-2.5 text-[14.5px] leading-[1.65] text-te-body">
+                <p className="m-0 mt-2.5 line-clamp-2 text-[14.5px] leading-[1.65] text-te-body">
                   {item.short_description || item.content?.replace(/<[^>]+>/g, '').slice(0, 220)}
                 </p>
               )}
+              <span className="mt-2 block text-[13px] font-semibold text-te-accent">Click here to read more →</span>
             </div>
 
             <Photo

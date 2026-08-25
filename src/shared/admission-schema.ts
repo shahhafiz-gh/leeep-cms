@@ -388,6 +388,7 @@ export function initialValues(fields: SchemaField[]): FormValues {
 export function ageEligibilityError(
   criteria: AdmissionCriteria | null,
   dateOfBirth: string | undefined,
+  contactPhone?: string,
 ): string | null {
   if (!criteria || !dateOfBirth) return null
   const dob = new Date(dateOfBirth)
@@ -402,12 +403,14 @@ export function ageEligibilityError(
     return date
   }
   const asOnLabel = asOn.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+  const dobLabel = dob.toLocaleDateString('en-GB')
+  const contact = contactPhone ? `at ${contactPhone}` : 'through the school office'
 
   if (criteria.min_age && asOn < onBirthday(criteria.min_age)) {
-    return `Not eligible for ${criteria.label}. The applicant must be at least ${criteria.min_age} years old as on ${asOnLabel}.`
+    return `Not eligible for ${criteria.label}. The applicant must be at least ${criteria.min_age} years old as on ${asOnLabel}. The Date of Birth entered by you is ${dobLabel}. Please contact the Admission In-charge ${contact} to complete the offline registration of your ward.`
   }
   if (criteria.max_age && asOn >= onBirthday(criteria.max_age)) {
-    return `Not eligible for ${criteria.label}. The applicant must be under ${criteria.max_age} years as on ${asOnLabel}.`
+    return `Not eligible for ${criteria.label}. The applicant must be under ${criteria.max_age} years as on ${asOnLabel}. The Date of Birth entered by you is ${dobLabel}. Please contact the Admission In-charge ${contact} to complete the offline registration of your ward.`
   }
   return null
 }

@@ -42,6 +42,8 @@ export default function AdmissionFormBody({
 }: AdmissionFormBodyProps): ReactNode {
   const successRef = useRef<HTMLDivElement>(null)
   const applicationNumberRef = useRef<HTMLDivElement>(null)
+  const classSelectorRef = useRef<HTMLDivElement>(null)
+  const didRevealClassSelector = useRef(false)
   const {
     formRef,
     programs,
@@ -69,8 +71,24 @@ export default function AdmissionFormBody({
     successMessage,
     error,
     eligibilityError,
+    eligibilityDialogOpen,
+    dismissEligibilityDialog,
     submit,
   } = form
+
+  useEffect(() => {
+    if (loadingPrograms || !programs.length || didRevealClassSelector.current) return
+    const target = classSelectorRef.current
+    if (!target) return
+    didRevealClassSelector.current = true
+    const frame = window.requestAnimationFrame(() => {
+      target.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start',
+      })
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [loadingPrograms, programs.length, termsAccepted])
 
   useEffect(() => {
     if (!submitted) return
@@ -111,7 +129,9 @@ export default function AdmissionFormBody({
         aria-live="polite"
         className="flex scroll-mt-24 flex-col items-center gap-4 py-14 text-center outline-none"
       >
-        <Icon icon="lucide:check-circle-2" className={`text-5xl ${chrome.accentIcon}`} />
+        <span className="admission-success-tick inline-flex rounded-full" aria-hidden="true">
+          <Icon icon="lucide:check-circle-2" className={`text-5xl ${chrome.accentIcon}`} />
+        </span>
         <h3 className={chrome.stateTitle}>{successTitle}</h3>
         <p className={`max-w-[52ch] ${chrome.bodyText}`}>
           {successMessage ??
@@ -243,7 +263,7 @@ export default function AdmissionFormBody({
     <form ref={formRef} className="flex flex-col gap-10" noValidate onSubmit={submit}>
       {/* Which class — it decides the age window, the fee, and (when the school
           scopes a form profile to it) the questions themselves. */}
-      <div>
+      <div ref={classSelectorRef} id="admission-class-selector" className="scroll-mt-28">
         <h3 className={chrome.heading}>Class you are applying for</h3>
         <div className={chrome.grid ?? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'}>
           <div className={chrome.field ?? 'flex flex-col gap-1.5'}>
@@ -356,6 +376,42 @@ export default function AdmissionFormBody({
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {eligibilityDialogOpen && eligibilityError && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-4"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.currentTarget === event.target) dismissEligibilityDialog()
+          }}
+        >
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="eligibility-dialog-title"
+            aria-describedby="eligibility-dialog-description"
+            className="w-full max-w-lg rounded-2xl border border-red-200 bg-white p-6 text-slate-900 shadow-2xl sm:p-8"
+          >
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-700">
+              <Icon icon="lucide:circle-alert" className="h-6 w-6" />
+            </div>
+            <h3 id="eligibility-dialog-title" className="m-0 text-xl font-semibold text-slate-950">
+              Applicant is not eligible
+            </h3>
+            <p id="eligibility-dialog-description" className="mt-3 text-[15px] leading-7 text-slate-700">
+              {eligibilityError}
+            </p>
+            <button
+              type="button"
+              autoFocus
+              onClick={dismissEligibilityDialog}
+              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white hover:bg-slate-800"
+            >
+              Review date of birth
+            </button>
           </div>
         </div>
       )}
