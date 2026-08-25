@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { styleObject } from '@/lib/component-styles'
-import { contactEntryValue, contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
+import { contactEntryLabel, contactEntryValue, contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
 import { Container } from '../common/Bits'
 
 /**
@@ -51,14 +51,23 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
                 <div data-edit="contact.address">{contact.address}</div>
               )}
               {phones.map((p, i) => (
-                <a
-                  key={`phone-${i}`}
-                  href={contactPhoneHref(p)}
-                  data-edit={`contact.phone.${i}.value`}
-                  className="block transition-colors hover:text-white"
-                >
-                  {contactPhoneDisplay(p)}
-                </a>
+                <div key={`phone-${i}`}>
+                  {(contactEntryLabel(p) || editing) && (
+                    <>
+                      <span data-edit={`contact.phone.${i}.label`} className="font-semibold text-te-on-ink">
+                        {contactEntryLabel(p)}
+                      </span>
+                      {contactEntryLabel(p) ? ': ' : ''}
+                    </>
+                  )}
+                  <a
+                    href={contactPhoneHref(p)}
+                    data-edit={`contact.phone.${i}.value`}
+                    className="transition-colors hover:text-white"
+                  >
+                    {contactPhoneDisplay(p)}
+                  </a>
+                </div>
               ))}
               {emails.map((e, i) => (
                 <div key={`email-${i}`} data-edit={`contact.email.${i}.value`}>{contactEntryValue(e)}</div>
