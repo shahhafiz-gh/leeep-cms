@@ -16,7 +16,12 @@ export default function ProgramsSection({ data }: { data: SchoolData }) {
 
   return (
     <section className="mx-auto max-w-[1400px] px-5 pb-16 pt-8 md:px-8 lg:px-12 lg:pb-20 lg:pt-12">
-      <SectionHead title="One school, every stage" href="/academics" linkLabel="All academics" />
+      <SectionHead
+        title={data.programsIntro?.title || 'One school, every stage'}
+        editPath="programsIntro.title"
+        href="/academics"
+        linkLabel="All academics"
+      />
 
       <div className={`grid gap-5 ${gridCols(programs.length, 3)}`}>
         {programs.map((program, i) => (

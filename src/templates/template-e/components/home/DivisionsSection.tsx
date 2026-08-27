@@ -16,7 +16,9 @@ export default function DivisionsSection({ data }: { data: SchoolData }) {
 
   return (
     <Container className="py-12 lg:py-14">
-      <Eyebrow className="mb-7">One school, every stage</Eyebrow>
+      <Eyebrow className="mb-7" data-edit="programsIntro.title">
+        {data.programsIntro?.title || 'One school, every stage'}
+      </Eyebrow>
       <div className={`grid gap-9 lg:gap-10 ${gridCols(programs.length, 3)}`}>
         {programs.map((program, i) => (
           <div key={program.id || i} className="flex flex-col gap-3">

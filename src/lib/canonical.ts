@@ -1,5 +1,5 @@
 import type { SchoolData } from '@/types/school.types'
-import type { Tenant } from './tenant'
+import { isDevHost, type Tenant } from './tenant'
 
 /**
  * Which host is a school's REAL address.
@@ -58,6 +58,13 @@ export function canonicalUrlFor(data: SchoolData, tenant: Tenant, pathname: stri
  * two hosts alive in the index.
  */
 export function redirectHostFor(data: SchoolData, tenant: Tenant): string | null {
+  // Never bounce a development or preview host to production. `localhost` and
+  // `*.vercel.app` are not the school's platform subdomain — they are someone
+  // working on the site — and redirecting them away means a preview deploy can
+  // never be inspected and a local run of a school with a verified domain
+  // instantly leaves for the live site.
+  if (isDevHost(tenant.host)) return null
+
   const canonical = canonicalHostFor(data, tenant)
   return canonical && canonical !== tenant.host ? canonical : null
 }

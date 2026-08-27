@@ -646,6 +646,19 @@ export interface MagazineData {
   issues?: MagazineIssue[]
 }
 
+/**
+ * Heading for a home-page block whose CONTENT is a list.
+ *
+ * A section like Programs stores an array, so its own heading has nowhere to
+ * live inside it — which is why these headings were hardcoded in the templates
+ * and could not be edited at all. A sibling `*Intro` object is the same shape
+ * `testimonialsIntro` already used; templates fall back to their original
+ * wording when it is empty, so nothing changes for a school until it edits one.
+ */
+export interface SectionIntroData {
+  title?: string
+}
+
 /** Heading + layout for the testimonials block (the quotes are `testimonials`). */
 export interface TestimonialsIntroData {
   title?: string
@@ -694,6 +707,10 @@ export interface SchoolData {
   testimonials: TestimonialData[]
   /** Heading/layout for the testimonials block. */
   testimonialsIntro?: TestimonialsIntroData
+  /** Heading above the Programs cards on the home page. */
+  programsIntro?: SectionIntroData
+  /** Heading above the latest-news strip on the home page. */
+  newsIntro?: SectionIntroData
   stats: StatData[]
   /** Frame for the home "Latest notifications" band (items come from
    *  `updates.announcements`). Quill shows this where other templates show stats. */

@@ -16,7 +16,12 @@ export default function NewsSection({ data }: { data: SchoolData }) {
 
   return (
     <section className="mx-auto max-w-[1400px] px-5 pb-16 pt-16 md:px-8 lg:px-12 lg:pb-18 lg:pt-22">
-      <SectionHead title="What's happening" href="/updates" linkLabel="All news" />
+      <SectionHead
+        title={data.newsIntro?.title || "What's happening"}
+        editPath="newsIntro.title"
+        href="/updates"
+        linkLabel="All news"
+      />
 
       <div className={`grid gap-5 ${gridCols(items.length, 3)}`}>
         {items.map((item) => (
