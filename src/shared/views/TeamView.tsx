@@ -58,7 +58,7 @@ export default function TeamView({ data }: { data: SchoolData }) {
           <div className="mx-auto grid max-w-6xl gap-8 bg-black p-6 text-white sm:p-10 lg:grid-cols-[260px_1fr] lg:p-12">
             {team.message.image && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <img loading="lazy" decoding="async"
                 src={team.message.image}
                 alt={team.message.name || 'School leader'}
                 data-edit-img="team.message.image"
@@ -90,7 +90,7 @@ export default function TeamView({ data }: { data: SchoolData }) {
                 <div className="aspect-4/5 overflow-hidden bg-black/5">
                   {person.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={person.image}
                       alt={person.name}
                       data-edit-img={`team.members.${index}.image`}

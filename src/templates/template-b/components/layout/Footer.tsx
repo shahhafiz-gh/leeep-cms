@@ -111,7 +111,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
           <p className="text-xs text-tb-body flex items-center gap-1.5">
             Powered by
             <a href="https://leeep.in" className="hover:opacity-80 transition-opacity">
-              <img src="/assets/kcs/leeep.svg" alt="Leeep" className="h-4 w-auto inline" />
+              <img loading="lazy" decoding="async" src="/assets/kcs/leeep.svg" alt="Leeep" className="h-4 w-auto inline" />
             </a>
           </p>
         </div>

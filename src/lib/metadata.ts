@@ -22,6 +22,15 @@ interface MetadataOptions {
    * failure. Omitted → the platform default favicon.
    */
   favicon?: string
+  /**
+   * Absolute URL this page should declare as canonical.
+   *
+   * A school is often reachable at two hosts — its platform subdomain and its
+   * own domain — serving byte-identical pages. Without a canonical, search
+   * engines index both and split the ranking between them. Also used as the
+   * Open Graph URL so a shared link names the school's own domain.
+   */
+  canonicalUrl?: string
 }
 
 const DEFAULT_SCHOOL_NAME = 'LEEEP School'
@@ -58,10 +67,14 @@ export function buildMetadata(options: MetadataOptions = {}): Metadata {
       const icon = options.favicon || DEFAULT_FAVICON
       return { icon, shortcut: icon, apple: icon }
     })(),
+    ...(options.canonicalUrl
+      ? { metadataBase: new URL(options.canonicalUrl), alternates: { canonical: options.canonicalUrl } }
+      : {}),
     openGraph: {
       title,
       description,
       type: 'website',
+      ...(options.canonicalUrl ? { url: options.canonicalUrl } : {}),
       ...(images ? { images } : {}),
     },
     ...(images ? { twitter: { card: 'summary_large_image', title, description, images } } : {}),

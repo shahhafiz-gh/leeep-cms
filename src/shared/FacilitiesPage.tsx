@@ -41,7 +41,7 @@ export default function FacilitiesPage({ data, variant }: { data: SchoolData; va
           </div>
           {facilities?.heroImage ? (
             <div className="relative min-h-[280px] overflow-hidden lg:min-h-full">
-              <img src={facilities.heroImage} alt={`${data.name} facilities`} data-edit-img="facilities.heroImage" className="absolute inset-0 h-full w-full object-cover" />
+              <img loading="lazy" decoding="async" src={facilities.heroImage} alt={`${data.name} facilities`} data-edit-img="facilities.heroImage" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           ) : (
             <div className={`flex min-h-[280px] items-center justify-center ${t.panel}`} data-edit-img="facilities.heroImage">
@@ -58,7 +58,7 @@ export default function FacilitiesPage({ data, variant }: { data: SchoolData; va
               <article id={slugify(item.name)} key={`${item.name}-${index}`} className={`grid scroll-mt-28 gap-8 border-b py-12 first:pt-0 last:border-b-0 lg:grid-cols-2 lg:items-center lg:gap-16 ${t.rule}`}>
                 <div className={`relative aspect-[4/3] overflow-hidden ${t.panel} ${index % 2 ? 'lg:order-2' : ''}`}>
                   {item.image ? (
-                    <img src={item.image} alt={item.name} data-edit-img={`facilities.items.${index}.image`} className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.02]" />
+                    <img loading="lazy" decoding="async" src={item.image} alt={item.name} data-edit-img={`facilities.items.${index}.image`} className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.02]" />
                   ) : (
                     <div className="flex h-full items-center justify-center"><Icon icon="lucide:building-2" className={`h-14 w-14 ${t.accent}`} /></div>
                   )}

@@ -13,6 +13,7 @@ import { HeritageGalleryView } from '@/shared/views/GalleryViews'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import StyleHydrator from '@/shared/StyleHydrator'
+import { templateBFonts } from './fonts'
 
 interface TemplateProps {
   data: SchoolData
@@ -46,7 +47,7 @@ export default function TemplateB({ data, page, editing = false }: TemplateProps
 
   return (
     <div
-      className="template-b bg-tb-background text-tb-foreground font-[family-name:var(--font-inter)] min-h-screen flex flex-col"
+      className={`template-b bg-tb-background text-tb-foreground font-[family-name:var(--font-inter)] min-h-screen flex flex-col ${templateBFonts}`}
       data-palette={data.config?.palette || undefined}
     >
       <Header data={data} page={page} />

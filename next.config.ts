@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // This repo carries both a package-lock.json and a yarn.lock, and Turbopack
+  // walks UP the tree looking for the workspace root — landing on ~/package-lock
+  // and treating the whole home directory as the project. Pin it here.
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     // Dev-only: skip server-side optimization. The Frappe backend is on
     // localhost (127.0.0.1), and Next 16's image optimizer hard-blocks any

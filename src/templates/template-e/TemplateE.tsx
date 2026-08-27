@@ -13,6 +13,7 @@ import { LedgerGalleryView } from '@/shared/views/GalleryViews'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import StyleHydrator from '@/shared/StyleHydrator'
+import { templateEFonts } from './fonts'
 
 interface TemplateProps {
   data: SchoolData
@@ -51,7 +52,7 @@ export default function TemplateE({ data, page, editing = false }: TemplateProps
 
   return (
     <div
-      className="template-e flex min-h-screen flex-col bg-te-paper font-(family-name:--font-te-sans) text-te-ink"
+      className={`template-e flex min-h-screen flex-col bg-te-paper font-(family-name:--font-te-sans) text-te-ink ${templateEFonts}`}
       data-palette={palette || undefined}
     >
       <Header data={data} />

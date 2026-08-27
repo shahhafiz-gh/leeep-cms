@@ -1,4 +1,21 @@
+import Image from 'next/image'
 import { Icon } from '@iconify/react'
+
+/**
+ * Filled slots render through `next/image`, which serves AVIF/WebP at the size
+ * the viewport actually needs instead of the original upload. Only the `fill`
+ * variant is converted: it already lives inside a `relative` frame whose box the
+ * picture is absolutely positioned into, so the optimiser is a drop-in with no
+ * layout consequences. The intrinsic-size variant keeps a plain `<img>` — it is
+ * sized entirely by CSS and has no dimensions to give `next/image`, and guessing
+ * them is how you introduce layout shift.
+ *
+ * `sizes` is deliberately conservative: these slots are full-width on a phone
+ * and at most half the page on a desktop, so that is what the browser is told.
+ */
+
+/** Full width on a phone, at most half the page on a desktop. */
+const sizes = '(max-width: 768px) 100vw, 50vw'
 
 interface PhotoProps {
   /** Image URL. Empty/undefined renders the editorial "photo slot" placeholder. */
@@ -31,6 +48,15 @@ interface PhotoProps {
    * is sized by its text (or by the frame's own `min-h-*`) as intended.
    */
   fill?: boolean
+  /**
+   * Load this image eagerly and hint it to the browser as a preload.
+   *
+   * Reserve it for the ONE image above the fold — normally the hero. That image
+   * is almost always the page's Largest Contentful Paint, and lazy-loading the
+   * LCP element means the browser only starts fetching it after layout, which
+   * is a measurable delay for no saving. Everything below the fold stays lazy.
+   */
+  priority?: boolean
 }
 
 /**
@@ -51,6 +77,7 @@ export default function Photo({
   rounded = 'rounded-[20px]',
   fit = 'cover',
   fill = false,
+  priority = false,
 }: PhotoProps) {
   const fitClass = fit === 'contain' ? 'object-contain' : 'object-cover'
   const hatch =
@@ -67,12 +94,14 @@ export default function Photo({
     return (
       <div className={`relative overflow-hidden ${rounded} ${className}`}>
         {src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={src}
             alt={alt}
             data-edit-img={editPath}
-            className={`absolute inset-0 h-full w-full ${fitClass}`}
+            fill
+            sizes={sizes}
+            priority={priority}
+            className={fitClass}
           />
         ) : (
           <div data-edit-img={editPath} className={`absolute inset-0 flex items-end p-5 ${hatch}`}>
@@ -86,7 +115,7 @@ export default function Photo({
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <img loading="lazy" decoding="async"
         src={src}
         alt={alt}
         data-edit-img={editPath}

@@ -38,7 +38,7 @@ export default function AlumniSection({ data }: { data: SchoolData }) {
                 <div className="w-12 h-12 rounded-full bg-tb-primary-50 flex items-center justify-center shrink-0 overflow-hidden">
                   {person.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={person.image} alt={person.name} data-edit-img={`alumni.${i}.image`} className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={person.image} alt={person.name} data-edit-img={`alumni.${i}.image`} className="w-full h-full object-cover" />
                   ) : (
                     <Icon icon="lucide:user" className="w-6 h-6 text-tb-primary-400" />
                   )}

@@ -130,7 +130,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
             Powered by
             <a href="https://leeep.in" className="transition-opacity hover:opacity-80">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/kcs/leeep.svg" alt="Leeep" className="inline h-6 w-auto" />
+              <img loading="lazy" decoding="async" src="/assets/kcs/leeep.svg" alt="Leeep" className="inline h-6 w-auto" />
             </a>
           </span>
         </div>

@@ -214,6 +214,13 @@
   --radius-ta-brand: 8px;
 
   /* ── Template B Typography ── */
+}
+
+/* Template B typography. Scoped to the template root because `--font-inter` /
+   `--font-hind` are `next/font` variables that now live on that same element —
+   at `:root` they are undefined, which makes the whole declaration invalid at
+   computed-value time and inherits down as invalid. */
+.template-b {
   --font-tb-heading: "Canela Trial", serif;
   --font-tb-display: "Canela Trial", serif;
   --font-tb-body: var(--font-inter), sans-serif;
@@ -293,23 +300,31 @@
  *
  * Declaring them as plain custom properties emits them unconditionally.
  *
- * They must sit on `body`, NOT on `:root`. `next/font` exposes each family as a
- * custom property on a class applied to <body>, so at :root `var(--font-lora)`
- * is undefined — which makes the whole declaration invalid at computed-value
- * time and inherits DOWN as invalid, even though --font-lora is perfectly well
- * defined one level lower. Resolving on `body` is the only place both halves
- * exist at once.
+ * They must sit on the SAME element that carries the `next/font` variables.
+ * Each family is exposed as a custom property on a class, and a declaration
+ * reading an undefined custom property is invalid at computed-value time and
+ * inherits DOWN as invalid — so `--font-te-serif: var(--font-lora)` resolves to
+ * nothing unless `--font-lora` is in scope right there. The font classes used to
+ * go on <body>; they now go on each template's root div (so a school downloads
+ * only its own template's faces), so these declarations followed them onto
+ * `.template-d` / `.template-e` / `.template-f`.
  * ════════════════════════════════════════════════════════════════════════════ */
-body {
-  /* Template D — Quill */
+/* Template D — Quill */
+.template-d {
   --font-td-sans: var(--font-space-grotesk), "Helvetica Neue", Helvetica, sans-serif;
   --font-td-serif: var(--font-newsreader), Georgia, serif;
-  /* Almanac defaults to BioRhyme. Website Management can switch both its main
-     and accent faces to another curated Google Font. */
+}
+
+/* Template F — Almanac. Defaults to BioRhyme; Website Management can switch both
+   its main and accent faces to another curated Google Font (see the
+   `[data-font]` override below, which is more specific and therefore wins). */
+.template-f {
   --font-tf-sans: var(--font-biorhyme), Georgia, serif;
   --font-tf-serif: var(--font-biorhyme), Georgia, serif;
+}
 
-  /* Template E — Ledger */
+/* Template E — Ledger */
+.template-e {
   --font-te-serif: var(--font-lora), Georgia, serif;
   --font-te-sans: var(--font-work-sans), Helvetica, Arial, sans-serif;
 }

@@ -90,7 +90,7 @@ export default function UpdateDetail({ data, id }: { data: SchoolData; id: strin
 
             {image && (
               <div className="mb-10 rounded-3xl overflow-hidden">
-                <img src={image} alt={title} className="w-full max-h-[480px] object-cover" />
+                <img loading="lazy" decoding="async" src={image} alt={title} className="w-full max-h-[480px] object-cover" />
               </div>
             )}
 

@@ -51,7 +51,7 @@ export default function AnnouncementsSection({ data }: { data: SchoolData }) {
           <Link href={`/updates/${featured.id}`} className="group flex-col block">
             {featured.thumbnail ? (
               <div className="relative w-full aspect-4/3 rounded-2xl overflow-hidden mb-6 bg-ta-surface-container">
-                <img
+                <img loading="lazy" decoding="async"
                   src={featured.thumbnail}
                   alt={featured.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
@@ -98,7 +98,7 @@ export default function AnnouncementsSection({ data }: { data: SchoolData }) {
                 >
                   {item.thumbnail ? (
                     <div className="w-28 sm:w-36 h-20 sm:h-24 shrink-0 rounded-xl overflow-hidden relative bg-ta-surface-container">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={item.thumbnail}
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"

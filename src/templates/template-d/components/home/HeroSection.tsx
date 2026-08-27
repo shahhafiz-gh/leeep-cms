@@ -33,6 +33,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
         {/* `fill` so the photo matches the height of the card stack beside it
             instead of dictating it from its own aspect ratio. */}
         <Photo
+          priority
           fill
           src={slide.image}
           alt={slide.title}

@@ -17,6 +17,7 @@ import { WillowGalleryView } from '@/shared/views/GalleryViews'
 import Header from '../template-a/components/layout/Header'
 import Footer from '../template-a/components/layout/Footer'
 import StyleHydrator from '@/shared/StyleHydrator'
+import { templateCFonts } from './fonts'
 
 interface TemplateProps {
   data: SchoolData
@@ -50,7 +51,7 @@ export default function TemplateC({ data, page, editing = false }: TemplateProps
 
   return (
     <div
-      className="template-c template-a bg-ta-background text-ta-on-background font-(family-name:--font-dm-sans) min-h-screen flex flex-col"
+      className={`template-c template-a bg-ta-background text-ta-on-background font-(family-name:--font-dm-sans) min-h-screen flex flex-col ${templateCFonts}`}
       data-palette={palette}
     >
       <Header data={data} />

@@ -1,7 +1,6 @@
-import { cache } from 'react'
-import { headers } from 'next/headers'
 import { createHmac, timingSafeEqual } from 'node:crypto'
-import type { SchoolData, WebsiteIdentity } from '@/types/school.types'
+import type { SchoolData } from '@/types/school.types'
+import { isAllowedBackend, siteTag, type Tenant } from './tenant'
 import { placeholderTemplateAData, mockKcgsData } from './mock'
 
 /**
@@ -9,90 +8,78 @@ import { placeholderTemplateAData, mockKcgsData } from './mock'
  *
  * Every server-side render gets its content through `getSiteData`. No component
  * fetches Frappe directly and nothing fetches site content from the browser, so
- * there are no CORS calls to the backend. School resolution and draft-preview
- * gating also live here so the rules exist in exactly one place.
+ * there are no CORS calls to the backend.
+ *
+ * CACHING (this is the point of the module's shape). `getSiteData` takes a
+ * `Tenant` resolved from the URL rather than reading `headers()`, because a
+ * page that touches a request-scoped API can never be statically rendered. With
+ * the tenant arriving as a plain argument, the published read is an ordinary
+ * cached `fetch` tagged `site:<backend-host>`, so:
+ *
+ *   - the school's Frappe is hit once per publish, not once per visitor;
+ *   - the rendered HTML is cached at the edge and revalidated on demand;
+ *   - the last good page keeps being served while a school's site is down.
+ *
+ * Frappe calls `POST /api/revalidate` on publish, which calls
+ * `revalidateTag(siteTag(backend))` — see `app/api/revalidate/route.ts`.
+ *
+ * DRAFT reads are never cached: they are per-editor, authenticated, and change
+ * on every keystroke of the builder.
  *
  * Backend methods used (do not invent others):
  *   - Content:  education.education.website_builder.get_site?school=&mode=
- *   - Identity: education.education.api.get_website_registration
  */
 
-// ── Config ──
-
-/**
- * Base URL of the Frappe backend. One Frappe site PER SCHOOL, so the backend is
- * per-request: `middleware.ts` resolves the host to the school's own site and
- * injects it as `x-frappe-backend`. This env is only the dev/localhost fallback.
- */
-const FRAPPE_URL_FALLBACK = process.env.FRAPPE_URL ?? 'http://localhost:8000'
-
-/** The per-school backend for THIS request (from middleware), or the fallback. */
-async function resolveBackend(): Promise<string> {
-  const backend = (await headers()).get('x-frappe-backend')
-  return backend && backend.trim() ? backend.trim().replace(/\/$/, '') : FRAPPE_URL_FALLBACK
-}
-
-/** Dotted Frappe method paths, kept in one place (env-overridable). */
+/** Dotted Frappe method path, kept in one place (env-overridable). */
 const GET_SITE_METHOD =
   process.env.FRAPPE_GET_SITE_METHOD ?? 'education.education.website_builder.get_site'
-const GET_IDENTITY_METHOD =
-  process.env.FRAPPE_GET_IDENTITY_METHOD ?? 'education.education.api.get_website_registration'
+
+/**
+ * How long a published page may serve before Next re-fetches it on its own.
+ * On-demand revalidation from Frappe is the PRIMARY freshness mechanism; this
+ * is only the backstop for a publish whose webhook never arrived.
+ */
+const PUBLISHED_TTL_SECONDS = Number(process.env.SITE_REVALIDATE_SECONDS ?? 3600)
 
 export type SiteMode = 'published' | 'draft'
 
+/**
+ * The requested host belongs to no school — as opposed to a school whose
+ * backend is merely unwell.
+ *
+ * The distinction decides what the visitor gets, and it has to be drawn
+ * carefully now that renders are cached: a 404 is a correct, cacheable answer
+ * for a host nobody owns, but caching one for a school that was briefly
+ * unreachable would take a real site down until the next publish. So only two
+ * unambiguous, permanent signals count as "no such school" — Frappe answering
+ * 404, or its hostname not existing in DNS. Timeouts, refused connections and
+ * 5xx are treated as outages and re-thrown, which lets Next keep serving the
+ * last good render instead.
+ */
+export class SiteNotFoundError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'SiteNotFoundError'
+  }
+}
+
+/** Does this thrown value mean the backend hostname does not exist at all? */
+function isDnsFailure(err: unknown): boolean {
+  const cause = (err as { cause?: { code?: string } })?.cause
+  return cause?.code === 'ENOTFOUND'
+}
+
 /** Search-params shape passed by Next.js pages (already awaited). */
 export type RouteSearchParams = Record<string, string | string[] | undefined>
-
-/** Minimal view of `headers()` — just the `.get` we need. */
-interface HeaderReader {
-  get(name: string): string | null
-}
-
-// ── School resolution (ONE place) ──
-
-/**
- * Resolve which school to render. Precedence:
- *
- *   1. PRIMARY — the school slug resolved from the request host by `middleware.ts`
- *      and injected as the `x-school-subdomain` header (platform subdomain OR a
- *      custom domain looked up in Frappe). This is how EVERY page resolves in
- *      real (non-localhost) environments.
- *   2. DEV OVERRIDE — on localhost/dev ONLY, a `?school=<slug>` query param wins,
- *      because there are no real subdomains on localhost. Ignored in production.
- */
-export function resolveSchool(
-  headersList: HeaderReader,
-  searchParams?: RouteSearchParams,
-): string {
-  const subdomain = headersList.get('x-school-subdomain') ?? ''
-
-  const host = headersList.get('host') ?? ''
-  const devOverrideAllowed =
-    process.env.NODE_ENV !== 'production' ||
-    host.includes('localhost') ||
-    host.startsWith('127.0.0.1') ||
-    // Raw Vercel deploy URLs (<project>-<hash>.vercel.app) carry no school
-    // subdomain, so allow `?school=<slug>` there for testing a live deploy.
-    host.endsWith('.vercel.app')
-
-  if (devOverrideAllowed) {
-    // Builder preview URLs carry the slug as `?subdomain=`; the dev override uses
-    // `?school=`. Accept either.
-    const raw = searchParams?.school ?? searchParams?.subdomain
-    const override = Array.isArray(raw) ? raw[0] : raw
-    if (override && override.trim() !== '') return override.trim()
-  }
-
-  return subdomain
-}
 
 // ── Draft-preview gating (token, server-side) ──
 
 /**
  * Decide which content variant to request from `searchParams`.
- * `?preview=1&token=<PREVIEW_SECRET>` → `"draft"`; otherwise `"published"`.
- * The secret is read server-side and never sent to the browser; the check is
- * per-request (no cookie/session).
+ * `?preview=1&token=<signed>` → `"draft"`; otherwise `"published"`.
+ *
+ * Only the `/preview` route calls these — the public routes have no query
+ * string at all, which is part of what keeps them cacheable.
  */
 export function resolvePreviewMode(searchParams?: RouteSearchParams): SiteMode {
   return isEditPreview(searchParams) ? 'draft' : 'published'
@@ -107,9 +94,6 @@ export function resolvePreviewToken(searchParams?: RouteSearchParams): string | 
 
 /**
  * Whether the request is an editor PREVIEW — `?preview=1&token=<signed token>`.
- * This is the SAME token mechanism as `resolvePreviewMode`; it is exposed
- * separately so the inline-edit layer can be gated on it WITHOUT forcing the
- * content fetch into `draft` mode.
  *
  * The token is minted by the authenticated builder (Frappe's
  * `website_builder.get_preview_token`, editor-gated) in the form
@@ -164,8 +148,7 @@ const EDITOR_NAV: { label: string; href: string }[] = [
 /**
  * Ensure the navigation exposes EVERY standard page in the inline editor, so the
  * admin can reach (and edit) each page from the header — even if the school's
- * own navigation omits some (e.g. Updates / Admissions are missing from this
- * school's Frappe nav, so they never appear in the menu).
+ * own navigation omits some.
  *
  * The school's own entries win for label/children/order; canonical pages it is
  * missing are inserted in the standard order, and any extra custom links the
@@ -192,19 +175,18 @@ export function withEditorNavigation(data: SchoolData): SchoolData {
 // ── Frappe asset URL resolution ──
 
 /**
- * Frappe serves these roots from its OWN origin (FRAPPE_URL), but stores them as
- * ROOT-RELATIVE paths in content (e.g. an uploaded logo is `/files/logo.png`,
- * the demo emblem is `/assets/education/leeep/logo.svg`). The renderer runs on a
- * DIFFERENT origin, so a bare `/files/...` would resolve against the renderer
- * (localhost:3000) and 404. We rewrite those to absolute Frappe URLs at read
- * time so the stored blob stays portable (prod just changes FRAPPE_URL).
+ * Frappe serves these roots from its OWN origin, but stores them as
+ * ROOT-RELATIVE paths in content (e.g. an uploaded logo is `/files/logo.png`).
+ * The renderer runs on a DIFFERENT origin, so a bare `/files/...` would resolve
+ * against the renderer and 404. We rewrite those to absolute Frappe URLs at read
+ * time so the stored blob stays portable.
  *
  * Only `is_private=0` uploads (`/files/`) and bundled `/assets/` are public; we
  * include `/private/files/` for completeness though private files need auth.
  */
 const FRAPPE_ASSET_PREFIXES = ['/files/', '/private/files/', '/assets/']
 
-/** Deep-rewrite any root-relative Frappe asset path to an absolute FRAPPE_URL.
+/** Deep-rewrite any root-relative Frappe asset path to an absolute backend URL.
  *
  * Spaces are percent-encoded on the way out: Frappe keeps an uploaded file's
  * original name, so `/files/dpms logo (1).png` is entirely normal, and a raw
@@ -240,85 +222,83 @@ function pickLocalMock(school: string): SchoolData {
 // ── The single content layer ──
 
 /**
- * Fetch the full `SchoolData` for a school.
+ * Fetch the full `SchoolData` for a tenant.
  *
- * @param school  School slug (resolve it with `resolveSchool`).
- * @param mode    `"published"` (default) or `"draft"` (from `resolvePreviewMode`).
+ * @param tenant  Resolved by `lib/tenant.ts` from the URL — never from headers.
+ * @param mode    `"published"` (default) or `"draft"` (editor preview only).
+ * @param previewToken  Forwarded to Frappe for a draft read.
+ *
+ * PUBLISHED reads are cached and tagged so the page they render can live at the
+ * edge until the school publishes. DRAFT reads always go to the network.
  *
  * - `USE_LOCAL_DATA=true` → return the local mock fixture; never touches the
  *   network (works fully offline).
- * - Otherwise fetch `GET /api/method/<get_site>?school=&mode=` server-side with
- *   `cache: "no-store"` and unwrap Frappe's `{ message }` envelope.
  * - On failure it RE-THROWS by default so dev failures are visible. A graceful
- *   fallback to the local mock is available but OPT-IN via `DEMO_FALLBACK=true`
- *   (for resilient demo environments) — never a silent default.
- *
- * Wrapped in React `cache()` so `generateMetadata` + the page body share one
- * fetch per render (same `school`/`mode`).
+ *   fallback to the local mock is available but OPT-IN via `DEMO_FALLBACK=true`.
+ *   Note that with the published read cached, an outage no longer takes the
+ *   public site down: Next keeps serving the last good render.
  */
-export const getSiteData = cache(
-  async (school: string, mode: SiteMode = 'published', previewToken?: string): Promise<SchoolData> => {
-    if (process.env.USE_LOCAL_DATA === 'true') {
-      return pickLocalMock(school)
-    }
+export async function getSiteData(
+  tenant: Tenant,
+  mode: SiteMode = 'published',
+  previewToken?: string,
+): Promise<SchoolData> {
+  if (process.env.USE_LOCAL_DATA === 'true') {
+    return pickLocalMock(tenant.slug)
+  }
 
-    const backend = await resolveBackend()
-    const url =
-      `${backend}/api/method/${GET_SITE_METHOD}` +
-      `?school=${encodeURIComponent(school)}&mode=${encodeURIComponent(mode)}` +
-      (previewToken ? `&token=${encodeURIComponent(previewToken)}` : '')
+  const backend = tenant.backend.replace(/\/$/, '')
+  if (!isAllowedBackend(backend)) {
+    throw new Error(`getSiteData: refusing to fetch from disallowed backend "${backend}"`)
+  }
 
-    try {
-      const res = await fetch(url, {
-        cache: 'no-store',
-        headers: { Accept: 'application/json' },
-      })
-      if (!res.ok) {
-        throw new Error(`Frappe returned ${res.status} ${res.statusText} from ${url}`)
-      }
-      const json = (await res.json()) as { message?: SchoolData }
-      if (json?.message == null) {
-        throw new Error(`Frappe response missing "message" envelope from ${url}`)
-      }
-      // Frappe stores asset paths root-relative; resolve them against its own
-      // origin so they don't 404 against the renderer's origin.
-      return absolutizeAssetUrls(json.message, backend)
-    } catch (err) {
-      const reason = err instanceof Error ? err.message : String(err)
-      if (process.env.DEMO_FALLBACK === 'true') {
-        console.warn(
-          `[cms] getSiteData failed for school="${school}" (mode=${mode}); ` +
-            `serving local fallback (DEMO_FALLBACK=true). Reason: ${reason}`,
-        )
-        return pickLocalMock(school)
-      }
-      throw new Error(
-        `getSiteData: failed to load site data for school="${school}" (mode=${mode}): ${reason}`,
-      )
-    }
-  },
-)
+  const params = new URLSearchParams({ mode })
+  // `school` is optional: one Frappe site per school, so the backend already
+  // identifies the site's single website. Sent when known for exactness.
+  if (tenant.slug) params.set('school', tenant.slug)
+  if (previewToken) params.set('token', previewToken)
+  const url = `${backend}/api/method/${GET_SITE_METHOD}?${params.toString()}`
 
-// ── Identity helper (auth; optional) ──
+  // Draft is per-editor and changes constantly; published is shared by every
+  // visitor and only changes on publish.
+  const cacheOptions: RequestInit =
+    mode === 'draft'
+      ? { cache: 'no-store' }
+      : { next: { revalidate: PUBLISHED_TTL_SECONDS, tags: [siteTag(backend)] } }
 
-/**
- * Fetch the website identity/registration for the authenticated editor session.
- * Returns `null` when there is no School Website or the request is unauthenticated.
- * Server-side only. (Not required to render published content — the template
- * comes from `get_site`'s `config.template_id` — but available for editor flows.)
- */
-export const getWebsiteIdentity = cache(async (): Promise<WebsiteIdentity | null> => {
-  const backend = await resolveBackend()
-  const url = `${backend}/api/method/${GET_IDENTITY_METHOD}`
   try {
     const res = await fetch(url, {
-      cache: 'no-store',
+      ...cacheOptions,
       headers: { Accept: 'application/json' },
     })
-    if (!res.ok) return null
-    const json = (await res.json()) as { message?: WebsiteIdentity | null }
-    return json?.message ?? null
-  } catch {
-    return null
+    if (res.status === 404) {
+      throw new SiteNotFoundError(`No School Website behind ${backend} (404)`)
+    }
+    if (!res.ok) {
+      throw new Error(`Frappe returned ${res.status} ${res.statusText} from ${url}`)
+    }
+    const json = (await res.json()) as { message?: SchoolData }
+    if (json?.message == null) {
+      throw new Error(`Frappe response missing "message" envelope from ${url}`)
+    }
+    // Frappe stores asset paths root-relative; resolve them against its own
+    // origin so they don't 404 against the renderer's origin.
+    return absolutizeAssetUrls(json.message, backend)
+  } catch (err) {
+    if (err instanceof SiteNotFoundError) throw err
+    if (isDnsFailure(err)) {
+      throw new SiteNotFoundError(`Backend host for "${tenant.host}" does not resolve`)
+    }
+    const reason = err instanceof Error ? err.message : String(err)
+    if (process.env.DEMO_FALLBACK === 'true') {
+      console.warn(
+        `[cms] getSiteData failed for host="${tenant.host}" (mode=${mode}); ` +
+          `serving local fallback (DEMO_FALLBACK=true). Reason: ${reason}`,
+      )
+      return pickLocalMock(tenant.slug)
+    }
+    throw new Error(
+      `getSiteData: failed to load site data for host="${tenant.host}" (mode=${mode}): ${reason}`,
+    )
   }
-})
+}

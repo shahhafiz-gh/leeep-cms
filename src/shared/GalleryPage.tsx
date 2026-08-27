@@ -19,7 +19,7 @@ function PhotoGrid({ images, basePath, panel }: { images: GalleryImage[]; basePa
         <figure key={`${image.src}-${index}`} className={`group m-0 overflow-hidden ${panel}`}>
           <div className="relative aspect-[4/3] overflow-hidden">
             {image.src ? (
-              <img
+              <img loading="lazy" decoding="async"
                 src={image.src}
                 alt={image.alt || `Gallery photo ${index + 1}`}
                 data-edit-img={basePath ? `${basePath}.${index}.src` : undefined}
