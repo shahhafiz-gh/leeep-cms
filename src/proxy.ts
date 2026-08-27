@@ -42,6 +42,26 @@ import {
  * renamed the `middleware` convention to `proxy`.
  */
 
+/**
+ * Static files shipped in `public/`.
+ *
+ * These MUST be excluded before anything else. Proxy runs ahead of Next's
+ * static-file handler, so a rewrite here does not "fall through" to the file —
+ * it turns `/assets/kcs/leeep.svg` into `/site/<host>/<slug>/assets/kcs/leeep.svg`,
+ * which matches no route and 404s. That took out the "Powered by Leeep" logo in
+ * every footer, template B's Canela fonts, and the demo images, all at once.
+ *
+ * Matched two ways so a file added to `public/` later cannot break the same way:
+ * the `/assets/` tree, and any request whose last segment carries a known static
+ * extension. The extension list is explicit rather than "anything with a dot",
+ * because a content id in `/updates/<id>` is allowed to contain one.
+ */
+const STATIC_FILE = /\.(?:svg|png|jpe?g|gif|webp|avif|ico|bmp|woff2?|ttf|otf|eot|mp4|webm|mp3|wav|pdf|txt|xml|json|csv|css|js|map|html|webmanifest)$/i
+
+function isStaticAsset(pathname: string): boolean {
+  return pathname.startsWith('/assets/') || STATIC_FILE.test(pathname)
+}
+
 /** Paths that own their routing and must never be rewritten to a tenant. */
 function isReservedPath(pathname: string): boolean {
   return (
@@ -50,11 +70,9 @@ function isReservedPath(pathname: string): boolean {
     pathname.startsWith('/demo') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/_vercel') ||
-    // Well-known files served from `public/` or generated at the root.
-    pathname === '/favicon.ico' ||
-    pathname === '/robots.txt' ||
-    pathname === '/sitemap.xml' ||
-    pathname.startsWith('/.well-known/')
+    pathname.startsWith('/.well-known/') ||
+    // Everything in `public/`, plus the generated robots/sitemap.
+    isStaticAsset(pathname)
   )
 }
 
