@@ -69,6 +69,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
               a school that never uploaded a clip all land on the photograph
               rather than on a black rectangle. */}
           <Photo
+          priority
             fill
             src={slide.image}
             alt={slide.title}

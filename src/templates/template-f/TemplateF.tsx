@@ -13,6 +13,7 @@ import { AlmanacGalleryView } from '@/shared/views/GalleryViews'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import StyleHydrator from '@/shared/StyleHydrator'
+import { templateFFonts } from './fonts'
 
 interface TemplateProps {
   data: SchoolData
@@ -53,7 +54,7 @@ export default function TemplateF({ data, page, editing = false }: TemplateProps
 
   return (
     <div
-      className="template-f flex min-h-screen flex-col bg-tf-paper font-(family-name:--font-tf-sans) text-tf-ink"
+      className={`template-f flex min-h-screen flex-col bg-tf-paper font-(family-name:--font-tf-sans) text-tf-ink ${templateFFonts}`}
       data-palette={palette || undefined}
       data-font={font}
     >

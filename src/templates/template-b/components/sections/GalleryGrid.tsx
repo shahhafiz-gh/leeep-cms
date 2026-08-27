@@ -39,7 +39,7 @@ export default function GalleryGrid({ initialImages }: { initialImages: GalleryI
         >
           {image.src ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <img loading="lazy" decoding="async"
               src={image.src}
               alt={image.alt}
               data-edit-img={`gallery.images.${i}.src`}

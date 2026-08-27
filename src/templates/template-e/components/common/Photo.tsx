@@ -1,3 +1,20 @@
+import Image from 'next/image'
+/**
+ * Filled slots render through `next/image`, which serves AVIF/WebP at the size
+ * the viewport actually needs instead of the original upload. Only the `fill`
+ * variant is converted: it already lives inside a `relative` frame whose box the
+ * picture is absolutely positioned into, so the optimiser is a drop-in with no
+ * layout consequences. The intrinsic-size variant keeps a plain `<img>` — it is
+ * sized entirely by CSS and has no dimensions to give `next/image`, and guessing
+ * them is how you introduce layout shift.
+ *
+ * `sizes` is deliberately conservative: these slots are full-width on a phone
+ * and at most half the page on a desktop, so that is what the browser is told.
+ */
+
+/** Full width on a phone, at most half the page on a desktop. */
+const sizes = '(max-width: 768px) 100vw, 50vw'
+
 interface PhotoProps {
   src?: string | null
   alt?: string
@@ -13,6 +30,15 @@ interface PhotoProps {
    * neighbouring column's height needs this.
    */
   fill?: boolean
+  /**
+   * Load this image eagerly and hint it to the browser as a preload.
+   *
+   * Reserve it for the ONE image above the fold — normally the hero. That image
+   * is almost always the page's Largest Contentful Paint, and lazy-loading the
+   * LCP element means the browser only starts fetching it after layout, which
+   * is a measurable delay for no saving. Everything below the fold stays lazy.
+   */
+  priority?: boolean
 }
 
 /**
@@ -28,6 +54,7 @@ export default function Photo({
   editPath,
   className = '',
   fill = false,
+  priority = false,
 }: PhotoProps) {
   const hatch =
     'bg-[repeating-linear-gradient(45deg,#e9e3d5_0_12px,#f0ebe0_12px_24px)]'
@@ -42,8 +69,7 @@ export default function Photo({
     return (
       <div className={`relative overflow-hidden border border-te-rule ${className}`}>
         {src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={alt} data-edit-img={editPath} className="absolute inset-0 h-full w-full object-cover" />
+          <Image src={src} alt={alt} data-edit-img={editPath} fill sizes={sizes} priority={priority} className="object-cover" />
         ) : (
           <div data-edit-img={editPath} className={`absolute inset-0 grid place-items-center ${hatch}`}>
             {note}
@@ -56,7 +82,7 @@ export default function Photo({
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <img loading="lazy" decoding="async"
         src={src}
         alt={alt}
         data-edit-img={editPath}

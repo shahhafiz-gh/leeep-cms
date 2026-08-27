@@ -32,7 +32,7 @@ export default function ClubsSection({ data }: { data: SchoolData }) {
               className="group relative h-[300px] rounded-2xl overflow-hidden cursor-pointer"
             >
               {club.image ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={club.image}
                   alt={club.name}
                   data-edit-img={`academics.clubs.${index}.image`}

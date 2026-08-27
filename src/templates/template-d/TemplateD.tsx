@@ -13,6 +13,7 @@ import { QuillGalleryView } from '@/shared/views/GalleryViews'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import StyleHydrator from '@/shared/StyleHydrator'
+import { templateDFonts } from './fonts'
 
 interface TemplateProps {
   data: SchoolData
@@ -51,7 +52,7 @@ export default function TemplateD({ data, page, editing = false }: TemplateProps
 
   return (
     <div
-      className="template-d flex min-h-screen flex-col bg-td-paper font-(family-name:--font-td-sans) text-td-ink"
+      className={`template-d flex min-h-screen flex-col bg-td-paper font-(family-name:--font-td-sans) text-td-ink ${templateDFonts}`}
       data-palette={palette || undefined}
     >
       <Header data={data} />

@@ -35,7 +35,7 @@ export default function NewsList({ data }: { data: SchoolData }) {
               <div className="relative overflow-hidden rounded-xl shrink-0 mb-5">
                 <Link href={`/updates/${featured.id}`}>
                   {featured.thumbnail ? (
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={featured.thumbnail}
                       alt={featured.title}
                       className="w-full h-[280px] object-cover block transition-transform duration-500 group-hover:scale-105"
@@ -100,7 +100,7 @@ export default function NewsList({ data }: { data: SchoolData }) {
                 >
                   <div className="shrink-0 w-[120px] h-[90px] rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center">
                     {item.thumbnail ? (
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={item.thumbnail}
                         alt={item.title}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

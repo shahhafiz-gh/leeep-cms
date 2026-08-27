@@ -81,7 +81,7 @@ export default function ContactHero({ data }: { data: SchoolData }) {
           <div className="relative z-10 w-full max-w-[550px] h-[360px] md:h-[400px] rounded-[40px] border-8 border-ta-surface shadow-2xl">
             <div className="relative w-full h-full rounded-[32px] overflow-hidden bg-ta-surface-container">
               {data.contact.image ? (
-                <img src={data.contact.image} alt={`${data.name} campus`} className="w-full h-full object-cover" data-edit-img="contact.image" />
+                <img loading="lazy" decoding="async" src={data.contact.image} alt={`${data.name} campus`} className="w-full h-full object-cover" data-edit-img="contact.image" />
               ) : (
                 <ImagePlaceholder label="Add campus image" icon="lucide:building-2" editPath="contact.image" />
               )}

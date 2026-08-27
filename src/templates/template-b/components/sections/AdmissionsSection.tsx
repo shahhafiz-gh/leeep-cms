@@ -63,7 +63,7 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
               </div>
             ) : admissions.homeImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <img loading="lazy" decoding="async"
                 src={admissions.homeImage}
                 alt="Admissions"
                 data-edit-img="admissions.homeImage"

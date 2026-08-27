@@ -36,6 +36,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
         </div>
 
         <Photo
+          priority
           fill
           src={slide.image}
           alt={slide.title}

@@ -46,6 +46,22 @@ export interface TemplateConfig {
   favicon?: string
   /** Whether the optional public page set is enabled for this school. */
   extended_pages?: boolean
+  /** Nav hrefs the school has chosen to hide. Server-owned. */
+  hidden_nav_items?: string[]
+  /**
+   * The school's own domain, once it has connected one. Server-owned, folded in
+   * by `get_site` from `School Website.custom_domain`. Used to pick the
+   * canonical host so the platform subdomain and the custom domain stop
+   * competing as two copies of one site.
+   */
+  custom_domain?: string
+  /** Vercel's verification state for `custom_domain` (`Active` once it is live). */
+  custom_domain_status?: string
+  /**
+   * The school's own Google Analytics 4 measurement id (`G-XXXXXXX`), if it has
+   * one. Empty/absent → no analytics script is emitted at all.
+   */
+  analytics_id?: string
 }
 
 // ── Facilities ──

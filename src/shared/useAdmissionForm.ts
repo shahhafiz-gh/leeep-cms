@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useClientSearchParams } from './hooks/useClientSearchParams'
 import {
   ageEligibilityError,
   fetchAdmissionPrograms,
@@ -36,7 +36,12 @@ export function useAdmissionForm(contactPhone?: string) {
 
   // The admissions page hands over which intake (and often which class) the
   // family chose, so the form opens where they left off instead of asking again.
-  const searchParams = useSearchParams()
+  //
+  // Read after mount (see useClientSearchParams): this page is statically
+  // rendered and cached, so the query cannot be known while the HTML is being
+  // produced. The prefill lands on hydration, which is before anyone has
+  // finished reading the first field.
+  const searchParams = useClientSearchParams()
   const admissionFromUrl = searchParams?.get('admission') ?? ''
   const programFromUrl = searchParams?.get('program') ?? ''
 
@@ -75,7 +80,13 @@ export function useAdmissionForm(contactPhone?: string) {
         // Honour the class carried over from the admissions page, but only if it
         // is genuinely still open — a stale or hand-edited link must not select
         // a class the school is not admitting into.
-        if (current && open.some((entry) => entry.program === current)) return current
+        //
+        // `programFromUrl` is consulted alongside `current` because the query is
+        // now read after mount: on the first pass it was still empty, so the
+        // deep-linked class arrives with this re-run rather than in the initial
+        // state.
+        const wanted = current || programFromUrl
+        if (wanted && open.some((entry) => entry.program === wanted)) return wanted
         // One open class is not a choice; skip straight to the questions.
         return open.length === 1 ? open[0].program : ''
       })
@@ -84,7 +95,7 @@ export function useAdmissionForm(contactPhone?: string) {
     return () => {
       cancelled = true
     }
-  }, [admissionFromUrl])
+  }, [admissionFromUrl, programFromUrl])
 
   useEffect(() => {
     if (!program) return
