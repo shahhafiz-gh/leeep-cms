@@ -17,12 +17,13 @@
  * path (a rewrite, not a redirect).
  *
  * Two segments, because they answer two different questions:
- *   - `host`  the PUBLIC host. Always present, and the only reliable key: the
- *             central custom-domain directory returns a backend but NO slug.
- *   - `slug`  the School Website slug, or `-` when unknown. Optional by design —
- *             with one Frappe site per school, `get_site` resolves that site's
- *             single website on its own. It exists for the `?school=` dev
- *             override on localhost, where there are no real subdomains.
+ *   - `host`  the PUBLIC host. Always present, and the only reliable key for
+ *             content: it is what the custom-domain directory is asked about.
+ *   - `slug`  the School Website slug, or `-` when unknown. Optional for
+ *             rendering — with one Frappe site per school, `get_site` resolves
+ *             that site's single website on its own — but the admission API
+ *             routes do forward it, so a custom domain derives it from its
+ *             backend rather than leaving it blank (see `resolveCustomDomain`).
  *
  * Edge-safe: `middleware.ts` imports this, so nothing here may pull in
  * `node:crypto` or any other Node-only builtin.
@@ -97,6 +98,15 @@ export function isAllowedBackend(backend: string): boolean {
   )
 }
 
+/** First host label of a school's Frappe origin: `https://kcs.leeep.in` -> `kcs`. */
+export function labelFromBackend(backend: string): string {
+  try {
+    return new URL(backend).hostname.toLowerCase().split('.')[0] ?? ''
+  } catch {
+    return ''
+  }
+}
+
 /** `kcs.schools.leeep.in` -> `kcs`; anything else -> ''. */
 export function platformLabel(host: string): string {
   if (!host.endsWith(`.${PLATFORM_DOMAIN}`)) return ''
@@ -111,10 +121,17 @@ export function backendForLabel(label: string): string {
 /**
  * Resolve a custom domain through the central directory (admin.leeep.in).
  *
- * The directory returns `{ backend, host }` and deliberately NOT a slug — it
- * keys on the domain, and the backend it hands back already identifies exactly
- * one school. Cached for five minutes so a busy domain doesn't re-ask on every
- * render; `revalidateTag('domain:<host>')` clears it early if a school moves.
+ * The directory keys on the domain and the backend it hands back already
+ * identifies exactly one school, so the slug is not needed to RENDER anything.
+ * It is still worth having: the `/api/admissions/*` routes forward a school
+ * identity to Frappe and refuse a request without one, which surfaced to
+ * families as "Admissions are currently closed" on an open admission. Newer
+ * directory rows carry `slug`; for the rest it is the first label of the
+ * school's own Frappe host (`https://ingenious.leeep.in` -> `ingenious`) — the
+ * same label a platform subdomain would have carried.
+ *
+ * Cached for five minutes so a busy domain doesn't re-ask on every render;
+ * `revalidateTag('domain:<host>')` clears it early if a school moves.
  */
 const CUSTOM_DOMAIN_TTL_MS = 60_000
 const customDomainMemo = new Map<string, { value: Tenant | null; at: number }>()
@@ -138,9 +155,11 @@ async function resolveCustomDomain(host: string): Promise<Tenant | null> {
     })
     let value: Tenant | null = null
     if (res.ok) {
-      const json = (await res.json()) as { message?: { backend?: string } | null }
+      const json = (await res.json()) as { message?: { backend?: string; slug?: string } | null }
       const backend = (json?.message?.backend ?? '').replace(/\/$/, '')
-      if (backend && isAllowedBackend(backend)) value = { host, backend, slug: '' }
+      if (backend && isAllowedBackend(backend)) {
+        value = { host, backend, slug: json?.message?.slug || labelFromBackend(backend) }
+      }
     }
     customDomainMemo.set(host, { value, at: Date.now() })
     return value
