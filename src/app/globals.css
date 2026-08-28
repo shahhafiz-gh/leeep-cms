@@ -803,3 +803,15 @@ body {
 .website-rich-content img,
 .website-rich-content video { max-width: 100%; height: auto; border-radius: 0.75rem; }
 .website-rich-content a { text-decoration: underline; text-underline-offset: 0.18em; }
+
+/* Text authored in Website management is a plain string carrying real newlines
+   (the editor field is a <textarea>). HTML collapses those into spaces, so what
+   the admin typed as paragraphs rendered as one block. Honour them on every
+   editable slot — `pre-line` keeps the line breaks while still collapsing runs
+   of spaces, which is what pasted text wants. Declared in `base` so an explicit
+   whitespace-* utility on the element (e.g. whitespace-nowrap) still wins. */
+@layer base {
+  [data-edit] {
+    white-space: pre-line;
+  }
+}
