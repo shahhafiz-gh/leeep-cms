@@ -14,7 +14,7 @@ import type { SchoolData, TemplateId } from '@/types/school.types'
  *  prospective schools, so nothing may resemble an existing client.
  * ──────────────────────────────────────────────────────────── */
 
-export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
+export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
 
 /** Build a sized Unsplash stock-photo URL from a (verified) photo id. */
 const img = (id: string, w = 1200) =>
@@ -63,6 +63,7 @@ export function resolveDemoTemplate(raw?: string | string[]): DemoTemplate {
   if (value === 'd' || value === 'template-d') return 'D'
   if (value === 'e' || value === 'template-e') return 'E'
   if (value === 'f' || value === 'template-f') return 'F'
+  if (value === 'g' || value === 'template-g') return 'G'
   return 'A'
 }
 
@@ -127,6 +128,8 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
             ? 'template-e'
             : template === 'F'
               ? 'template-f'
+              : template === 'G'
+                ? 'template-g'
               : 'template-a'
   // Horizon defaults to its warm palette so the demo card shows its true look; an
   // explicit override (from ?palette=) lets the gallery preview any curated preset.

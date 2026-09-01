@@ -28,6 +28,7 @@ export type TemplateId =
   | 'template-d'
   | 'template-e'
   | 'template-f'
+  | 'template-g'
 
 // ── Template Configuration ──
 
