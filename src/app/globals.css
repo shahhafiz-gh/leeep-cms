@@ -228,6 +228,60 @@
   --font-tb-serif: "Rufina", serif;
 }
 
+/* Template G — Baramulla-inspired blue/purple institutional palette.
+ * It reuses Heritage's inner-page token contract, while its own header and
+ * home composition provide a distinct public-school layout. */
+.template-g {
+  --font-tb-heading: var(--font-inter), sans-serif;
+  --font-tb-display: var(--font-inter), sans-serif;
+  --color-tb-primary-50: #eef1f9;
+  --color-tb-primary-100: #dbe0f1;
+  --color-tb-primary-200: #b8c2e1;
+  --color-tb-primary-300: #9b84ca;
+  --color-tb-primary: #6b31a1;
+  --color-tb-primary-400: #6b31a1;
+  --color-tb-primary-500: #572681;
+  --color-tb-primary-600: #472066;
+  --color-tb-primary-700: #35184d;
+  --color-tb-primary-800: #261137;
+
+  --color-tb-secondary: #21347a;
+  --color-tb-accent: #6b31a1;
+  --color-tb-hover: #572681;
+  --color-tb-heading: #21347a;
+  --color-tb-body: #5e6477;
+  --color-tb-border: #d9ddec;
+  --color-tb-line: #e9ebf3;
+  --color-tb-light-white: #f6f7fb;
+  --color-tb-footer: #16275f;
+  --color-tb-background: #ffffff;
+  --color-tb-foreground: #202437;
+
+  /* Almanac admission components use the tf-* semantic contract. Remap that
+   * contract here so Template G can share its staged rules/application flow
+   * without inheriting Almanac's walnut palette. */
+  --color-tf-paper: #f6f7fb;
+  --color-tf-card: #ffffff;
+  --color-tf-panel: #eef1f9;
+  --color-tf-rail: #f2f4fb;
+  --color-tf-border: #d9ddec;
+  --color-tf-border-strong: #bbc4df;
+  --color-tf-ink: #21347a;
+  --color-tf-ink-soft: #16275f;
+  --color-tf-ink-line: #40508d;
+  --color-tf-ink-border: #6070a7;
+  --color-tf-accent: #6b31a1;
+  --color-tf-accent-soft: #a977d4;
+  --color-tf-accent-wash: #eee5f8;
+  --color-tf-body: #48516f;
+  --color-tf-muted: #626b87;
+  --color-tf-faint: #818aa7;
+  --color-tf-on-ink: #f7f8ff;
+  --color-tf-on-ink-body: #dce1f3;
+  --color-tf-on-ink-muted: #b9c2df;
+  --color-tf-on-ink-faint: #8f9abd;
+}
+
 /* Template B Global Typography Overrides */
 .template-b h1,
 .template-b h2,
@@ -627,12 +681,10 @@ body {
   }
 }
 
-/* Almanac palettes — each preset re-maps ONLY the accent triad and the warm
- * neutrals it must stay in tune with, so the paper/ink structure is identical
- * across presets and a school cannot break the design. Default = walnut.
- *
- * Every preset is a BROWN: they shift where in the brown family the template
- * sits (cooler and darker through to redder and lighter); they never leave it.
+/* Almanac palettes — each preset re-maps the semantic colour system, so the
+ * paper/ink structure is identical across presets and a school cannot break
+ * the design. Default = walnut. The first four alternatives remain within the
+ * brown family; Baramulla Blue is the requested institutional exception.
  * Ids match TEMPLATE_PALETTES['template-f'] in the builder's config.ts — adding
  * one here means adding it there too. */
 
@@ -698,6 +750,30 @@ body {
   --color-tf-ink-soft: #37241a;
   --color-tf-ink-line: #4a3226;
   --color-tf-ink-border: #5c4133;
+}
+
+/* ── Baramulla Blue (deep school blue with a purple action accent) ── */
+.template-f[data-palette="baramulla"] {
+  --color-tf-accent: #6b31a1;
+  --color-tf-accent-soft: #c9a8ec;
+  --color-tf-accent-wash: #eee5f8;
+  --color-tf-panel: #e4e8f4;
+  --color-tf-paper: #e9ecf7;
+  --color-tf-card: #f9faff;
+  --color-tf-rail: #f2f4fb;
+  --color-tf-border: #d4d9ea;
+  --color-tf-border-strong: #bbc4df;
+  --color-tf-ink: #16275f;
+  --color-tf-ink-soft: #21347a;
+  --color-tf-ink-line: #40508d;
+  --color-tf-ink-border: #6070a7;
+  --color-tf-body: #3f496d;
+  --color-tf-muted: #596385;
+  --color-tf-faint: #7c86a7;
+  --color-tf-on-ink: #f7f8ff;
+  --color-tf-on-ink-body: #dce1f3;
+  --color-tf-on-ink-muted: #b9c2df;
+  --color-tf-on-ink-faint: #8f9abd;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

@@ -7,6 +7,7 @@ import TemplateC from '@/templates/template-c/TemplateC'
 import TemplateD from '@/templates/template-d/TemplateD'
 import TemplateE from '@/templates/template-e/TemplateE'
 import TemplateF from '@/templates/template-f/TemplateF'
+import TemplateG from '@/templates/template-g/TemplateG'
 import { styleObject } from '@/lib/component-styles'
 
 function styleSelector(path: string) {
@@ -58,6 +59,7 @@ export function renderTemplate(data: SchoolData, page: PageType, school: string,
   if (templateId === 'template-d') return withSavedStyles(<TemplateD data={renderData} page={page} editing={editing} />, renderData)
   if (templateId === 'template-e') return withSavedStyles(<TemplateE data={renderData} page={page} editing={editing} />, renderData)
   if (templateId === 'template-f') return withSavedStyles(<TemplateF data={renderData} page={page} editing={editing} />, renderData)
+  if (templateId === 'template-g') return withSavedStyles(<TemplateG data={renderData} page={page} editing={editing} />, renderData)
 
   if (templateId !== 'template-a') {
     console.warn(

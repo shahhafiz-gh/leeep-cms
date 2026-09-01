@@ -39,13 +39,13 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
  * Template D — "Almanac"
  *
  * An editorial template with its OWN component set (unlike Horizon, which
- * re-themes Willow): oversized slab-serif display type, a terracotta-on-ivory
- * palette, and a composition built from full-bleed sand and ink panels rather
- * than the card grids the other templates use. Website Management can switch
- * its typeface between BioRhyme and Roboto Slab.
+ * re-themes Willow): oversized slab-serif display type and a composition built
+ * from full-bleed paper and ink panels rather than the card grids the other
+ * templates use. Website Management can switch its typeface between BioRhyme
+ * and Roboto Slab.
  *
- * Palette defaults to the built-in terracotta; `config.palette` can switch it to
- * any curated preset (sage / plum / cobalt — see globals.css).
+ * Palette defaults to built-in walnut; `config.palette` can switch it to any
+ * curated preset, including the institutional Baramulla blue/purple option.
  */
 export default function TemplateF({ data, page, editing = false }: TemplateProps) {
   const PageComponent = pageMap[page]
