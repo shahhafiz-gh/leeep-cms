@@ -6,6 +6,7 @@ import { fetchAdmissionSchema } from '@/shared/admission-schema'
 import { useAdmissionOverview } from '@/shared/useAdmissionOverview'
 import type { AdmissionChrome } from '@/shared/AdmissionFormBody'
 import type { SchoolData } from '@/types/school.types'
+import RichText from '@/shared/RichText'
 
 /**
  * Step one of Almanac's application: what the school is admitting into this
@@ -88,20 +89,14 @@ export default function RulesStep({
         )}
 
         {active?.introduction && (
-          <div
-            className={`${chrome.bodyText} mt-5 [&_*]:my-1`}
-            dangerouslySetInnerHTML={{ __html: active.introduction }}
-          />
+          <RichText html={active.introduction} className={`${chrome.bodyText} mt-5`} />
         )}
       </div>
 
       <div>
         <h4 className={chrome.sectionTitle}>Terms and conditions</h4>
         {rules ? (
-          <div
-            className={`${chrome.bodyText} mt-3 [&_*]:my-1`}
-            dangerouslySetInnerHTML={{ __html: rules }}
-          />
+          <RichText html={rules} className={`${chrome.bodyText} mt-3`} />
         ) : (
           <p className={`${chrome.bodyText} mt-3`}>
             Please read these before you begin. By continuing you confirm that the information you

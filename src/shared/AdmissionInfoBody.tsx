@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react'
 import { useApplyHref } from './apply-link'
 import { useAdmissionOverview } from './useAdmissionOverview'
 import type { AdmissionCriteria } from './admission-schema'
+import RichText from './RichText'
 
 /**
  * The admission DETAILS block on the public admissions page — the step before
@@ -147,10 +148,7 @@ export default function AdmissionInfoBody({
         </div>
 
         {active.introduction && (
-          <div
-            className={`${chrome.bodyText} mt-4 [&_*]:my-1`}
-            dangerouslySetInnerHTML={{ __html: active.introduction }}
-          />
+          <RichText html={active.introduction} className={`${chrome.bodyText} mt-4`} />
         )}
       </div>
 

@@ -6,6 +6,7 @@ import { Icon } from '@iconify/react'
 import AdmissionFormFields, { type AdmissionFormStyles } from './AdmissionFormFields'
 import type { AdmissionInfoChrome } from './AdmissionInfoBody'
 import type { useAdmissionForm } from './useAdmissionForm'
+import RichText from './RichText'
 
 /**
  * The whole public application form, minus the template's outer shell.
@@ -313,10 +314,7 @@ export default function AdmissionFormBody({
         <div>
           <h3 className={chrome.heading}>Admission rules</h3>
           {settings?.terms_and_conditions ? (
-            <div
-              className={`${chrome.bodyText} [&_*]:my-1`}
-              dangerouslySetInnerHTML={{ __html: settings.terms_and_conditions }}
-            />
+            <RichText html={settings.terms_and_conditions} className={chrome.bodyText} />
           ) : (
             <p className={chrome.bodyText}>
               Please read these before you begin. By continuing you confirm that the information you
@@ -418,8 +416,11 @@ export default function AdmissionFormBody({
         {criteria?.description && <p className={`${chrome.help} mt-3`}>{criteria.description}</p>}
       </div>
 
-      {settings?.intro_message && (
-        <div className={`${chrome.bodyText} [&_*]:my-1`} dangerouslySetInnerHTML={{ __html: settings.intro_message }} />
+      {/* The school's introduction belongs to the form as a whole, so it is said
+          once, on the first step — repeating it above every step buried the
+          questions under instructions the family had already read. */}
+      {settings?.intro_message && stepIndex === 0 && (
+        <RichText html={settings.intro_message} className={chrome.bodyText} />
       )}
 
       {loading && program && (
@@ -431,9 +432,10 @@ export default function AdmissionFormBody({
 
       {!loading && activeStep && (
         <>
-          {/* No numbered step strip: the doctype's tabs are an authoring detail,
-              and numbering them told an applicant how much was left without
-              letting them act on it. Back / Continue carry the navigation. */}
+          {/* No numbered step strip: the count follows the school's sections and
+              changes with their configuration, and numbering them told an applicant
+              how much was left without letting them act on it. Back / Continue
+              carry the navigation. */}
           <div ref={activeStepRef} tabIndex={-1} className="scroll-mt-28 outline-none">
             <h3 className={chrome.heading}>{activeStep.label || 'Application details'}</h3>
             <AdmissionFormFields step={activeStep} values={values} onChange={setValue} styles={chrome} />

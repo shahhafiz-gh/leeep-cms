@@ -891,3 +891,42 @@ body {
     white-space: pre-line;
   }
 }
+
+/* Quill (the Website management editor) does not emit plain `<ul><li>`: every
+   list is an `<ol>` whose items carry `data-list="bullet" | "ordered"`, with the
+   marker drawn by a `.ql-ui` span that only Quill's own stylesheet fills in. Off
+   the editor that leaves bullet lists numbered and the spans blank, so the
+   marker is restored from the attribute and the leftover span hidden. */
+.website-rich-content li[data-list="bullet"] { list-style-type: disc; }
+.website-rich-content li[data-list="ordered"] { list-style-type: decimal; }
+.website-rich-content li[data-list="checked"],
+.website-rich-content li[data-list="unchecked"] { list-style-type: none; }
+.website-rich-content li[data-list="checked"]::marker,
+.website-rich-content li[data-list="unchecked"]::marker { content: none; }
+.website-rich-content li[data-list="checked"]::before { content: "\2611"; margin-right: 0.4em; }
+.website-rich-content li[data-list="unchecked"]::before { content: "\2610"; margin-right: 0.4em; }
+.website-rich-content .ql-ui { display: none; }
+
+/* Alignment and indent are class-based in Quill's output too. */
+.website-rich-content .ql-align-center { text-align: center; }
+.website-rich-content .ql-align-right { text-align: right; }
+.website-rich-content .ql-align-justify { text-align: justify; }
+.website-rich-content .ql-indent-1 { padding-left: 3em; }
+.website-rich-content .ql-indent-2 { padding-left: 6em; }
+.website-rich-content .ql-indent-3 { padding-left: 9em; }
+.website-rich-content .ql-indent-4 { padding-left: 12em; }
+
+/* Preflight flattens every heading to the body's size and weight, so authored
+   headings arrived looking like ordinary paragraphs. `:where()` keeps this at
+   zero specificity and `base` keeps it below the utilities layer, so a template
+   that sets its own heading scale (template-d/e/f do) still wins. */
+@layer base {
+  .website-rich-content :where(h1) { font-size: 1.6em; font-weight: 700; }
+  .website-rich-content :where(h2) { font-size: 1.35em; font-weight: 700; }
+  .website-rich-content :where(h3) { font-size: 1.15em; font-weight: 600; }
+  .website-rich-content :where(h4, h5, h6) { font-size: 1em; font-weight: 600; }
+  .website-rich-content :where(strong, b) { font-weight: 700; }
+  .website-rich-content :where(em, i) { font-style: italic; }
+  .website-rich-content :where(u) { text-decoration: underline; }
+  .website-rich-content :where(s) { text-decoration: line-through; }
+}
