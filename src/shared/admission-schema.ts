@@ -233,15 +233,24 @@ export interface SchemaSection {
 }
 
 export interface SchemaStep {
-  /** Tab heading — one wizard step per tab the DocType defines. */
+  /** Section heading — one wizard step per section the school configured. */
   label: string
   sections: SchemaSection[]
 }
 
 /**
- * Rebuild the DocType's own tab / section grouping from the flat field list, so
- * the public form reads the way the school laid the DocType out — and a section
- * they hid entirely takes its heading with it.
+ * One wizard step per SECTION of the flat field list.
+ *
+ * The section is the unit the school actually controls: its Application Form
+ * screen groups every question under a section heading, and the profile's
+ * per-field "Section Heading" moves a question between them. Tabs are a desk
+ * authoring detail the school never sees, so stepping by tab lumped unrelated
+ * sections — medical records, previous school — into one long page while the
+ * headings the school wrote did nothing.
+ *
+ * A section that the school hid entirely takes its heading with it, because a
+ * step with no visible fields is never emitted. An unlabelled section falls back
+ * to its tab's heading so the opening group still has a name.
  *
  * Fields flagged `is_scope` (the class and its academic year) are dropped: the
  * form's class picker already sets them, and it only offers classes that are
@@ -249,36 +258,38 @@ export interface SchemaStep {
  */
 export function groupSchemaFields(fields: SchemaField[]): SchemaStep[] {
   const steps: SchemaStep[] = []
-  let step: SchemaStep = { label: '', sections: [] }
-  let section: SchemaSection = { label: '', fields: [] }
+  let tabLabel = ''
+  let sectionLabel = ''
+  let current: SchemaField[] = []
 
-  const flushSection = () => {
-    if (section.fields.length) step.sections.push(section)
-  }
-  const flushStep = () => {
-    flushSection()
-    if (step.sections.length) steps.push(step)
+  // The step carries the heading; its single section is left unnamed so the
+  // same words are not printed twice, once as the step and once above the grid.
+  const flush = () => {
+    if (current.length) {
+      steps.push({ label: sectionLabel || tabLabel, sections: [{ label: '', fields: current }] })
+    }
+    current = []
   }
 
   for (const field of fields) {
     if (field.fieldtype === 'Tab Break') {
-      flushStep()
-      step = { label: field.label || 'Details', sections: [] }
-      section = { label: '', fields: [] }
+      flush()
+      tabLabel = field.label || ''
+      sectionLabel = ''
       continue
     }
     if (field.fieldtype === 'Section Break') {
-      flushSection()
-      section = { label: field.label || '', fields: [] }
+      flush()
+      sectionLabel = field.label || ''
       continue
     }
     // Column breaks are a desk-layout concern; the public form flows in one
     // responsive grid, so they carry no meaning here.
     if (field.fieldtype === 'Column Break') continue
     if (field.is_scope) continue
-    section.fields.push(field)
+    current.push(field)
   }
-  flushStep()
+  flush()
 
   if (!steps.length) return [{ label: 'Application', sections: [] }]
   return steps

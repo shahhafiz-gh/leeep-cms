@@ -28,7 +28,7 @@ import {
  * The flow the schema implies:
  *   1. pick a class — the class decides the age window, the fee and (because a
  *      school can scope an `Admission Form Profile` to it) the field set itself
- *   2. fill the steps the DocType's tabs define
+ *   2. fill the steps the form's sections define
  *   3. accept the declaration and submit
  */
 export function useAdmissionForm(contactPhone?: string) {
