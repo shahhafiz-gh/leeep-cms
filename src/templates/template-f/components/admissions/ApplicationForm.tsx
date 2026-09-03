@@ -86,6 +86,10 @@ export default function ApplicationForm({ data }: { data: SchoolData }) {
             schoolName={data.name}
             successTitle="Application received."
             successText={`Thank you for applying to ${data.name}. Our admissions team will review your application and be in touch shortly.`}
+            // The rules stage above already printed the school's introduction;
+            // the two fields it can come from hold the same text, so letting the
+            // body print it again made the family read it twice in a row.
+            showIntro={false}
           />
         )}
       </div>

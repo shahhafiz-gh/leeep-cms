@@ -32,6 +32,15 @@ export interface AdmissionFormBodyProps {
   /** Optional per-template copy for the state panels. */
   successTitle?: string
   successText?: string
+  /**
+   * Does this template already show the school's introduction elsewhere?
+   *
+   * A school writes the same instructions twice — `Student Admission`'s
+   * `introduction` and the profile's `intro_message` — and templates that open
+   * with a rules stage print the first one there. Without this the family reads
+   * the identical block again the moment they reach the questions.
+   */
+  showIntro?: boolean
 }
 
 /** Keep the focused form control inside the part of the page left visible by
@@ -61,6 +70,7 @@ export default function AdmissionFormBody({
   schoolName,
   successTitle = 'Application Submitted',
   successText,
+  showIntro = true,
 }: AdmissionFormBodyProps): ReactNode {
   const successRef = useRef<HTMLDivElement>(null)
   const activeStepRef = useRef<HTMLDivElement>(null)
@@ -418,8 +428,9 @@ export default function AdmissionFormBody({
 
       {/* The school's introduction belongs to the form as a whole, so it is said
           once, on the first step — repeating it above every step buried the
-          questions under instructions the family had already read. */}
-      {settings?.intro_message && stepIndex === 0 && (
+          questions under instructions the family had already read. A template
+          whose rules stage already said it passes `showIntro={false}`. */}
+      {showIntro && settings?.intro_message && stepIndex === 0 && (
         <RichText html={settings.intro_message} className={chrome.bodyText} />
       )}
 

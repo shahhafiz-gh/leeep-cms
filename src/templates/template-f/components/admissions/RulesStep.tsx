@@ -42,8 +42,14 @@ export default function RulesStep({
   onContinue: () => void
 }) {
   const { loading, active } = useAdmissionOverview()
-  const genericTerms = useGenericTerms(terms === undefined)
-  const rules = terms || genericTerms
+  // The school writes its instructions in two places that hold the same text:
+  // `Student Admission.introduction` and the profile's `intro_message`. This
+  // stage is the only place Almanac prints them (the form body is told not to
+  // repeat them), so fall back to the profile copy when the admission record
+  // has none — otherwise a school that filled only the profile loses them.
+  const profile = useProfileSettings(terms === undefined || !active?.introduction)
+  const rules = terms || profile.terms
+  const introduction = active?.introduction || profile.intro
   const title = data.admissions?.rulesTitle || 'Admission rules'
 
   if (loading) {
@@ -88,9 +94,7 @@ export default function RulesStep({
           </div>
         )}
 
-        {active?.introduction && (
-          <RichText html={active.introduction} className={`${chrome.bodyText} mt-5`} />
-        )}
+        {introduction && <RichText html={introduction} className={`${chrome.bodyText} mt-5`} />}
       </div>
 
       <div>
@@ -140,15 +144,15 @@ export default function RulesStep({
 }
 
 /**
- * The school's declaration text when no class has been chosen yet.
+ * The school's declaration and introduction when no class has been chosen yet.
  *
  * `Admission Form Profile` settings normally arrive with the class's field set,
  * which the form only fetches once a class is picked — and here the rules come
  * FIRST. Asking the schema route with no class returns the school's default
  * profile, which is what a family reading the rules up front should see.
  */
-function useGenericTerms(enabled: boolean): string {
-  const [terms, setTerms] = useState('')
+function useProfileSettings(enabled: boolean): { terms: string; intro: string } {
+  const [settings, setSettings] = useState({ terms: '', intro: '' })
 
   useEffect(() => {
     if (!enabled) return
@@ -156,14 +160,17 @@ function useGenericTerms(enabled: boolean): string {
     ;(async () => {
       const schema = await fetchAdmissionSchema()
       if (cancelled) return
-      setTerms(schema?.settings?.terms_and_conditions ?? '')
+      setSettings({
+        terms: schema?.settings?.terms_and_conditions ?? '',
+        intro: schema?.settings?.intro_message ?? '',
+      })
     })()
     return () => {
       cancelled = true
     }
   }, [enabled])
 
-  return terms
+  return settings
 }
 
 function formatDate(value: string | null): string {
