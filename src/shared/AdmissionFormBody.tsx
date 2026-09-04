@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties, type FocusEvent, type 
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import AdmissionFormFields, { type AdmissionFormStyles } from './AdmissionFormFields'
+import AdmissionStepper from './AdmissionStepper'
 import type { AdmissionInfoChrome } from './AdmissionInfoBody'
 import type { useAdmissionForm } from './useAdmissionForm'
 import RichText from './RichText'
@@ -93,6 +94,8 @@ export default function AdmissionFormBody({
     setHoneypot,
     stepIndex,
     setStepIndex,
+    maxStepReached,
+    goToStep,
     goNext,
     goBack,
     isLastStep,
@@ -443,10 +446,17 @@ export default function AdmissionFormBody({
 
       {!loading && activeStep && (
         <>
-          {/* No numbered step strip: the count follows the school's sections and
-              changes with their configuration, and numbering them told an applicant
-              how much was left without letting them act on it. Back / Continue
-              carry the navigation. */}
+          {/* The stepper mirrors the school's own tab -> section hierarchy and
+              hides itself for a single-section form. Steps already passed are
+              clickable to jump back; forward steps stay gated behind Continue so
+              their required fields are answered in order. */}
+          <AdmissionStepper
+            steps={steps}
+            stepIndex={stepIndex}
+            maxStepReached={maxStepReached}
+            onSelect={goToStep}
+            styles={chrome}
+          />
           <div ref={activeStepRef} tabIndex={-1} className="scroll-mt-28 outline-none">
             <h3 className={chrome.heading}>{activeStep.label || 'Application details'}</h3>
             <AdmissionFormFields step={activeStep} values={values} onChange={setValue} styles={chrome} />

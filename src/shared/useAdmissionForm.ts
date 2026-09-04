@@ -54,6 +54,10 @@ export function useAdmissionForm(contactPhone?: string) {
   const [honeypot, setHoneypot] = useState('')
 
   const [stepIndex, setStepIndex] = useState(0)
+  // The furthest step the family has reached. The stepper lets them click any
+  // step up to here (back, or forward into ground they already cleared) but not
+  // skip ahead past required fields they have not answered yet.
+  const [maxStepReached, setMaxStepReached] = useState(0)
   const [loadingPrograms, setLoadingPrograms] = useState(true)
   const [loadingSchema, setLoadingSchema] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -110,6 +114,7 @@ export function useAdmissionForm(contactPhone?: string) {
       // pre-fills, so switching class doesn't wipe the form.
       setValues((current) => ({ ...initialValues(result?.fields ?? []), ...current }))
       setStepIndex(0)
+      setMaxStepReached(0)
       setLoadingSchema(false)
     })()
     return () => {
@@ -185,13 +190,32 @@ export function useAdmissionForm(contactPhone?: string) {
     }
     setError(null)
     setShowErrors(false)
-    setStepIndex((current) => Math.min(current + 1, steps.length - 1))
+    setStepIndex((current) => {
+      const next = Math.min(current + 1, steps.length - 1)
+      setMaxStepReached((furthest) => Math.max(furthest, next))
+      return next
+    })
   }, [missingOn, stepIndex, steps.length, eligibilityError])
 
   const goBack = useCallback(() => {
     setError(null)
     setStepIndex((current) => Math.max(current - 1, 0))
   }, [])
+
+  /**
+   * Jump straight to a step from the stepper. Allowed only up to the furthest
+   * step already reached, so a family can revisit anything they have passed
+   * through without skipping the required fields on a step they have not seen.
+   */
+  const goToStep = useCallback(
+    (index: number) => {
+      if (index < 0 || index > maxStepReached) return
+      setError(null)
+      setShowErrors(false)
+      setStepIndex(index)
+    },
+    [maxStepReached],
+  )
 
   const isLastStep = steps.length > 0 && stepIndex === steps.length - 1
 
@@ -261,6 +285,8 @@ export function useAdmissionForm(contactPhone?: string) {
     // navigation
     stepIndex,
     setStepIndex,
+    maxStepReached,
+    goToStep,
     goNext,
     goBack,
     isLastStep,
