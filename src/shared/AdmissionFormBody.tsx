@@ -446,7 +446,7 @@ export default function AdmissionFormBody({
 
       {!loading && activeStep && (
         <>
-          {/* The stepper mirrors the school's own tab -> section hierarchy and
+          {/* One flat, horizontal row of the sections the school configured; it
               hides itself for a single-section form. Steps already passed are
               clickable to jump back; forward steps stay gated behind Continue so
               their required fields are answered in order. */}
