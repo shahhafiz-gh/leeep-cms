@@ -235,7 +235,42 @@ export interface SchemaSection {
 export interface SchemaStep {
   /** Section heading — one wizard step per section the school configured. */
   label: string
+  /**
+   * The DocType tab this section lives under ('' for sections before the first
+   * Tab Break). Carried so the stepper can group its steps under the tab the
+   * school authored them in, instead of showing one long undifferentiated list.
+   */
+  tab: string
   sections: SchemaSection[]
+}
+
+/** One tab's worth of steps, for a stepper that mirrors the tab -> section tree. */
+export interface SchemaStepGroup {
+  /** Tab heading, or '' for the run of sections that precede the first tab. */
+  tab: string
+  /** Each step with its index into the flat `SchemaStep[]` the wizard walks. */
+  steps: Array<{ step: SchemaStep; index: number }>
+}
+
+/**
+ * Fold the flat step list back into its tab groups for the stepper.
+ *
+ * The wizard itself stays flat — one section per step, walked by a single index —
+ * but the stepper shows the hierarchy the school actually authored: each tab, then
+ * the sections under it. Consecutive steps sharing a `tab` form one group; the
+ * step's index into the flat list is kept so a click can jump straight to it.
+ */
+export function groupStepsByTab(steps: SchemaStep[]): SchemaStepGroup[] {
+  const groups: SchemaStepGroup[] = []
+  steps.forEach((step, index) => {
+    const last = groups[groups.length - 1]
+    if (last && last.tab === step.tab) {
+      last.steps.push({ step, index })
+    } else {
+      groups.push({ tab: step.tab, steps: [{ step, index }] })
+    }
+  })
+  return groups
 }
 
 /**
@@ -264,9 +299,15 @@ export function groupSchemaFields(fields: SchemaField[]): SchemaStep[] {
 
   // The step carries the heading; its single section is left unnamed so the
   // same words are not printed twice, once as the step and once above the grid.
+  // `tab` records which Tab Break the section sat under, so the stepper can
+  // regroup the flat steps into the hierarchy the school authored.
   const flush = () => {
     if (current.length) {
-      steps.push({ label: sectionLabel || tabLabel, sections: [{ label: '', fields: current }] })
+      steps.push({
+        label: sectionLabel || tabLabel,
+        tab: tabLabel,
+        sections: [{ label: '', fields: current }],
+      })
     }
     current = []
   }
@@ -291,7 +332,7 @@ export function groupSchemaFields(fields: SchemaField[]): SchemaStep[] {
   }
   flush()
 
-  if (!steps.length) return [{ label: 'Application', sections: [] }]
+  if (!steps.length) return [{ label: 'Application', tab: '', sections: [] }]
   return steps
 }
 
