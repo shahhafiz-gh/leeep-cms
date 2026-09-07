@@ -29,6 +29,7 @@ export type TemplateId =
   | 'template-e'
   | 'template-f'
   | 'template-g'
+  | 'template-h'
 
 // ── Template Configuration ──
 
@@ -600,6 +601,64 @@ export interface NotificationsData {
   emptyText?: string
 }
 
+/**
+ * "Quote of the Day" — a short daily passage on the home page.
+ *
+ * Modelled as up to three renderings of one passage (an original script, a
+ * translation, a second translation) because the school that needs it publishes
+ * Arabic with English and Urdu beneath. Every line is optional; the panel is
+ * skipped when nothing is authored. Templates render these with `dir="auto"`,
+ * so a right-to-left script lays out correctly without the school declaring it.
+ */
+/**
+ * A video the school has published, identified by its watch URL.
+ *
+ * Only the URL is stored — never an embed snippet — so the renderer decides how
+ * to present it and no school can paste arbitrary markup into the page.
+ */
+export interface VideoItem {
+  title: string
+  /** YouTube/Vimeo watch, share or embed URL. */
+  url: string
+  /** Optional custom poster; the provider's own thumbnail is used when empty. */
+  thumbnail?: string
+  description?: string
+}
+
+export interface VideoGalleryData {
+  title?: string
+  subtitle?: string
+  videos?: VideoItem[]
+}
+
+/**
+ * A campus, for schools that run more than one.
+ *
+ * Deliberately small: a campus here is a NAME and the places a family is sent
+ * for it, not a second site's worth of content. A school whose campuses each
+ * need their own pages runs them as separate sites.
+ */
+export interface CampusData {
+  name: string
+  /** Where "Apply" for this campus goes. Often another school site entirely. */
+  admissionUrl?: string
+  address?: string
+  phone?: string
+}
+
+export interface QuoteOfTheDayData {
+  /** Panel heading. Defaults to "Quote of the Day" when empty. */
+  title?: string
+  /** The passage in its original script, shown first and largest. */
+  scriptText?: string
+  /** Primary translation. */
+  text?: string
+  /** Optional second translation. */
+  translationText?: string
+  /** Source or speaker. */
+  attribution?: string
+}
+
 export interface SocialPost {
   image?: string
   caption: string
@@ -716,6 +775,12 @@ export interface SchoolData {
   /** Frame for the home "Latest notifications" band (items come from
    *  `updates.announcements`). Quill shows this where other templates show stats. */
   notifications?: NotificationsData
+  /** Home-page "Quote of the Day" panel. */
+  quote?: QuoteOfTheDayData
+  /** Published videos, shown on the Gallery page. */
+  videoGallery?: VideoGalleryData
+  /** Campuses, when the school runs more than one. Empty for most schools. */
+  campuses?: CampusData[]
   /** Authored social wall. */
   socialSpace?: SocialSpaceData
   /** School magazine issues. */

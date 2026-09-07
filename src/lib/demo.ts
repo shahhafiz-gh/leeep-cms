@@ -14,7 +14,7 @@ import type { SchoolData, TemplateId } from '@/types/school.types'
  *  prospective schools, so nothing may resemble an existing client.
  * ──────────────────────────────────────────────────────────── */
 
-export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
+export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H'
 
 /** Build a sized Unsplash stock-photo URL from a (verified) photo id. */
 const img = (id: string, w = 1200) =>
@@ -64,6 +64,7 @@ export function resolveDemoTemplate(raw?: string | string[]): DemoTemplate {
   if (value === 'e' || value === 'template-e') return 'E'
   if (value === 'f' || value === 'template-f') return 'F'
   if (value === 'g' || value === 'template-g') return 'G'
+  if (value === 'h' || value === 'template-h') return 'H'
   return 'A'
 }
 
@@ -130,6 +131,8 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
               ? 'template-f'
               : template === 'G'
                 ? 'template-g'
+                : template === 'H'
+                  ? 'template-h'
               : 'template-a'
   // Horizon defaults to its warm palette so the demo card shows its true look; an
   // explicit override (from ?palette=) lets the gallery preview any curated preset.
@@ -440,6 +443,31 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
     },
 
     // Frame only — the notices themselves come from `updates.announcements`.
+    // Fictional campuses and videos, so the demo exercises the multi-campus
+    // menu and the video gallery without carrying a real school's links.
+    campuses: [
+      { name: 'Main Campus', admissionUrl: '/admissions/apply', address: '123 Demo Road, Sample City' },
+      { name: 'North Campus', admissionUrl: '/admissions/apply', address: '45 Example Lane, Sample City' },
+    ],
+
+    videoGallery: {
+      title: 'Video Gallery',
+      subtitle: 'A few minutes inside a school day.',
+      videos: [
+        { title: 'A day at Leeep Public School', url: 'https://www.youtube.com/watch?v=aqz-KE-bpKQ' },
+        { title: 'Annual Day highlights', url: 'https://youtu.be/aqz-KE-bpKQ' },
+        { title: 'Our science labs', url: 'https://www.youtube.com/embed/aqz-KE-bpKQ' },
+      ],
+    },
+
+    // Rendered by Template H's home page. Generic wording on purpose: the demo
+    // must not carry any real school's chosen passage.
+    quote: {
+      title: 'Quote of the Day',
+      text: 'Tell me and I forget. Teach me and I remember. Involve me and I learn.',
+      attribution: 'Benjamin Franklin',
+    },
+
     notifications: {
       title: 'Latest notifications',
       subtitle: 'Noticeboard',

@@ -11,6 +11,7 @@ import TemplateD from '@/templates/template-d/TemplateD'
 import TemplateE from '@/templates/template-e/TemplateE'
 import TemplateF from '@/templates/template-f/TemplateF'
 import TemplateG from '@/templates/template-g/TemplateG'
+import TemplateH from '@/templates/template-h/TemplateH'
 import InlineEditLayer from '@/shared/InlineEditLayer'
 
 /**
@@ -45,6 +46,10 @@ const SLUG_TO_PAGE: Record<string, PageType> = {
   contact: 'contact',
   updates: 'updates',
   facilities: 'facilities',
+  // The standalone Gallery page is part of the extended set and every template
+  // maps it, but the demo route had no slug for it — so it could not be
+  // previewed at all.
+  gallery: 'gallery',
 }
 
 function resolvePage(slug?: string[]): PageType | null {
@@ -84,6 +89,8 @@ export default async function DemoPage({ params, searchParams }: DemoProps) {
         <TemplateF data={data} page={page} />
       ) : template === 'G' ? (
         <TemplateG data={data} page={page} />
+      ) : template === 'H' ? (
+        <TemplateH data={data} page={page} />
       ) : (
         <TemplateA data={data} page={page} />
       )}
