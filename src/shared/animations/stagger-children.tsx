@@ -1,8 +1,8 @@
 'use client'
 
-import { Children, isValidElement, type ReactNode } from 'react'
-import { motion } from 'framer-motion'
+import { Children, isValidElement, type CSSProperties, type ReactNode } from 'react'
 import { cn } from '@/shared/utils/cn'
+import { useInView } from './use-in-view'
 
 interface StaggerChildrenProps {
   children: ReactNode
@@ -15,9 +15,47 @@ interface StaggerChildrenProps {
   delay?: number
 }
 
+/** One child, revealing on its own in-view trigger. */
+function StaggeredChild({
+  children,
+  duration,
+  delay,
+}: {
+  children: ReactNode
+  duration: number
+  delay: number
+}) {
+  const { ref, inView } = useInView<HTMLDivElement>()
+  return (
+    <div
+      ref={ref}
+      className="h-full"
+      data-reveal={inView ? 'in' : 'out'}
+      style={
+        {
+          '--reveal-y': '20px',
+          '--reveal-duration': `${duration}s`,
+          '--reveal-delay': `${delay}s`,
+        } as CSSProperties
+      }
+    >
+      {children}
+    </div>
+  )
+}
+
 /**
  * Stagger animation — children animate in sequentially when scrolled into view.
- * Framer Motion implementation (replaces the GSAP version).
+ *
+ * CSS transitions plus one IntersectionObserver per child, replacing
+ * framer-motion. Same props as before, so no consumer changed.
+ *
+ * Each child reveals on its OWN in-view trigger (rather than being orchestrated
+ * by a one-time parent reveal). That keeps the staggered entrance on first load
+ * AND — crucially for the editor — reveals cards ADDED later: a parent-
+ * orchestrated `once` reveal fires before the new card exists, leaving it pinned
+ * at opacity 0 ("a space but nothing in it"). A self-triggering child in view
+ * animates in immediately.
  */
 export default function StaggerChildren({
   children,
@@ -26,26 +64,13 @@ export default function StaggerChildren({
   duration = 0.5,
   delay = 0,
 }: StaggerChildrenProps) {
-  // Each child reveals on its OWN in-view trigger (rather than being orchestrated
-  // by a one-time parent `whileInView`). That keeps the staggered entrance on
-  // first load AND — crucially for the editor — reveals cards ADDED later: a
-  // parent-orchestrated `once` reveal fires before the new card exists, leaving it
-  // pinned at opacity 0 ("a space but nothing in it"). A self-triggering child in
-  // view animates in immediately.
   return (
     <div className={cn(className)}>
       {Children.map(children, (child, i) =>
         isValidElement(child) ? (
-          <motion.div
-            key={i}
-            className="h-full"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-            transition={{ duration, ease: 'easeOut', delay: delay + i * stagger }}
-          >
+          <StaggeredChild key={i} duration={duration} delay={delay + i * stagger}>
             {child}
-          </motion.div>
+          </StaggeredChild>
         ) : (
           child
         ),

@@ -34,6 +34,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* The reveal animations start hidden and are shown by an
+            IntersectionObserver. With scripting off that observer never runs,
+            so the page would be a column of blank space — this makes the
+            content visible instead. A <style> is the only thing <noscript>
+            may usefully contain in <head>. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>
+        </noscript>
+      </head>
       <body className="min-h-screen antialiased">{children}</body>
     </html>
   )

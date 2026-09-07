@@ -1,16 +1,17 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 
+/** The shared entrance for this hero's copy: fade up, staggered by `delay`.
+ *  Spread onto a plain element — the animation itself is CSS (`[data-enter]`). */
 const fadeUp = (delay: number) => ({
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay, ease: 'easeOut' as const },
+  'data-enter': true,
+  style: { '--reveal-y': '20px', '--reveal-delay': `${delay}s` } as CSSProperties,
 })
 
 export default function HeroSection({ data }: { data: SchoolData }) {
@@ -25,25 +26,25 @@ export default function HeroSection({ data }: { data: SchoolData }) {
           <div className="md:col-span-6 flex flex-col gap-ta-lg pt-ta-lg pb-ta-xl md:py-ta-xl text-center md:text-left items-center md:items-start">
           
 
-            <motion.h1
+            <h1
               data-edit="hero.slides.0.title"
               className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl"
               {...fadeUp(0.2)}
             >
               {slide.title}
-            </motion.h1>
+            </h1>
 
-            <motion.p
+            <p
               data-edit="hero.slides.0.description"
               className="font-(family-name:--font-ta-body-lg) text-ta-body-md md:text-ta-body-lg text-ta-on-surface-variant"
               {...fadeUp(0.3)}
             >
               {slide.description || data.tagline}
-            </motion.p>
+            </p>
 
             {/* CTA */}
             {slide.cta && (
-              <motion.div
+              <div
                 className="flex flex-col sm:flex-row flex-wrap gap-ta-sm mt-ta-xs w-full sm:w-auto"
                 {...fadeUp(0.4)}
               >
@@ -52,12 +53,12 @@ export default function HeroSection({ data }: { data: SchoolData }) {
                     <span data-edit="hero.slides.0.cta.label">{slide.cta.label}</span>
                   </button>
                 </Link>
-              </motion.div>
+              </div>
             )}
 
             {/* Trust Badges */}
             {data.stats && data.stats.length > 0 && (
-              <motion.div
+              <div
                 className="flex mt-1 flex-wrap justify-center md:justify-start items-center gap-ta-lg pt-ta-lg border-t border-ta-surface-dim/30 w-full"
                 {...fadeUp(0.5)}
               >
@@ -76,16 +77,13 @@ export default function HeroSection({ data }: { data: SchoolData }) {
                     </span>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             )}
           </div>
 
           {/* Right: Hero Image */}
-          <motion.div
+          <div data-enter style={{ '--reveal-scale': '0.95', '--reveal-from-opacity': '0', '--reveal-delay': '0.2s', '--reveal-duration': '0.5s' } as CSSProperties}
             className="md:col-span-6 relative w-full rounded-3xl overflow-hidden mt-8 md:mt-0 px-4 md:px-0 max-w-2xl mx-auto"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
           >
             {slide.image ? (
               <Image
@@ -100,7 +98,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
             ) : (
               <ImagePlaceholder label="Add hero image" className="w-full h-[320px] md:h-[460px] rounded-3xl" editPath="hero.slides.0.image" />
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

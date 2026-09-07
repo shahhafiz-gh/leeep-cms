@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import type { CSSProperties } from 'react'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 
@@ -11,42 +11,30 @@ export default function UpdatesHero({ data }: { data: SchoolData }) {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col items-center text-center relative z-10 max-w-4xl mx-auto space-y-8">
           {/* Pill Label */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
+          <div data-enter style={{ '--reveal-scale': '0.9', '--reveal-from-opacity': '0', '--reveal-delay': '0.1s' } as CSSProperties}
             className="px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-flex items-center gap-2"
           >
             <Icon icon="lucide:megaphone" className="text-sm" />
             <span data-edit="updatesHero.subtitle">{hero.subtitle ?? 'What’s Happening'}</span>
-          </motion.div>
+          </div>
 
           <div className="space-y-4">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+            <h1 data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.2s' } as CSSProperties}
               className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-background max-w-2xl mx-auto"
               data-edit="updatesHero.title"
             >
               {hero.title ?? 'Stay In The Loop With Everything At School'}
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+            <p data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.3s' } as CSSProperties}
               className="font-(family-name:--font-ta-body-lg) text-[17px] leading-relaxed text-ta-on-surface-variant max-w-xl mx-auto"
               data-edit="updatesHero.description"
             >
               {hero.description ?? `Discover the latest news, upcoming academic deadlines, and vibrant campus events — your central hub for all ${data.name} updates.`}
-            </motion.p>
+            </p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.4s' } as CSSProperties}
             className="flex flex-wrap justify-center gap-4 pt-2"
           >
             <a href="#events">
@@ -55,7 +43,7 @@ export default function UpdatesHero({ data }: { data: SchoolData }) {
                 <Icon icon="lucide:arrow-down" />
               </button>
             </a>
-          </motion.div>
+          </div>
         </div>
       </div>
 

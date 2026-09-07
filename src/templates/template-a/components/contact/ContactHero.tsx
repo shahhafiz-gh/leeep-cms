@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import type { CSSProperties } from 'react'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { contactEntryValue } from '@/lib/contact-entry'
@@ -23,39 +23,27 @@ export default function ContactHero({ data }: { data: SchoolData }) {
       <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center relative z-10">
         {/* Content */}
         <div className="flex flex-col justify-center space-y-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
+          <div data-enter style={{ '--reveal-scale': '0.9', '--reveal-from-opacity': '0', '--reveal-delay': '0.1s' } as CSSProperties}
             className="w-fit px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold"
           >
             <span data-edit="contact.subtitle">{contact.subtitle ?? 'Get In Touch'}</span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <h1 data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.2s' } as CSSProperties}
             className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl"
             data-edit="contact.title"
           >
             {contact.title ?? 'Let’s Start A Conversation'}
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <p data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.3s' } as CSSProperties}
             className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-xl"
             data-edit="contact.description"
           >
             {contact.description ?? 'Whether you have questions about admissions, academics, or campus life, our dedicated team is ready to assist you.'}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.4s' } as CSSProperties}
             className="flex flex-wrap gap-4 pt-4"
           >
             {quickInfo.map((info) => (
@@ -67,15 +55,12 @@ export default function ContactHero({ data }: { data: SchoolData }) {
                 <span data-edit={info.path} className="font-(family-name:--font-ta-label-md) text-ta-label-md text-ta-on-surface">{info.label}</span>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Image */}
         <div className="relative flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-            animate={{ opacity: 0.3, scale: 1, rotate: 0 }}
-            transition={{ duration: 1 }}
+          <div data-enter style={{ '--reveal-scale': '0.8', '--reveal-from-opacity': '0', '--reveal-to-opacity': '0.3', '--reveal-duration': '1s' } as CSSProperties}
             className="absolute w-[110%] h-[110%] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] z-0"
           />
           <div className="relative z-10 w-full max-w-[550px] h-[360px] md:h-[400px] rounded-[40px] border-8 border-ta-surface shadow-2xl">
@@ -88,10 +73,7 @@ export default function ContactHero({ data }: { data: SchoolData }) {
             </div>
 
             {highlights[0] && (
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
+              <div data-enter style={{ '--reveal-x': '-30px', '--reveal-from-opacity': '0', '--reveal-delay': '0.5s' } as CSSProperties}
                 className="absolute -bottom-6 -left-4 md:-left-12 bg-ta-surface-container-lowest p-4 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
               >
                 <div className="bg-ta-primary-container text-ta-on-primary-container p-3 rounded-full flex">
@@ -103,14 +85,11 @@ export default function ContactHero({ data }: { data: SchoolData }) {
                     <p data-edit="contact.highlights.0.sublabel" className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{highlights[0].sublabel}</p>
                   )}
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {highlights[1] && (
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 }}
+              <div data-enter style={{ '--reveal-x': '30px', '--reveal-from-opacity': '0', '--reveal-delay': '0.6s' } as CSSProperties}
                 className="absolute top-10 -right-4 md:-right-8 bg-ta-surface-container-lowest p-4 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
               >
                 <div className="bg-ta-secondary-container text-ta-on-secondary-container p-3 rounded-full flex">
@@ -122,7 +101,7 @@ export default function ContactHero({ data }: { data: SchoolData }) {
                     <p data-edit="contact.highlights.1.sublabel" className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{highlights[1].sublabel}</p>
                   )}
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
