@@ -47,6 +47,70 @@ function humanizeField(path: string): string {
   return words ? words.charAt(0).toUpperCase() + words.slice(1) : 'Edit'
 }
 
+/**
+ * Apply text to an editable hook by mutating its text nodes IN PLACE — never
+ * adding or removing a child.
+ *
+ * `el.textContent = v` drops every child and creates one fresh text node, but
+ * React still holds fibers for the children it rendered there. Some editable
+ * hooks legitimately wrap markup: the contact rows put an Iconify `<svg>` next
+ * to their text, so `textContent` deletes that `<svg>` out from under React. The
+ * next commit that touches it calls `parent.removeChild(svg)` on a node that is
+ * no longer a child and the browser throws `NotFoundError`, which unmounts the
+ * page to the error boundary — the whole preview replaced by an error panel.
+ *
+ * Writing `nodeValue` is exactly what React itself does on a text update, so
+ * fiber and DOM stay in agreement and every node React owns keeps its place.
+ */
+function setEditableText(el: HTMLElement, value: string): void {
+  const texts: Text[] = []
+  for (const node of Array.from(el.childNodes)) {
+    if (node.nodeType === Node.TEXT_NODE) texts.push(node as Text)
+  }
+  // Nothing to write into (an empty slot): appending is the only option, and is
+  // safe — it takes nothing away from React.
+  if (texts.length === 0) {
+    el.appendChild(el.ownerDocument.createTextNode(value))
+    return
+  }
+  if (texts[0].nodeValue !== value) texts[0].nodeValue = value
+  // Collapse any further text nodes instead of removing them.
+  for (let i = 1; i < texts.length; i++) {
+    if (texts[i].nodeValue !== '') texts[i].nodeValue = ''
+  }
+}
+
+/**
+ * Make `removeChild`/`insertBefore` survive a node that moved out from under
+ * React, and return the un-patch.
+ *
+ * This layer mutates DOM that React renders — contentEditable typing, applied
+ * overrides, swapped media — so React's commit phase can be handed a node that
+ * is no longer where its fiber thinks it is. In an ordinary app that is a bug
+ * worth crashing on; here it is expected, and crashing swaps the school's entire
+ * preview for the error boundary. Downgrade that one case to a no-op; every
+ * other argument still reaches the real implementation, so genuine mistakes
+ * still throw. Preview-only — the public site never loads this module.
+ */
+function installDomGuards(): () => void {
+  const proto = Node.prototype
+  const { removeChild, insertBefore } = proto
+
+  proto.removeChild = function <T extends Node>(this: Node, child: T): T {
+    if (child.parentNode !== this) return child
+    return removeChild.call(this, child) as T
+  }
+  proto.insertBefore = function <T extends Node>(this: Node, node: T, ref: Node | null): T {
+    if (ref && ref.parentNode !== this) return this.appendChild(node)
+    return insertBefore.call(this, node, ref) as T
+  }
+
+  return () => {
+    proto.removeChild = removeChild
+    proto.insertBefore = insertBefore
+  }
+}
+
 /** Social-link editor state (drives the custom popup). */
 type SocialEdit = { el: HTMLElement; path: string; platform: string; url: string }
 
@@ -93,6 +157,9 @@ export default function InlineEditLayer() {
     const targetOrigin = getParentOrigin()
     targetOriginRef.current = targetOrigin
     const cleanups: Array<() => void> = []
+    // This layer edits DOM React owns, so React's commit phase must tolerate a
+    // node that has since moved. See `installDomGuards`.
+    cleanups.push(installDomGuards())
 
     const post = (payload: { path?: string; type: string; value?: unknown }) => {
       window.parent.postMessage({ source: MESSAGE_SOURCE, ...payload }, targetOrigin)
@@ -125,7 +192,7 @@ export default function InlineEditLayer() {
       textOverrides.forEach((value, path) => {
         document.querySelectorAll<HTMLElement>(`[data-edit="${path}"],[data-bind="${path}"]`).forEach((el) => {
           if (document.activeElement === el) return
-          if (el.textContent !== value) el.textContent = value
+          if (el.textContent !== value) setEditableText(el, value)
         })
       })
     }
@@ -512,18 +579,19 @@ export default function InlineEditLayer() {
     // in place (the poster stays the image). Works for BOTH the image-upload flow
     // (`apply-image`) and a value set from the form panel (`apply-field`).
     const applyVideo = (el: HTMLVideoElement, url: string) => {
+      // The template renders the <source> for an authored clip, so reuse that
+      // node rather than replacing it: pulling a React-owned child out of the
+      // tree is what makes React throw on its next deletion pass. Create one
+      // only when the template rendered none (a slide authored without video).
+      const existing = el.querySelector('source')
       if (url) {
         el.setAttribute('src', url)
-        let source = el.querySelector('source')
-        if (!source) {
-          source = document.createElement('source')
-          el.appendChild(source)
-        }
+        const source = existing ?? el.appendChild(document.createElement('source'))
         source.setAttribute('src', url)
         source.setAttribute('type', 'video/mp4')
       } else {
         el.removeAttribute('src')
-        el.querySelector('source')?.remove()
+        existing?.removeAttribute('src') // clear, never remove — see above
       }
       el.load()
       if (url) void el.play().catch(() => {})
@@ -606,13 +674,13 @@ export default function InlineEditLayer() {
         let hadTextTarget = false
         document.querySelectorAll<HTMLElement>(sel('data-edit')).forEach((el) => {
           hadTextTarget = true
-          if (document.activeElement !== el) el.textContent = value
+          if (document.activeElement !== el) setEditableText(el, value)
         })
         // Display-only mirrors (e.g. hero stat badges): reflect the value but
         // never editable — so edited stats show here without being editable.
         document.querySelectorAll<HTMLElement>(sel('data-bind')).forEach((el) => {
           hadTextTarget = true
-          el.textContent = value
+          setEditableText(el, value)
         })
         if (hadTextTarget) textOverrides.set(msg.path, value)
         // Remember image overrides delivered as apply-field too, so they survive
