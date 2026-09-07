@@ -213,6 +213,26 @@
   /* Template A Border Radius */
   --radius-ta-brand: 8px;
 
+  /* ── Template H Colors (Grand — brick red on near-white, institutional) ──
+   * Private to one school; values are taken from its existing site. Declared
+   * here rather than only on `.template-h` because Tailwind v4 generates a
+   * utility (`bg-th-primary`) from `@theme` alone — a token defined only inside
+   * a class rule produces the variable but no class to apply it with. */
+  --color-th-primary-50: #fdf3f2;
+  --color-th-primary-100: #f8ded9;
+  --color-th-primary-200: #eeb8b0;
+  --color-th-primary-300: #dd8377;
+  --color-th-primary: #b9473b;
+  --color-th-primary-600: #9c382e;
+  --color-th-primary-700: #7c2c24;
+  --color-th-heading: #222222;
+  --color-th-body: #6a6a6a;
+  --color-th-muted: #848484;
+  --color-th-line: #ececec;
+  --color-th-border: #e1e1e1;
+  --color-th-paper: #f7f7f7;
+  --color-th-footer: #1d1d1d;
+
   /* ── Template B Typography ── */
 }
 
@@ -280,6 +300,71 @@
   --color-tf-on-ink-body: #dce1f3;
   --color-tf-on-ink-muted: #b9c2df;
   --color-tf-on-ink-faint: #8f9abd;
+}
+
+.template-h {
+  /* Heritage's views are reused wholesale, so Template H remaps the tb-* token
+   * contract they read rather than restyling each component. Values are the
+   * school's existing site: brick red #b9473b on near-white paper, ink #222,
+   * body grey #848484. */
+  --font-tb-heading: var(--font-poppins), sans-serif;
+  --font-tb-display: var(--font-poppins), sans-serif;
+
+  /* Heritage (tb-*) contract, re-pointed at the th-* palette in @theme. */
+  --color-tb-primary-50: #fdf3f2;
+  --color-tb-primary-100: #f8ded9;
+  --color-tb-primary-200: #eeb8b0;
+  --color-tb-primary-300: #dd8377;
+  --color-tb-primary: #b9473b;
+  --color-tb-primary-400: #b9473b;
+  --color-tb-primary-500: #9c382e;
+  --color-tb-primary-600: #7c2c24;
+  --color-tb-primary-700: #5e211b;
+  --color-tb-primary-800: #421713;
+  --color-tb-secondary: #222222;
+  --color-tb-accent: #b9473b;
+  --color-tb-hover: #9c382e;
+  --color-tb-heading: #222222;
+  --color-tb-body: #6a6a6a;
+  --color-tb-border: #e1e1e1;
+  --color-tb-line: #ececec;
+  --color-tb-light-white: #f7f7f7;
+  --color-tb-footer: #1d1d1d;
+  --color-tb-background: #ffffff;
+  --color-tb-foreground: #222222;
+
+  /* Almanac (tf-*) contract, used by the shared admissions flow. */
+  --color-tf-paper: #f7f7f7;
+  --color-tf-card: #ffffff;
+  --color-tf-panel: #fdf3f2;
+  --color-tf-rail: #faf6f5;
+  --color-tf-border: #e1e1e1;
+  --color-tf-border-strong: #cbcbcb;
+  --color-tf-ink: #222222;
+  --color-tf-ink-soft: #1d1d1d;
+  --color-tf-ink-line: #3d3d3d;
+  --color-tf-ink-border: #5c5c5c;
+  --color-tf-accent: #b9473b;
+  --color-tf-accent-soft: #dd8377;
+  --color-tf-accent-wash: #fdf3f2;
+  --color-tf-body: #6a6a6a;
+  --color-tf-muted: #848484;
+  --color-tf-faint: #9e9e9e;
+  --color-tf-on-ink: #fafafa;
+  --color-tf-on-ink-body: #e3e3e3;
+  --color-tf-on-ink-muted: #bdbdbd;
+  --color-tf-on-ink-faint: #949494;
+}
+
+/* Template H sets its own chrome in Poppins; the reused Heritage views inherit
+ * it through the tb-heading variable remapped above. */
+.template-h h1,
+.template-h h2,
+.template-h h3,
+.template-h h4,
+.template-h h5,
+.template-h h6 {
+  font-family: var(--font-poppins), sans-serif;
 }
 
 /* Template B Global Typography Overrides */
