@@ -740,6 +740,16 @@ export interface SchoolData {
   /** Curated per-component style overrides (align / wrap / …), keyed by style
    *  path (e.g. `name`). Values are curated option ids resolved by component-styles. */
   styles?: Record<string, Record<string, string>>
+  /**
+   * The school's own running order for each page, as a list of block ids.
+   *
+   * Absent means "the order this template ships with" — which is what every
+   * existing site has, so nothing changes until a school reorders something.
+   * Stored per PAGE rather than per template, so an id naming a block the
+   * current template does not have is ignored rather than breaking the page
+   * (see `lib/layout.ts`).
+   */
+  layout?: Partial<Record<PageType, string[]>>
 
   hero: HeroData
   about: AboutData
