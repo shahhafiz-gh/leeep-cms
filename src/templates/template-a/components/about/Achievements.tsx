@@ -1,8 +1,9 @@
 'use client'
 
-import { motion, type Variants } from 'framer-motion'
+import type { CSSProperties } from 'react'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
+import StaggerChildren from '@/shared/animations/stagger-children'
 
 const ICONS = [
   'lucide:award',
@@ -13,15 +14,6 @@ const ICONS = [
   'lucide:trophy',
 ]
 
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay: i * 0.07, ease: 'easeOut' },
-  }),
-}
-
 export default function Achievements({ data }: { data: SchoolData }) {
   const items = data.about.achievements ?? []
   if (items.length === 0) return null
@@ -30,12 +22,8 @@ export default function Achievements({ data }: { data: SchoolData }) {
     <section className="py-16  md:pt- md:pb-34 bg-ta-surface-container-lowest">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <motion.div
+        <div data-enter style={{ '--reveal-y': '30px', '--reveal-from-opacity': '0', '--reveal-duration': '0.7s' } as CSSProperties}
           className="text-center flex flex-col items-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <div className="mb-4 px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block">
             Milestones
@@ -47,19 +35,14 @@ export default function Achievements({ data }: { data: SchoolData }) {
             {data.about.achievementsDescription ??
               `A proud legacy of accomplishments that reflect the dedication of our students, faculty, and the ${data.name} community.`}
           </p>
-        </motion.div>
+        </div>
 
         {/* Achievements Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StaggerChildren stagger={0.07} duration={0.5} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item, index) => (
-            <motion.div
+            <div
               key={item.title}
               className="bg-ta-surface-container-lowest rounded-3xl border border-ta-outline-variant p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-md group"
-              custom={index}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
             >
               <div className="w-16 h-16 bg-ta-surface-container-high rounded-full flex items-center justify-center mb-4 group-hover:bg-ta-primary transition-colors duration-500">
                 <Icon
@@ -82,9 +65,9 @@ export default function Achievements({ data }: { data: SchoolData }) {
                   {item.year}
                 </span>
               )}
-            </motion.div>
+            </div>
           ))}
-        </div>
+        </StaggerChildren>
       </div>
     </section>
   )

@@ -1,7 +1,7 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import { Icon } from '@iconify/react'
-import { motion } from 'framer-motion'
 import type { SchoolData } from '@/types/school.types'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import { useLiveValue } from '@/shared/hooks/useLiveValue'
@@ -21,14 +21,11 @@ export default function FindUsSection({ data }: { data: SchoolData }) {
   return (
     <section className="bg-ta-surface-container-lowest mb-24 py-16 md:py-24 relative overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+        <h2 data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0' } as CSSProperties}
           className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-12 text-center md:text-left tracking-tight"
         >
           Find Us Easily
-        </motion.h2>
+        </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] items-stretch rounded-3xl overflow-hidden border border-ta-outline-variant shadow-sm">
           {/* Map */}

@@ -1,42 +1,43 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 
+/** The shared entrance for this hero's copy: fade up, staggered by `delay`.
+ *  Spread onto a plain element — the animation itself is CSS (`[data-enter]`). */
 const fadeUp = (delay: number) => ({
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay, ease: 'easeOut' as const },
+  'data-enter': true,
+  style: { '--reveal-y': '20px', '--reveal-delay': `${delay}s` } as CSSProperties,
 })
 
 export default function AboutHero({ data }: { data: SchoolData }) {
   return (
     <section className="relative w-full py-10 md:py-20 mt-20 overflow-hidden bg-ta-surface">
       {/* Decorative floating icons */}
-      <motion.div
+      <div
         className="absolute top-10 left-10 text-ta-primary opacity-30 pointer-events-none"
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        data-loop="float"
+        style={{ '--loop-distance': '-10px', '--loop-duration': '4s' } as CSSProperties}
       >
         <Icon icon="lucide:pencil" className="text-4xl" />
-      </motion.div>
-      <motion.div
+      </div>
+      <div
         className="absolute bottom-20 left-1/2 text-ta-secondary opacity-40 pointer-events-none"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        data-loop="pulse"
+        style={{ '--loop-scale': '1.1', '--loop-duration': '5s' } as CSSProperties}
       >
         <Icon icon="lucide:star" className="text-5xl" />
-      </motion.div>
-      <motion.div
+      </div>
+      <div
         className="absolute top-32 right-1/4 text-ta-primary opacity-20 pointer-events-none"
-        animate={{ rotate: [0, 15, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        data-loop="wobble"
+        style={{ '--loop-rotate': '15deg', '--loop-duration': '6s' } as CSSProperties}
       >
         <Icon icon="lucide:layout-grid" className="text-3xl" />
-      </motion.div>
+      </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
@@ -44,25 +45,25 @@ export default function AboutHero({ data }: { data: SchoolData }) {
           <div className="w-full md:w-[55%] flex flex-col items-start gap-6">
             
 
-            <motion.h1
+            <h1
               data-edit="about.title"
               className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl"
               {...fadeUp(0.2)}
             >
               {data.about.title}
-            </motion.h1>
+            </h1>
 
-            <motion.p
+            <p
               data-edit="about.description"
               className="font-(family-name:--font-ta-body-lg) text-[17px] leading-relaxed text-ta-on-surface-variant"
               {...fadeUp(0.3)}
             >
               {data.about.description}
-            </motion.p>
+            </p>
 
             {/* Stats Row */}
             {data.stats.length > 0 && (
-              <motion.div
+              <div
                 className="flex flex-wrap items-center gap-6 mt-6 border-t border-ta-outline-variant pt-6 w-full max-w-2xl"
                 {...fadeUp(0.4)}
               >
@@ -90,16 +91,13 @@ export default function AboutHero({ data }: { data: SchoolData }) {
                     )}
                   </div>
                 ))}
-              </motion.div>
+              </div>
             )}
           </div>
 
           {/* Right: Image */}
-          <motion.div
+          <div data-enter style={{ '--reveal-scale': '0.95', '--reveal-from-opacity': '0', '--reveal-delay': '0.2s', '--reveal-duration': '0.6s' } as CSSProperties}
             className="w-full md:w-[45%] relative mt-12 md:mt-0 flex justify-center items-center min-h-[340px]"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
           >
             {/* Blob background */}
             <div className="absolute w-full h-[500px] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-40 z-0" />
@@ -140,7 +138,7 @@ export default function AboutHero({ data }: { data: SchoolData }) {
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -1,17 +1,9 @@
 'use client'
 
-import { motion, type Variants } from 'framer-motion'
+import type { CSSProperties } from 'react'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
-
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.15, ease: 'easeOut' },
-  }),
-}
+import StaggerChildren from '@/shared/animations/stagger-children'
 
 export default function MissionSection({ data }: { data: SchoolData }) {
   const vision = data.about.vision
@@ -44,29 +36,25 @@ export default function MissionSection({ data }: { data: SchoolData }) {
   return (
     <section className="relative bg-ta-surface w-full overflow-hidden pb-16 md:pb-24">
       {/* Decorative floating elements */}
-      <motion.div
+      <div
         className="absolute top-16 right-[10%] opacity-20 pointer-events-none hidden lg:block text-ta-tertiary-container"
-        animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        data-loop="float"
+        style={{ '--loop-distance': '-15px', '--loop-duration': '7s' } as CSSProperties}
       >
         <Icon icon="lucide:rainbow" className="text-[120px]" />
-      </motion.div>
-      <motion.div
+      </div>
+      <div
         className="absolute top-1/4 left-[5%] opacity-30 pointer-events-none text-ta-secondary"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        data-loop="pulse"
+        style={{ '--loop-scale': '1.2', '--loop-duration': '5s' } as CSSProperties}
       >
         <Icon icon="lucide:star" className="text-[32px]" />
-      </motion.div>
+      </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 pt-16 md:pt-24 mt-10">
         {/* Section Header */}
-        <motion.div
+        <div data-enter style={{ '--reveal-y': '30px', '--reveal-from-opacity': '0', '--reveal-duration': '0.7s' } as CSSProperties}
           className="text-center mb-16 flex flex-col items-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <div className="mb-4 px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block">
             What Drives Us
@@ -77,19 +65,14 @@ export default function MissionSection({ data }: { data: SchoolData }) {
           <p className="font-(family-name:--font-ta-body-md) text-[--text-ta-body-md] text-ta-on-surface-variant max-w-[520px] mx-auto">
             At {data.name}, our purpose is deeply rooted in fostering an environment where spiritual growth meets academic excellence.
           </p>
-        </motion.div>
+        </div>
 
         {/* Vision & Mission Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <StaggerChildren stagger={0.07} duration={0.5} className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {cards.map((card, index) => (
-            <motion.div
+            <div
               key={card.key}
               className="bg-ta-surface-container border border-ta-outline-variant rounded-xl p-8 relative overflow-hidden group transition-all duration-300 shadow-sm flex flex-col h-full hover:border-ta-primary hover:shadow-md hover:-translate-y-1"
-              custom={index}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
             >
               {/* Background decorator */}
               <div className={`absolute ${card.decoratorPos} w-32 h-32 bg-ta-primary opacity-5 z-0 transition-transform duration-500 group-hover:scale-125`} />
@@ -126,9 +109,9 @@ export default function MissionSection({ data }: { data: SchoolData }) {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           ))}
-        </div>
+        </StaggerChildren>
       </div>
     </section>
   )

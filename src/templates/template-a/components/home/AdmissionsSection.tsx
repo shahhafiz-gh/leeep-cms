@@ -1,13 +1,12 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 
-const viewport = { once: true, margin: '0px 0px -20% 0px' } as const
 
 export default function AdmissionsSection({ data }: { data: SchoolData }) {
   const currentYear = new Date().getFullYear()
@@ -30,45 +29,38 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
 
         <div className="flex flex-col md:flex-row items-center gap-(--spacing-ta-xxl)]">
           {/* Content */}
-          <motion.div
+          <div
             className="w-full md:w-[60%] flex flex-col items-start space-y-6"
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            variants={{
-              hidden: {},
-              visible: { transition: { staggerChildren: 0.1 } },
-            }}
           >
-            <motion.span
+            <span
               className="inline-block bg-white text-ta-primary px-4 py-2 rounded-full font-(family-name:--font-ta-label-md) text-ta-body-md shadow-sm font-bold"
-              variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              data-enter
+              style={{ '--reveal-x': '-20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
             >
               <span data-edit="admissions.subtitle">{admissions.subtitle || `${session} Admissions`}</span>
-            </motion.span>
+            </span>
 
-            <motion.h2
+            <h2
               className="font-(family-name:--font-ta-h2) text-4xl md:text-[44px] leading-[1.1] font-extrabold text-white tracking-tight"
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              data-enter
+              style={{ '--reveal-y': '20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
             >
               <span data-edit="admissions.title">{admissions.title || "Shape Your Child's Future"}</span>
-            </motion.h2>
+            </h2>
 
-            <motion.p
+            <p
               className="font-(family-name:--font-ta-body-lg) text-ta-body-md md:text-ta-body-lg text-white/85"
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              data-enter
+              style={{ '--reveal-y': '20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
             >
               <span data-edit="admissions.description">{admissions.description || `Nurturing young minds with values and academic excellence. Admissions are now open for the ${session} session.`}</span>
-            </motion.p>
+            </p>
 
             {highlights.length > 0 && (
-              <motion.div
+              <div
                 className="flex flex-wrap gap-3 pt-2"
-                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
+                data-enter
+                style={{ '--reveal-y': '20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
               >
                 {highlights.map((highlight, hi) => (
                   <span
@@ -79,13 +71,13 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
                     <span data-edit={`admissions.highlights.${hi}.label`}>{highlight.label}</span>
                   </span>
                 ))}
-              </motion.div>
+              </div>
             )}
 
-            <motion.div
+            <div
               className="flex flex-col sm:flex-row flex-wrap gap-4 pt-4 w-full sm:w-auto"
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              data-enter
+              style={{ '--reveal-y': '20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
             >
               <Link href="/admissions" className="w-full sm:w-auto">
                 <button className="bg-white text-ta-primary hover:bg-gray-50 transition-colors px-8 py-3 rounded-full font-bold text-[15px] shadow-sm flex items-center justify-center gap-2 border-none w-full sm:w-auto">
@@ -93,17 +85,13 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
                   <Icon icon="lucide:arrow-right" className="text-ta-body-lg" />
                 </button>
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Image */}
           <div className="w-full md:w-[40%] pr-4 md:pr-0 relative mt-12 md:mt-0 flex justify-center">
-            <motion.div
+            <div data-enter style={{ '--reveal-scale': '0.8', '--reveal-from-opacity': '0', '--reveal-duration': '0.5s' } as CSSProperties}
               className="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px] rounded-full bg-white/20 border-4 border-white/30 backdrop-blur-sm p-4 overflow-visible flex items-center justify-center mx-auto"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={viewport}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <div className="relative w-full h-full rounded-full overflow-hidden z-10 border-4 border-white/50 shadow-2xl bg-ta-surface">
                 {admissions.homeImage ? (
@@ -127,7 +115,7 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
                 <div className="absolute top-[6px] left-[6px] w-[84px] h-[84px] rounded-full border-[6px] border-yellow-400/80" />
                 <div className="absolute top-[12px] left-[12px] w-[72px] h-[72px] rounded-full border-[6px] border-blue-400/80" />
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

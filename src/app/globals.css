@@ -468,6 +468,102 @@
   --font-te-sans: var(--font-work-sans), Helvetica, Arial, sans-serif;
 }
 
+/* ── Scroll reveal ─────────────────────────────────────────────────────────
+ * The entrance animations, in CSS. These replace framer-motion, which was a
+ * client runtime downloaded by every visitor to every school site to do work
+ * a transition does natively.
+ *
+ * The component (see shared/animations/scroll-reveal.tsx) only flips
+ * `data-reveal` from `out` to `in` when the element scrolls into view; the
+ * distance, duration and delay arrive as custom properties, so every variation
+ * is this one rule.
+ *
+ * `transform: none` rather than a zeroed translate on the `in` state, so the
+ * element ends with no transform at all and cannot create a stacking context
+ * that traps a sticky child.
+ * ────────────────────────────────────────────────────────────────────────── */
+[data-reveal] {
+  transition:
+    opacity var(--reveal-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0s),
+    transform var(--reveal-duration, 0.8s) cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0s);
+}
+
+[data-reveal='out'] {
+  opacity: 0;
+  transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 0), 0);
+}
+
+[data-reveal='in'] {
+  opacity: 1;
+  transform: none;
+}
+
+/* An entrance animation is decoration. Honour the OS setting: show everything,
+   immediately, with no movement at all. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal='out'],
+  [data-reveal='in'] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Entrance and ambient motion ───────────────────────────────────────────
+ * `[data-reveal]` above handles anything triggered by scrolling. These two
+ * handle the rest, and need no JavaScript at all:
+ *
+ *   [data-enter]  a one-shot entrance for above-the-fold content, which is on
+ *                 screen the moment the page paints and so has nothing to wait
+ *                 for. `both` fill keeps the from-state during the delay.
+ *   [data-loop]   the ambient float / pulse / wobble on decorative blobs.
+ *
+ * Together with `[data-reveal]` these replaced framer-motion outright.
+ * ────────────────────────────────────────────────────────────────────────── */
+@keyframes reveal-enter {
+  from {
+    opacity: var(--reveal-from-opacity, 0);
+    transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 0), 0) scale(var(--reveal-scale, 1));
+  }
+  to {
+    opacity: var(--reveal-to-opacity, 1);
+    transform: none;
+  }
+}
+
+[data-enter] {
+  animation: reveal-enter var(--reveal-duration, 0.5s) cubic-bezier(0.16, 1, 0.3, 1)
+    var(--reveal-delay, 0s) both;
+}
+
+@keyframes loop-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--loop-distance, -12px)); }
+}
+
+@keyframes loop-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(var(--loop-scale, 1.2)); }
+}
+
+@keyframes loop-wobble {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(var(--loop-rotate, 15deg)); }
+}
+
+[data-loop='float'] { animation: loop-float var(--loop-duration, 4s) ease-in-out infinite; }
+[data-loop='pulse'] { animation: loop-pulse var(--loop-duration, 4s) ease-in-out infinite; }
+[data-loop='wobble'] { animation: loop-wobble var(--loop-duration, 4s) ease-in-out infinite; }
+
+/* Ambient movement is the first thing to go when someone asks for less of it. */
+@media (prefers-reduced-motion: reduce) {
+  [data-enter],
+  [data-loop] {
+    animation: none;
+  }
+}
+
 /* ── Global Resets ── */
 html {
   scroll-behavior: smooth;

@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import type { CSSProperties } from 'react'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
@@ -24,39 +24,27 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
 
       <div className="container mx-auto px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
         <div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
+          <div data-enter style={{ '--reveal-scale': '0.9', '--reveal-from-opacity': '0', '--reveal-delay': '0.1s' } as CSSProperties}
             className="w-fit mb-4 px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block"
           >
             <span data-edit="admissions.subtitle">{admissions.subtitle ?? 'Join Us'}</span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <h1 data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.2s' } as CSSProperties}
             className="font-(family-name:--font-ta-h1) text-4xl md:text-[56px] leading-[1.1] tracking-[-0.02em] font-extrabold text-ta-on-surface max-w-2xl mb-5"
             data-edit="admissions.title"
           >
             {admissions.title}
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <p data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.3s' } as CSSProperties}
             className="font-(family-name:--font-ta-body-lg) text-ta-body-md md:text-ta-body-lg text-ta-on-surface-variant mb-8 max-w-xl"
             data-edit="admissions.description"
           >
             {admissions.description}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.4s' } as CSSProperties}
             className="flex flex-wrap gap-4 mb-8"
           >
             <StartApplicationLink
@@ -70,13 +58,10 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
             >
               Download Form
             </button>
-          </motion.div>
+          </div>
 
           {highlights.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+            <div data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.5s' } as CSSProperties}
               className="flex flex-wrap gap-6 border-t border-ta-outline-variant pt-6"
             >
               {highlights.map((highlight, index) => (
@@ -85,16 +70,13 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
                   <span data-edit={`admissions.highlights.${index}.label`} className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{highlight.label}</span>
                 </div>
               ))}
-            </motion.div>
+            </div>
           )}
         </div>
 
         {/* Hero image */}
         <div className="relative flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-            animate={{ opacity: 0.3, scale: 1, rotate: 0 }}
-            transition={{ duration: 1 }}
+          <div data-enter style={{ '--reveal-scale': '0.8', '--reveal-from-opacity': '0', '--reveal-to-opacity': '0.3', '--reveal-duration': '1s' } as CSSProperties}
             className="absolute w-[110%] h-[110%] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] z-0"
           />
           <div className="relative h-[300px] w-full max-w-[500px] lg:h-[400px] rounded-xl border border-ta-outline-variant bg-ta-surface-container-highest z-10">
@@ -107,10 +89,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
             </div>
 
             {admissions.callout && (
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 }}
+              <div data-enter style={{ '--reveal-x': '-20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.6s' } as CSSProperties}
                 className="absolute bottom-8 -left-6 md:-left-12 bg-ta-surface-container-lowest border border-ta-outline-variant rounded-lg p-4 shadow-sm max-w-[200px] flex items-center gap-3 z-20"
               >
                 <Icon icon={admissions.callout.icon ?? 'lucide:users'} className="text-ta-secondary-container bg-ta-secondary-container/20 p-2 rounded-full text-4xl" />
@@ -120,7 +99,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
                     <div data-edit="admissions.callout.sublabel" className="font-(family-name:--font-ta-caption) text-xs text-ta-on-surface-variant">{admissions.callout.sublabel}</div>
                   )}
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
