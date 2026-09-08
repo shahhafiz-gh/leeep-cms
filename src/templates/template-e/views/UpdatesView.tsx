@@ -1,6 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation'
+import PageSection from '@/shared/PageSection'
 import type { SchoolData } from '@/types/school.types'
 import { Container, PageIntro } from '../components/common/Bits'
 import NewsList from '../components/updates/NewsList'
@@ -30,8 +31,12 @@ export default function UpdatesView({ data }: { data: SchoolData }) {
           ledePath="updatesHero.description"
         />
       </Container>
-      <NewsList data={data} />
-      <EventsList data={data} />
+      <PageSection id="news">
+        <NewsList data={data} />
+      </PageSection>
+      <PageSection id="events">
+        <EventsList data={data} />
+      </PageSection>
     </>
   )
 }

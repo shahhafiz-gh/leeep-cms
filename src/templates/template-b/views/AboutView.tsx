@@ -1,4 +1,5 @@
 import type { SchoolData } from '@/types/school.types'
+import PageSection from '@/shared/PageSection'
 import PageHero from '../components/common/PageHero'
 import OurStory from '../components/about/OurStory'
 import MissionVision from '../components/about/MissionVision'
@@ -16,10 +17,18 @@ export default function AboutView({ data }: { data: SchoolData }) {
         description={data.about.description}
         descriptionEditPath="about.description"
       />
-      <OurStory data={data} />
-      <MissionVision data={data} />
-      <WhyChooseUs data={data} />
-      <Achievements data={data} />
+      <PageSection id="story">
+        <OurStory data={data} />
+      </PageSection>
+      <PageSection id="vision-mission">
+        <MissionVision data={data} />
+      </PageSection>
+      <PageSection id="why-choose">
+        <WhyChooseUs data={data} />
+      </PageSection>
+      <PageSection id="achievements">
+        <Achievements data={data} />
+      </PageSection>
     </div>
   )
 }

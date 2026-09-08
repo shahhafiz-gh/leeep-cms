@@ -50,6 +50,8 @@ export interface TemplateConfig {
   extended_pages?: boolean
   /** Nav hrefs the school has chosen to hide. Server-owned. */
   hidden_nav_items?: string[]
+  /** The school's menu arrangement, as hrefs in order. Server-owned. */
+  nav_order?: string[]
   /**
    * The school's own domain, once it has connected one. Server-owned, folded in
    * by `get_site` from `School Website.custom_domain`. Used to pick the
@@ -179,6 +181,22 @@ export interface Achievement {
   icon?: string
 }
 
+/**
+ * A message from a member of the school's leadership (Chairman, Principal, ...).
+ *
+ * Schools that grew up on a page-per-message site keep that structure in the
+ * menu — each message is a section on the About page, linked from the About
+ * dropdown — without each one costing a route of its own.
+ */
+export interface LeadershipMessage {
+  /** "Chairman", "Principal", "Management" — also the menu label and the anchor. */
+  role: string
+  /** Who is speaking, when the school names them. */
+  name?: string
+  image?: string
+  message: string
+}
+
 export interface AboutData {
   title: string
   subtitle?: string
@@ -210,6 +228,12 @@ export interface AboutData {
   achievements?: Achievement[]
   /** Small floating trust badges shown across the about sections (icon + label + sublabel). */
   badges?: Badge[]
+  /** Chairman / Principal / Management messages, rendered as About sections. */
+  messages?: LeadershipMessage[]
+  /** Heading over the organisation chart. Empty falls back to a sensible default. */
+  structureTitle?: string
+  /** The school's organisation chart, as an image. */
+  structureImage?: string
   story?: string
   recognition?: {
     title: string
@@ -288,6 +312,24 @@ export interface CourseData {
   subjects?: string[]
 }
 
+/** One downloadable file offered under an academic resource. */
+export interface ResourceFile {
+  label: string
+  url: string
+}
+
+/**
+ * A set of academic downloads — a syllabus, a booklist, a stationery list.
+ *
+ * Grouped rather than flat because these arrive class-by-class: one "Syllabus"
+ * resource holds a file per grade, which is how families look for them.
+ */
+export interface AcademicResource {
+  title: string
+  description?: string
+  files?: ResourceFile[]
+}
+
 export interface AcademicsData {
   title: string
   subtitle?: string
@@ -318,6 +360,11 @@ export interface AcademicsData {
     image?: string
   }
   courses?: CourseData[]
+  /** Editable heading + intro for the downloads section. */
+  resourcesTitle?: string
+  resourcesDescription?: string
+  /** Syllabus / booklists / stationery lists, each with its own files. */
+  resources?: AcademicResource[]
 }
 
 // ── Admissions ──

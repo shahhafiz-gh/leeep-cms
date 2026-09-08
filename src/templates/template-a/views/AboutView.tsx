@@ -1,4 +1,5 @@
 import type { SchoolData } from '@/types/school.types'
+import PageSection from '@/shared/PageSection'
 import AboutHero from '../components/about/AboutHero'
 import OurStory from '../components/about/OurStory'
 import MissionSection from '../components/about/MissionSection'
@@ -10,10 +11,18 @@ export default function AboutView({ data }: { data: SchoolData }) {
   return (
     <div className="font-(family-name:--font-ta-body) bg-ta-background text-ta-on-background">
       <AboutHero data={data} />
-      <OurStory data={data} />
-      <MissionSection data={data} />
-      <WhyChooseUsSection data={data} />
-      <Achievements data={data} />
+      <PageSection id="story">
+        <OurStory data={data} />
+      </PageSection>
+      <PageSection id="vision-mission">
+        <MissionSection data={data} />
+      </PageSection>
+      <PageSection id="why-choose">
+        <WhyChooseUsSection data={data} />
+      </PageSection>
+      <PageSection id="achievements">
+        <Achievements data={data} />
+      </PageSection>
     </div>
   )
 }

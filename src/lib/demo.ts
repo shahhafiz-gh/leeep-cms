@@ -216,6 +216,24 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
         { title: 'Inter-School Sample Cup', description: 'Demo students excelled at a fictional regional tournament.', year: '2023', icon: 'lucide:medal', image: STOCK.sports },
         { title: 'Young Innovators Showcase', description: 'Placeholder text for a science and innovation highlight.', year: '2023', icon: 'lucide:lightbulb', image: STOCK.tech },
       ],
+      // Rendered as About sections by Template H, and linked from its About
+      // dropdown — the demo carries them so that menu has something behind it.
+      messages: [
+        {
+          role: 'Chairman',
+          name: 'Mr. V. Menon',
+          image: avatar(13),
+          message:
+            'Welcome to our sample school. A school is a promise made to a family: that their child will be known by name, stretched a little further each year, and sent out steadier than they arrived.\n\nThis is placeholder copy — a real school writes its own message here, at whatever length it wants to.',
+        },
+        {
+          role: 'Principal',
+          name: 'Dr. P. Rao',
+          image: avatar(60),
+          message:
+            'Every morning this building fills with several hundred different reasons to be curious. Our work is to keep that curiosity alive while giving it the discipline to become something.\n\nPlaceholder text, shown here so the Principal’s Message section and its menu link can be previewed.',
+        },
+      ],
     },
 
     team: {
@@ -272,6 +290,14 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
         ],
         image: STOCK.building2,
       },
+      resourcesTitle: 'Syllabus & Booklists',
+      resourcesDescription: 'Class-wise material for the current session.',
+      // Downloads that belong to academics rather than a page of their own.
+      // Files are attached per school; the demo shows the empty state.
+      resources: [
+        { title: 'Syllabus', description: 'Class-wise syllabus for the current session.', files: [] },
+        { title: 'Booklist', description: 'The books each class works from.', files: [] },
+      ],
       clubs: [
         { name: 'Robotics & Coding', description: 'Hands-on robotics, programming, and innovation challenges.', image: STOCK.tech },
         { name: 'Debate & Literary', description: 'Public speaking, debate, and creative writing.', image: STOCK.classroom },

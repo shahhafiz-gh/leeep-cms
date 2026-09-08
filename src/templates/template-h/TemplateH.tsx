@@ -1,6 +1,4 @@
 import type { PageType, SchoolData } from '@/types/school.types'
-import AboutView from '@/templates/template-b/views/AboutView'
-import AcademicsView from '@/templates/template-b/views/AcademicsView'
 import AdmissionsView from '@/templates/template-f/views/AdmissionsView'
 import AdmissionsApplyView from '@/templates/template-f/views/AdmissionsApplyView'
 import AdmissionsStatusView from '@/templates/template-f/views/AdmissionsStatusView'
@@ -12,6 +10,8 @@ import { templateBFonts } from '@/templates/template-b/fonts'
 import { templateHFonts } from './fonts'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import AboutView from './views/AboutView'
+import AcademicsView from './views/AcademicsView'
 import HomeView from './views/HomeView'
 import TeamView from './views/TeamView'
 import GalleryView from './views/GalleryView'
@@ -49,6 +49,11 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
  * folded onto those routes and reachable from the nav's dropdowns — the old
  * site's three galleries become one page (photos then videos), and its
  * department-led faculty listing becomes this template's own grouped Team view.
+ *
+ * About and Academics are Heritage's views plus the sections that folding needs:
+ * the leadership messages and the organisation chart on About, the syllabus and
+ * booklist downloads on Academics. Each of those sections carries the anchor its
+ * menu entry points at (see NAV_BLUEPRINT on the server).
  *
  * Both `template-b` and `template-h` are on the root: the former keeps every
  * Heritage-scoped rule matching, the latter re-points the tokens those rules

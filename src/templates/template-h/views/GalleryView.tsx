@@ -1,6 +1,7 @@
 import type { SchoolData } from '@/types/school.types'
 import { HeritageGalleryView } from '@/shared/views/GalleryViews'
 import VideoGallery from '@/shared/VideoGallery'
+import PageSection from '@/shared/PageSection'
 
 /**
  * Photos then videos on one Gallery page.
@@ -13,15 +14,19 @@ import VideoGallery from '@/shared/VideoGallery'
 export default function GalleryView({ data }: { data: SchoolData }) {
   return (
     <>
-      <HeritageGalleryView data={data} />
-      <div className="bg-th-paper">
-        <VideoGallery
-          data={data}
-          accentClass="bg-th-primary"
-          headingClass="text-th-heading"
-          bodyClass="text-th-body"
-        />
-      </div>
+      <PageSection id="photos">
+        <HeritageGalleryView data={data} />
+      </PageSection>
+      <PageSection id="videos">
+        <div className="bg-th-paper">
+          <VideoGallery
+            data={data}
+            accentClass="bg-th-primary"
+            headingClass="text-th-heading"
+            bodyClass="text-th-body"
+          />
+        </div>
+      </PageSection>
     </>
   )
 }
