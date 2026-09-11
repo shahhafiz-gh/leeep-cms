@@ -150,7 +150,9 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
     config: { template_id: templateId, palette, font_family: 'biorhyme' },
 
     hero: {
-      // Single hero (not a slider).
+      // One slide for every template but Grand, whose hero rotates — so its
+      // demo carries the extra slides that show what the slider does (and what
+      // the builder's "Hero slides" list edits), each with its own dwell time.
       slides: [
         {
           title: 'Welcome to Leeep Public School',
@@ -159,7 +161,31 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
             'A nurturing environment for every learner — blending strong academics, creativity, and character so each student discovers their full potential.',
           image: STOCK.hero1,
           cta: { label: 'Explore Admissions', href: demoHref('/admissions') },
+          duration: '6',
         },
+        ...(template === 'H'
+          ? [
+              {
+                title: 'Admissions are open for the new session',
+                subtitle: 'Join us',
+                description:
+                  'Apply online in a few minutes — our admissions team will be in touch as soon as your form is in.',
+                image: STOCK.students,
+                cta: { label: 'Online Admission', href: demoHref('/admissions') },
+                secondaryCta: { label: 'Visit the campus', href: demoHref('/contact') },
+                duration: '8',
+              },
+              {
+                title: 'Learning that goes beyond the classroom',
+                subtitle: 'Sport, arts and science',
+                description:
+                  'Labs, studios and playing fields that give every student somewhere to be good at something.',
+                image: STOCK.scienceKids,
+                cta: { label: 'Our facilities', href: demoHref('/academics') },
+                duration: '5',
+              },
+            ]
+          : []),
       ],
     },
 

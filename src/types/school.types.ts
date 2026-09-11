@@ -152,6 +152,17 @@ export interface HeroSlide {
     label: string
     href: string
   }
+  /** Optional second, outline button beside `cta`. Rendered only when labelled. */
+  secondaryCta?: {
+    label: string
+    href: string
+  }
+  /**
+   * How long this slide stays on screen, in seconds, before the slider advances
+   * (templates that rotate — currently Grand). The builder writes it as a string,
+   * so read it through `slideDurationMs`. Blank/invalid falls back to 6s.
+   */
+  duration?: string | number
 }
 
 export interface HeroData {
