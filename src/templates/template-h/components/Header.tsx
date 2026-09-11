@@ -98,8 +98,11 @@ export default function Header({ data }: { data: SchoolData }) {
 
       {/* ── Header band ───────────────────────────────────────────────── */}
       <div className="bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-4 px-4 py-5 lg:px-8">
-          <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3">
+        {/* One row, never two: the logo block is the only flexible item, so the
+            app buttons stay beside the logo instead of wrapping underneath it
+            when a school has a long name or long button labels. */}
+        <div className="mx-auto flex max-w-7xl items-center gap-x-6 px-4 py-5 lg:px-8">
+          <Link href="/" className="flex min-w-0 items-center gap-3">
             {data.logo ? (
               <Image
                 src={data.logo}
@@ -137,51 +140,54 @@ export default function Header({ data }: { data: SchoolData }) {
             </span>
           </Link>
 
-          {/* Info cards — hidden below xl where they would wrap into a wall. */}
-          <div className="ml-auto hidden items-center gap-7 xl:flex">
-            {phones[0] && (
-              <InfoCard
-                icon="lucide:phone-call"
-                title={contactEntryLabel(phones[0]) || 'Call us now'}
-                detail={contactPhoneDisplay(phones[0])}
-                href={contactPhoneHref(phones[0])}
-              />
-            )}
-            {data.contact?.workingHours && (
-              <InfoCard icon="lucide:clock" title="Opening hours" detail={data.contact.workingHours} />
-            )}
-          </div>
-
-          {appLinks.length > 0 && (
-            <div className="hidden items-center gap-2.5 lg:flex">
-              {appLinks.map((link, i) => (
-                <a
-                  key={`app-${i}`}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`flex items-center gap-2 rounded-sm px-3.5 py-2.5 text-[11px] font-semibold uppercase leading-tight tracking-wide transition-colors ${
-                    link.variant === 'dark'
-                      ? 'bg-th-heading text-white hover:bg-black'
-                      : 'bg-th-primary text-white hover:bg-th-primary-600'
-                  }`}
-                >
-                  <Icon icon="lucide:download" className="h-4 w-4 shrink-0" />
-                  <span className="text-left">{link.label}</span>
-                </a>
-              ))}
+          <div className="ml-auto flex shrink-0 items-center gap-5">
+            {/* Info cards — hidden below xl, where there is no room for them
+                next to the buttons. */}
+            <div className="hidden items-center gap-5 xl:flex">
+              {phones[0] && (
+                <InfoCard
+                  icon="lucide:phone-call"
+                  title={contactEntryLabel(phones[0]) || 'Call us now'}
+                  detail={contactPhoneDisplay(phones[0])}
+                  href={contactPhoneHref(phones[0])}
+                />
+              )}
+              {data.contact?.workingHours && (
+                <InfoCard icon="lucide:clock" title="Opening hours" detail={data.contact.workingHours} />
+              )}
             </div>
-          )}
 
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            aria-label="Toggle navigation"
-            aria-expanded={open}
-            className="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-th-primary text-white lg:hidden"
-          >
-            <Icon icon={open ? 'lucide:x' : 'lucide:menu'} className="h-5 w-5" />
-          </button>
+            {appLinks.length > 0 && (
+              <div className="hidden items-center gap-2 lg:flex">
+                {appLinks.map((link, i) => (
+                  <a
+                    key={`app-${i}`}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center gap-1.5 rounded-sm px-3 py-2.5 text-[11px] font-semibold uppercase leading-tight tracking-wide transition-colors ${
+                      link.variant === 'dark'
+                        ? 'bg-th-heading text-white hover:bg-black'
+                        : 'bg-th-primary text-white hover:bg-th-primary-600'
+                    }`}
+                  >
+                    <Icon icon="lucide:download" className="h-4 w-4 shrink-0" />
+                    <span className="text-left">{link.label}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setOpen((value) => !value)}
+              aria-label="Toggle navigation"
+              aria-expanded={open}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-th-primary text-white lg:hidden"
+            >
+              <Icon icon={open ? 'lucide:x' : 'lucide:menu'} className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -332,14 +338,14 @@ function InfoCard({
 }) {
   const body = (
     <>
-      <Icon icon={icon} className="h-8 w-8 shrink-0 text-th-primary" />
+      <Icon icon={icon} className="h-7 w-7 shrink-0 text-th-primary" />
       <span className="min-w-0">
         <span className="block text-[13px] font-semibold leading-tight text-th-heading">{title}</span>
-        <span className="mt-0.5 block truncate text-xs text-th-body">{detail}</span>
+        <span className="mt-0.5 block text-[11px] leading-snug text-th-body">{detail}</span>
       </span>
     </>
   )
-  const className = 'flex items-center gap-3'
+  const className = 'flex max-w-[190px] items-center gap-2.5'
   return href ? (
     <a href={href} className={`${className} transition-opacity hover:opacity-80`}>
       {body}
