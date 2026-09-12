@@ -39,7 +39,9 @@ const themes: Record<
     page: 'bg-ta-background text-ta-on-background pt-20', hero: 'bg-ta-surface', eyebrow: 'text-ta-primary', title: 'text-ta-on-surface font-(family-name:--font-ta-h1)', body: 'text-ta-on-surface-variant', heading: 'text-ta-on-surface font-(family-name:--font-ta-h1)', rule: 'border-ta-outline-variant/40', panel: 'bg-ta-surface rounded-lg', accent: 'text-ta-primary', link: 'text-ta-primary hover:underline', meta: 'text-ta-on-surface-variant',
   },
   heritage: {
-    page: 'bg-tb-background text-tb-foreground', hero: 'bg-tb-secondary text-white', eyebrow: 'text-tb-accent', title: 'text-white font-[family-name:var(--font-playfair)]', body: 'text-tb-body', heading: 'text-tb-secondary font-[family-name:var(--font-playfair)]', rule: 'border-tb-border', panel: 'bg-tb-light-white', accent: 'text-tb-accent', link: 'text-tb-accent hover:underline', meta: 'text-white/75',
+    // Heritage's header sits OVER the top of the page until it goes sticky, so
+    // its inner-page heroes all clear it themselves (see template-b PageHero).
+    page: 'bg-tb-background text-tb-foreground', hero: 'bg-tb-secondary text-white pt-32 md:pt-44', eyebrow: 'text-tb-accent', title: 'text-white font-[family-name:var(--font-playfair)]', body: 'text-tb-body', heading: 'text-tb-secondary font-[family-name:var(--font-playfair)]', rule: 'border-tb-border', panel: 'bg-tb-light-white', accent: 'text-tb-accent', link: 'text-tb-accent hover:underline', meta: 'text-white/75',
   },
   quill: {
     page: 'bg-td-paper text-td-ink', hero: 'bg-td-panel', eyebrow: 'text-td-accent', title: 'text-td-ink font-(family-name:--font-td-display)', body: 'text-td-body', heading: 'text-td-ink font-(family-name:--font-td-display)', rule: 'border-td-border', panel: 'bg-td-panel', accent: 'text-td-accent', link: 'text-td-accent hover:underline', meta: 'text-td-body',
