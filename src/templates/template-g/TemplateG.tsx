@@ -7,6 +7,7 @@ import AdmissionsStatusView from '@/templates/template-f/views/AdmissionsStatusV
 import ContactView from '@/templates/template-b/views/ContactView'
 import UpdatesView from '@/templates/template-b/views/UpdatesView'
 import FacilitiesView from '@/templates/template-b/views/FacilitiesView'
+import PrivacyView from '@/templates/template-b/views/PrivacyView'
 import TeamView from '@/shared/views/TeamView'
 import { HeritageGalleryView } from '@/shared/views/GalleryViews'
 import StyleHydrator from '@/shared/StyleHydrator'
@@ -33,6 +34,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
   updates: UpdatesView,
   facilities: FacilitiesView,
   gallery: HeritageGalleryView,
+  privacy: PrivacyView,
 }
 
 /**

@@ -124,7 +124,14 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
         </div>
 
         <div className="flex flex-col gap-3 border-t border-te-ink-rule py-6 text-[12.5px] text-te-on-ink-faint sm:flex-row sm:items-center sm:justify-between">
-          <span data-edit="footer.copyright">{data.footer?.copyright}</span>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span data-edit="footer.copyright">{data.footer?.copyright}</span>
+            {/* Every template's footer carries this link: the site takes admission
+                enquiries, so the notice has to be reachable from every page. */}
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Privacy Policy
+            </Link>
+          </div>
           {/* Hardcoded brand attribution, not school content. */}
           <span className="flex items-center gap-1.5">
             Powered by

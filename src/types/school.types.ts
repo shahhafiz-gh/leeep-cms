@@ -20,6 +20,7 @@ export type PageType =
   | 'updates'
   | 'facilities'
   | 'gallery'
+  | 'privacy'
 
 export type TemplateId =
   | 'template-a'
@@ -606,6 +607,34 @@ export interface FooterData {
   copyright?: string
 }
 
+// ── Privacy Policy ──
+
+/** One headed clause of the policy. `body` accepts Markdown (or the legacy HTML
+ *  a school pasted before the editor wrote Markdown) — see MarkdownContent. */
+export interface PrivacyPolicySection {
+  heading: string
+  body: string
+}
+
+/**
+ * The school's privacy notice, reachable from the footer of every template.
+ *
+ * Optional on purpose: the page exists for every school whether or not one has
+ * been written, because the footer link must never 404 and a site that collects
+ * admission enquiries needs a notice from day one. When `sections` is empty the
+ * renderer falls back to a generic baseline built from the school's own name and
+ * contact details (`shared/privacy-baseline.ts`), clearly marked as the standard
+ * notice so an admin can see it is theirs to replace.
+ */
+export interface PrivacyPolicyData {
+  title?: string
+  subtitle?: string
+  description?: string
+  /** Free text, shown as-is (e.g. "1 September 2026") — never parsed. */
+  lastUpdated?: string
+  sections?: PrivacyPolicySection[]
+}
+
 // ── Alumni ──
 
 export interface AlumniData {
@@ -822,6 +851,9 @@ export interface SchoolData {
   updates: UpdatesData
   /** Optional campus facilities page, enabled through Website Management. */
   facilities?: FacilitiesData
+  /** Privacy notice shown at `/privacy`, linked from every template's footer.
+   *  Absent/empty falls back to the generic baseline (see PrivacyPolicyData). */
+  privacy?: PrivacyPolicyData
   /**
    * Updates PAGE header copy. Lives OUTSIDE `updates` because that key is
    * server-owned (announcements/events are folded into it on every read,

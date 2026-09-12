@@ -54,6 +54,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/admissions/apply', 0.9, 'monthly'),
     entry('/contact', 0.7, 'yearly'),
     entry('/updates', 0.7, 'weekly'),
+    // Linked from every page's footer, so it is crawled anyway — declaring it
+    // at a low priority keeps it out of the way of the pages that matter.
+    entry('/privacy', 0.2, 'yearly'),
   ]
 
   if (data.config?.extended_pages) {

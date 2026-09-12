@@ -62,6 +62,8 @@ function pageTypeFor(segments: string[]): PageType | null {
       return 'facilities'
     case '/gallery':
       return 'gallery'
+    case '/privacy':
+      return 'privacy'
     default:
       // Announcement detail pages render the updates view, which picks the
       // announcement out of the payload client-side.

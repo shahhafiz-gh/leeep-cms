@@ -8,6 +8,7 @@ import AdmissionsStatusView from './views/AdmissionsStatusView'
 import ContactView from './views/ContactView'
 import UpdatesView from './views/UpdatesView'
 import FacilitiesView from './views/FacilitiesView'
+import PrivacyView from './views/PrivacyView'
 import TeamView from '@/shared/views/TeamView'
 import { WillowGalleryView } from '@/shared/views/GalleryViews'
 import Header from './components/layout/Header'
@@ -35,6 +36,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   updates: UpdatesView,
   facilities: FacilitiesView,
   gallery: WillowGalleryView,
+  privacy: PrivacyView,
 }
 
 /**
