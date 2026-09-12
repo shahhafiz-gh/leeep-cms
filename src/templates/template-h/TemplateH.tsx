@@ -5,6 +5,7 @@ import AdmissionsStatusView from '@/templates/template-f/views/AdmissionsStatusV
 import ContactView from '@/templates/template-b/views/ContactView'
 import UpdatesView from '@/templates/template-b/views/UpdatesView'
 import FacilitiesView from '@/templates/template-b/views/FacilitiesView'
+import PrivacyView from '@/templates/template-b/views/PrivacyView'
 import StyleHydrator from '@/shared/StyleHydrator'
 import { templateBFonts } from '@/templates/template-b/fonts'
 import { templateHFonts } from './fonts'
@@ -34,6 +35,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
   updates: UpdatesView,
   facilities: FacilitiesView,
   gallery: GalleryView,
+  privacy: PrivacyView,
 }
 
 /**

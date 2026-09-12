@@ -190,7 +190,14 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
 
         {/* Bottom Footer */}
         <div className="mt-10 pt-4 pb-4 border-t items-center justify-center lg:justify-between border-ta-inverse-on-surface/10 flex flex-col lg:flex-row gap-2">
-          <span data-edit="footer.copyright" className="text-ta-outline-variant text-sm">{data.footer?.copyright}</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <span data-edit="footer.copyright" className="text-ta-outline-variant text-sm">{data.footer?.copyright}</span>
+            {/* Every template's footer carries this link: the site takes admission
+                enquiries, so the notice has to be reachable from every page. */}
+            <Link href="/privacy" className="text-ta-outline-variant hover:text-ta-inverse-primary text-sm transition-colors">
+              Privacy Policy
+            </Link>
+          </div>
           {/* Hardcoded, non-editable "Powered by Leeep" — brand attribution, not school content. */}
           <p className="text-ta-outline-variant text-sm flex items-center gap-1.5">
             Powered by

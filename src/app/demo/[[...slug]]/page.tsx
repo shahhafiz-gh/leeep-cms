@@ -50,6 +50,7 @@ const SLUG_TO_PAGE: Record<string, PageType> = {
   // maps it, but the demo route had no slug for it — so it could not be
   // previewed at all.
   gallery: 'gallery',
+  privacy: 'privacy',
 }
 
 function resolvePage(slug?: string[]): PageType | null {

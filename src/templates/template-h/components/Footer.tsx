@@ -134,7 +134,12 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <span data-edit="footer.copyright">{data.footer?.copyright}</span>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span data-edit="footer.copyright">{data.footer?.copyright}</span>
+            {/* Every template's footer carries this link: the site takes admission
+                enquiries, so the notice has to be reachable from every page. */}
+            <Link href="/privacy" className="transition-colors hover:text-white">Privacy Policy</Link>
+          </div>
           <span>
             Powered by{' '}
             <a href="https://leeep.in" className="font-semibold text-white/70 hover:text-white">
