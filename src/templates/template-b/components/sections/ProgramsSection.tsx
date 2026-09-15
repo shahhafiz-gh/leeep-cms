@@ -35,7 +35,9 @@ export default function ProgramsSection({ data }: { data: SchoolData }) {
           <p className="text-tb-primary-400 text-sm font-bold uppercase tracking-widest mb-3">
             Our Programs
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-tb-heading mb-4">A Program For Every Stage Of Learning</h2>
+          <h2 data-edit="programsIntro.title" className="text-3xl md:text-4xl font-bold text-tb-heading mb-4">
+            {data.programsIntro?.title || 'A Program For Every Stage Of Learning'}
+          </h2>
           <p className="text-tb-body text-lg max-w-2xl mx-auto leading-relaxed">
             Fostering growth, curiosity, and academic excellence from the foundational years to college readiness.
           </p>

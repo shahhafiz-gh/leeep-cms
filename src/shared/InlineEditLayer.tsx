@@ -539,9 +539,19 @@ export default function InlineEditLayer() {
         el.src = url
         // Guarantee a clean fit even if the original markup lacked object-cover
         // (e.g. an empty placeholder slot being filled for the first time).
-        el.style.objectFit = 'cover'
-        el.style.width = '100%'
-        el.style.height = '100%'
+        //
+        // But only then. An image the template already fits deliberately — a
+        // LOGO is the standing case, sized `object-contain` inside a small box
+        // so a wide wordmark is shown whole — must keep its own fit: stretching
+        // it to 100%x100% and cropping to cover turned a replaced logo into an
+        // unrecognisable slice of itself, which read as "the logo didn't
+        // change". `object-fit: fill` is the CSS default, so anything else is
+        // the template having made a choice.
+        if (window.getComputedStyle(el).objectFit === 'fill') {
+          el.style.objectFit = 'cover'
+          el.style.width = '100%'
+          el.style.height = '100%'
+        }
       } else if (el instanceof HTMLVideoElement) {
         // `data-edit-img` on a <video> is its POSTER — the still image shown
         // before/behind the clip — not the playable source (that's patched via
@@ -725,9 +735,14 @@ export default function InlineEditLayer() {
         const styleObj = (msg.value && typeof msg.value === 'object') ? (msg.value as Record<string, string>) : {}
         styleOverrides.set(msg.path, styleObj)
         document.querySelectorAll<HTMLElement>(`${sel('data-style')},${sel('data-edit')},${sel('data-bind')}`).forEach((el) => {
+          // Clear every property a curated style can set, so switching an
+          // option back to "Default" returns it to the template's own value
+          // instead of leaving the last pick stuck as an inline style.
           el.style.fontSize = ''
           el.style.textAlign = ''
           el.style.whiteSpace = ''
+          el.style.lineHeight = ''
+          el.style.maxWidth = ''
           Object.assign(el.style, styleObj)
         })
         return

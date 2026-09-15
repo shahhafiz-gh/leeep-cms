@@ -4,7 +4,9 @@ import { useEffect } from 'react'
 import type { SchoolData } from '@/types/school.types'
 import { styleObject } from '@/lib/component-styles'
 
-const RESET_PROPERTIES = ['fontSize', 'textAlign', 'whiteSpace'] as const
+// Every property a curated style can set (component-styles STYLE_PROPS). Cleared
+// before re-applying so picking "Default" hands the property back to the template.
+const RESET_PROPERTIES = ['fontSize', 'textAlign', 'whiteSpace', 'lineHeight', 'maxWidth'] as const
 
 /** Applies saved curated typography to editable text on the published site. */
 export default function StyleHydrator({ data }: { data: SchoolData }) {

@@ -58,11 +58,12 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
               <p className="text-white/70 text-sm font-bold uppercase tracking-widest mb-3">
                 Testimonials
               </p>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Parents Feedback
+              <h2 data-edit="testimonialsIntro.title" className="text-3xl md:text-4xl font-bold text-white mb-4">
+                {data.testimonialsIntro?.title || 'Parents Feedback'}
               </h2>
-              <p className="text-white/80 text-sm leading-relaxed mb-10">
-                Your opinion matters. By providing feedback, you contribute to the continuous enhancement of our academic programs, support services, and campus life.
+              <p data-edit="testimonialsIntro.subtitle" className="text-white/80 text-sm leading-relaxed mb-10">
+                {data.testimonialsIntro?.subtitle ||
+                  'Your opinion matters. By providing feedback, you contribute to the continuous enhancement of our academic programs, support services, and campus life.'}
               </p>
 
               {/* Navigation arrows */}

@@ -6,13 +6,16 @@ import ScrollReveal from '@/shared/animations/scroll-reveal'
 /** Template B — News & Announcements Section (KCS style) */
 export default function NewsSection({ data }: { data: SchoolData }) {
   const { announcements } = data.updates
+  // The editor's "Latest news heading" field. It fed nothing here until now, so
+  // a school that changed it saw its home page keep the template's wording.
+  const heading = data.newsIntro?.title || 'News & Announcements'
 
   if (announcements.length === 0) {
     return (
       <section id="news" className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-tb-heading mb-6">
-            News &amp; Announcements
+          <h2 data-edit="newsIntro.title" className="text-2xl md:text-3xl font-bold text-tb-heading mb-6">
+            {heading}
           </h2>
           <p className="text-tb-body">No announcements at the moment. Check back soon.</p>
         </div>
@@ -41,8 +44,8 @@ export default function NewsSection({ data }: { data: SchoolData }) {
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         {/* Header */}
         <ScrollReveal className="flex items-baseline justify-between mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-tb-heading">
-            News &amp; Announcements
+          <h2 data-edit="newsIntro.title" className="text-2xl md:text-3xl font-bold text-tb-heading">
+            {heading}
           </h2>
           <Link
             href="/updates"
