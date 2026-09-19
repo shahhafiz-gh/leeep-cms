@@ -17,7 +17,7 @@ const INPUT =
 /**
  * A school-written form. Answers are keyed by the question as worded, which is
  * also how the server checks them against the published form and how staff
- * read them in `Website Form Submission`.
+ * read them in the Grievance it is filed as.
  */
 export default function FormBlock({ block, page, formId }: FormBlockProps) {
   const fields = (block.fields ?? []).filter((field) => field.label?.trim())
