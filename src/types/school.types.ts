@@ -22,6 +22,13 @@ export type PageType =
   | 'gallery'
   | 'privacy'
 
+/**
+ * Every page a route can ask a template for. `custom` is a school-authored page
+ * from `SchoolData.pages`; it is kept out of `PageType` because only templates
+ * in `CUSTOM_PAGE_TEMPLATES` render one, and the route refuses the rest.
+ */
+export type SitePage = PageType | 'custom'
+
 export type TemplateId =
   | 'template-a'
   | 'template-b'
@@ -31,6 +38,7 @@ export type TemplateId =
   | 'template-f'
   | 'template-g'
   | 'template-h'
+  | 'template-i'
 
 // ── Template Configuration ──
 
@@ -470,6 +478,15 @@ export interface ContactData {
   visitingHours?: { label: string; time: string }[]
   /** Trust badges shown in the contact hero (icon + label + sublabel). */
   highlights?: Badge[]
+  /** Who to contact for what — one row per office holder (Scholars). */
+  directory?: ContactPerson[]
+}
+
+export interface ContactPerson {
+  role: string
+  name?: string
+  email?: string
+  phone?: string
 }
 
 // ── Updates / Announcements / Events ──
@@ -663,6 +680,89 @@ export interface PortalLink {
   url: string
   /** Visual emphasis — `primary` uses the brand colour, `dark` uses the neutral/ink colour. */
   variant?: 'primary' | 'dark'
+}
+
+// ── Custom pages ──
+
+/**
+ * A page the school writes itself, served at `/<slug>` by templates that render
+ * custom pages (currently Scholars). It exists for schools arriving from a
+ * page-per-topic site — History, Syllabus, Honour Board, a page per boarding
+ * campus — whose pages do not fold onto the fixed routes without losing them.
+ *
+ * The body is a list of typed blocks rather than free HTML, so a school can
+ * never paste markup into the page and every block keeps the template's design.
+ * Menu placement is SERVER-OWNED: `menu` names the dropdown the page joins and
+ * `get_site` folds the result into `navigation` (see NAV_BLUEPRINT).
+ */
+export interface CustomPage {
+  slug: string
+  title: string
+  /** Shorter label for the menu; the title is used when empty. */
+  navLabel?: string
+  /** The dropdown this page sits under ("About", "Academics", ...). Empty → top level. */
+  menu?: string
+  /** 'no' keeps the page out of the header menu (footer and links still reach it). */
+  inMenu?: 'yes' | 'no' | ''
+  /** One line under the title, and on the page's card in its group index. */
+  summary?: string
+  heroImage?: string
+  /** Old addresses of this page (e.g. `/SchoolHistory.aspx`) that redirect here. */
+  aliases?: string[]
+  blocks?: CustomPageBlock[]
+}
+
+export type CustomPageBlockType = 'text' | 'images' | 'table' | 'files' | 'form' | 'map' | 'people'
+
+export interface CustomPageImage {
+  src: string
+  alt?: string
+  caption?: string
+}
+
+export interface CustomPageFile {
+  label: string
+  url?: string
+  description?: string
+  date?: string
+}
+
+export interface CustomFormField {
+  label: string
+  type?: 'text' | 'email' | 'tel' | 'number' | 'date' | 'textarea' | 'select' | ''
+  required?: 'yes' | 'no' | ''
+  /** Comma-separated choices for a `select`. */
+  options?: string
+}
+
+/**
+ * One block of a custom page. A single flat shape rather than a union, because
+ * the builder edits every block with the same list editor; each type reads only
+ * the keys it needs.
+ */
+export interface CustomPageBlock {
+  type: CustomPageBlockType
+  heading?: string
+  /** Markdown — `text`, and the intro line of any other block. */
+  body?: string
+  /** `images`: the photos. 'grid' (default), 'wide' (one per row) or 'pages' (document scans). */
+  images?: CustomPageImage[]
+  layout?: 'grid' | 'wide' | 'pages' | ''
+  /** `table`: header cells and rows, each a ` | `-separated line. */
+  columns?: string
+  rows?: { cells: string }[]
+  /** `files`: downloads. */
+  files?: CustomPageFile[]
+  /** `form`: the questions, button label and thank-you line. */
+  fields?: CustomFormField[]
+  submitLabel?: string
+  successMessage?: string
+  /** Stable id for a `form`; its position among the page's forms when empty. */
+  formId?: string
+  /** `map`: a Google Maps embed or share URL. */
+  url?: string
+  /** `people`: portraits with a name and a line (e.g. honour-board toppers). */
+  people?: { name: string; role?: string; image?: string }[]
 }
 
 // ────────────────────────────────────────────
@@ -899,6 +999,27 @@ export interface SchoolData {
    * existed is unaffected.
    */
   hiddenSections?: string[]
+  /** School-authored pages served at `/<slug>` (templates that render them). */
+  pages?: CustomPage[]
+  /**
+   * Old single-segment addresses (`/About.aspx`) and where they live now
+   * (`/about`), so links into a school's previous site keep working once its
+   * domain points here. Custom pages carry their own `aliases` instead.
+   */
+  redirects?: { from: string; to: string }[]
+  /** Scrolling one-line notices under the header (Scholars). Empty → the latest announcements. */
+  ticker?: { text: string; href?: string }[]
+  /** Home "message" panel — a leadership welcome with a portrait (Scholars). */
+  homeMessage?: LeadershipMessage & { title?: string }
+  /** Home prospectus band: page scans and the full PDF (Scholars). */
+  prospectus?: {
+    title?: string
+    subtitle?: string
+    pages?: string[]
+    pdf?: string
+    /** Custom page holding the full prospectus, e.g. `/prospectus`. */
+    href?: string
+  }
   navigation: NavigationItem[]
   socialLinks: SocialLink[]
   footer: FooterData

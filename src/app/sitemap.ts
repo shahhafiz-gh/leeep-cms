@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { getSiteData } from '@/lib/cms'
 import { canonicalHostFor, schemeFor } from '@/lib/canonical'
 import { normalizeHost, resolveTenant } from '@/lib/tenant'
+import { customPages, pageHref, supportsCustomPages } from '@/lib/custom-pages'
 
 /**
  * `sitemap.xml`, per school.
@@ -63,6 +64,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pages.push(entry('/about/team', 0.5, 'monthly'))
     pages.push(entry('/facilities', 0.6, 'monthly'))
     pages.push(entry('/gallery', 0.5, 'monthly'))
+  }
+
+  // A school's own pages (History, Syllabus, ...) — only where the template
+  // serves them.
+  if (supportsCustomPages(data)) {
+    for (const page of customPages(data)) pages.push(entry(pageHref(page), 0.6, 'monthly'))
   }
 
   for (const announcement of data.updates?.announcements ?? []) {
