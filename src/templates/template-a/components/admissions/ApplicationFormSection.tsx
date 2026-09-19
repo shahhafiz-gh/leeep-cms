@@ -33,7 +33,12 @@ export default function ApplicationFormSection({ data }: { data: SchoolData }) {
         </div>
 
         <div className="bg-ta-surface-container-lowest border border-ta-outline-variant rounded-xl p-6 md:p-10 shadow-sm">
-          <AdmissionFormBody form={form} chrome={chrome} schoolName={data.name} />
+          <AdmissionFormBody
+            form={form}
+            chrome={chrome}
+            schoolName={data.name}
+            rulesTitle={data.admissions?.rulesTitle}
+          />
         </div>
       </div>
     </section>

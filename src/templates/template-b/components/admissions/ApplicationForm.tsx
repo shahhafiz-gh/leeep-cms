@@ -29,7 +29,12 @@ export default function ApplicationForm({ data }: { data: SchoolData }) {
         </div>
 
         <div className="bg-white rounded-2xl border border-tb-border p-6 md:p-10">
-          <AdmissionFormBody form={form} chrome={chrome} schoolName={data.name} />
+          <AdmissionFormBody
+            form={form}
+            chrome={chrome}
+            schoolName={data.name}
+            rulesTitle={data.admissions?.rulesTitle}
+          />
         </div>
       </div>
     </section>

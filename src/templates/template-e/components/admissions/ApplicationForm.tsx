@@ -39,6 +39,7 @@ export default function ApplicationForm({ data }: { data: SchoolData }) {
           form={form}
           chrome={chrome}
           schoolName={data.name}
+          rulesTitle={data.admissions?.rulesTitle}
           successTitle="Thank you — we have your application."
           successText={`A member of the admissions team at ${data.name} will review it and reply shortly.`}
         />
