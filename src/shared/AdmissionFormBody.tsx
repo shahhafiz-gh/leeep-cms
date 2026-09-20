@@ -91,6 +91,8 @@ export default function AdmissionFormBody({
     settings,
     values,
     setValue,
+    files,
+    setFile,
     termsAccepted,
     setTermsAccepted,
     honeypot,
@@ -108,6 +110,8 @@ export default function AdmissionFormBody({
     applicationNumber,
     successMessage,
     error,
+    fieldErrors,
+    invalidFocus,
     eligibilityError,
     eligibilityDialogOpen,
     dismissEligibilityDialog,
@@ -234,6 +238,36 @@ export default function AdmissionFormBody({
       if (secondFrame) window.cancelAnimationFrame(secondFrame)
     }
   }, [stepIndex])
+
+  useEffect(() => {
+    if (!invalidFocus) return
+
+    // A failed Continue paints the offending controls red; this puts the first
+    // of them on screen. Two frames: the step that owns the field may only be
+    // mounting now, because submit sends the family back to it.
+    let secondFrame = 0
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        const wrapper = formRef.current?.querySelector(
+          `[data-admission-field="${invalidFocus.fieldname}"]`,
+        )
+        if (!(wrapper instanceof HTMLElement)) return
+        wrapper.scrollIntoView({
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          block: 'center',
+        })
+        // Focus the control itself, not the wrapper, so the keyboard opens on
+        // the answer that has to change. A file input is hidden — leave it be.
+        const control = wrapper.querySelector('input:not([type="file"]), select, textarea')
+        if (control instanceof HTMLElement) control.focus({ preventScroll: true })
+      })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame)
+      if (secondFrame) window.cancelAnimationFrame(secondFrame)
+    }
+  }, [invalidFocus, formRef])
 
   // Final step. A confirmation that only says "thank you" leaves a family with
   // nothing to do and nothing to keep; the application number and where to use
@@ -417,7 +451,15 @@ export default function AdmissionFormBody({
           />
           <div ref={activeStepRef} tabIndex={-1} className="scroll-mt-28 outline-none">
             <h3 className={chrome.heading}>{activeStep.label || 'Application details'}</h3>
-            <AdmissionFormFields step={activeStep} values={values} onChange={setValue} styles={chrome} />
+            <AdmissionFormFields
+              step={activeStep}
+              values={values}
+              onChange={setValue}
+              styles={chrome}
+              errors={fieldErrors}
+              files={files}
+              onFileChange={setFile}
+            />
           </div>
         </>
       )}

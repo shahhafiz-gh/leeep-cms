@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useClientSearchParams } from './hooks/useClientSearchParams'
+import { fieldFormatError } from './admission-formats'
 import {
   ageEligibilityError,
   fetchAdmissionPrograms,
@@ -13,13 +14,22 @@ import {
   isFileField,
   isChildTable,
   submitAdmissionApplication,
-  filePartName,
   type AdmissionCriteria,
   type AdmissionSchema,
   type FormValue,
   type FormValues,
   type SchemaStep,
 } from './admission-schema'
+
+/** What is wrong with each answer, by fieldname. Empty means the step is clean. */
+export type FieldErrors = Record<string, string>
+
+/** Which field to reveal after a failed Continue, and a token so repeating the
+ * same failure still scrolls. */
+export interface InvalidFocus {
+  fieldname: string
+  token: number
+}
 
 /**
  * All the behaviour behind the public admission form, so each template only has
@@ -30,6 +40,10 @@ import {
  *      school can scope an `Admission Form Profile` to it) the field set itself
  *   2. fill the steps the form's sections define
  *   3. accept the declaration and submit
+ *
+ * Every step is checked as the family leaves it, never only at the end: a
+ * question answered wrongly on step two is theirs to fix while they can still
+ * see it, and each offending control is named so the form can paint it red.
  */
 export function useAdmissionForm(contactPhone?: string) {
   const formRef = useRef<HTMLFormElement>(null)
@@ -50,6 +64,11 @@ export function useAdmissionForm(contactPhone?: string) {
   const [schema, setSchema] = useState<AdmissionSchema | null>(null)
 
   const [values, setValues] = useState<FormValues>({})
+  // Attachments live here rather than in their <input>: only the active step is
+  // mounted, so a file left in an uncontrolled input is lost the moment the
+  // family presses Continue — and then reported missing at submit, on a step
+  // they can no longer see.
+  const [files, setFiles] = useState<Record<string, File>>({})
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [honeypot, setHoneypot] = useState('')
 
@@ -65,11 +84,14 @@ export function useAdmissionForm(contactPhone?: string) {
   const [applicationNumber, setApplicationNumber] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [showErrors, setShowErrors] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [invalidFocus, setInvalidFocus] = useState<InvalidFocus | null>(null)
   const [eligibilityDialogOpen, setEligibilityDialogOpen] = useState(false)
 
   const setProgram = useCallback((value: string) => {
     setProgramState(value)
+    setFieldErrors({})
+    setError(null)
     if (!value) setSchema(null)
   }, [])
 
@@ -129,45 +151,107 @@ export function useAdmissionForm(contactPhone?: string) {
   const criteria = schema?.criteria ?? null
   const settings = schema?.settings ?? null
 
-  const setValue = useCallback((fieldname: string, value: FormValue) => {
-    setValues((current) => ({ ...current, [fieldname]: value }))
-    if (fieldname === 'date_of_birth') {
-      setEligibilityDialogOpen(false)
-      setError(null)
-    }
+  /** Drop one field's complaint — answering it is the fix, so the red goes at once. */
+  const clearFieldError = useCallback((fieldname: string) => {
+    setFieldErrors((current) => {
+      if (!(fieldname in current)) return current
+      const next = { ...current }
+      delete next[fieldname]
+      return next
+    })
   }, [])
 
+  const setValue = useCallback(
+    (fieldname: string, value: FormValue) => {
+      setValues((current) => ({ ...current, [fieldname]: value }))
+      clearFieldError(fieldname)
+      setError(null)
+      if (fieldname === 'date_of_birth') setEligibilityDialogOpen(false)
+    },
+    [clearFieldError],
+  )
+
+  const setFile = useCallback(
+    (fieldname: string, file: File | null) => {
+      setFiles((current) => {
+        const next = { ...current }
+        if (file) next[fieldname] = file
+        else delete next[fieldname]
+        return next
+      })
+      if (file) {
+        clearFieldError(fieldname)
+        setError(null)
+      }
+    },
+    [clearFieldError],
+  )
+
   /**
-   * Missing answers on one step (or across every step when `index` is omitted).
-   * Files are checked against the live form because their inputs are
-   * uncontrolled — and a hidden required file input would otherwise make the
-   * browser block submission with nothing on screen to explain why.
+   * Everything wrong on one step (or across every step when `index` is omitted):
+   * required answers left blank, and answers whose format the server would
+   * reject anyway — Aadhaar, PEN, phone, email.
    */
-  const missingOn = useCallback(
-    (index?: number): string[] => {
+  const errorsOn = useCallback(
+    (index?: number): FieldErrors => {
       const scope = index === undefined ? steps : steps.slice(index, index + 1)
-      const formData = formRef.current ? new FormData(formRef.current) : null
-      const missing: string[] = []
+      const errors: FieldErrors = {}
       for (const step of scope) {
         for (const section of step.sections) {
           for (const field of section.fields) {
-            if (!isFieldVisible(field, values) || !isFieldRequired(field, values)) continue
+            if (!isFieldVisible(field, values)) continue
+            const required = isFieldRequired(field, values)
+            const label = field.label || field.fieldname
+
             if (isFileField(field)) {
-              const file = formData?.get(filePartName(field.fieldname))
-              if (!(file instanceof File) || file.size === 0) missing.push(field.label)
-            } else if (isChildTable(field)) {
-              const rows = values[field.fieldname]
-              if (!Array.isArray(rows) || !rows.length) missing.push(field.label)
-            } else {
-              const value = values[field.fieldname]
-              if (value === undefined || String(value).trim() === '') missing.push(field.label)
+              if (required && !(files[field.fieldname] instanceof File)) {
+                errors[field.fieldname] = `Please attach ${label}.`
+              }
+              continue
             }
+            if (isChildTable(field)) {
+              const rows = values[field.fieldname]
+              if (required && (!Array.isArray(rows) || !rows.length)) {
+                errors[field.fieldname] = `Please add at least one ${label.replace(/s$/, '')}.`
+              }
+              continue
+            }
+
+            const text = String(values[field.fieldname] ?? '').trim()
+            if (!text) {
+              if (required) errors[field.fieldname] = `${label} is required.`
+              continue
+            }
+            const message = fieldFormatError(field.fieldname, text, label)
+            if (message) errors[field.fieldname] = message
           }
         }
       }
-      return missing
+      return errors
     },
-    [steps, values],
+    [steps, values, files],
+  )
+
+  /**
+   * One line above the buttons — where the family just pressed. It only points
+   * upwards: every problem is already written beside the answer that caused it,
+   * so repeating it here would say the same thing twice.
+   */
+  const summarise = useCallback((errors: FieldErrors): string => {
+    const count = Object.keys(errors).length
+    return count === 1
+      ? 'Please check the highlighted question above before continuing.'
+      : `Please check the ${count} highlighted questions above before continuing.`
+  }, [])
+
+  /** Show the problems and send the family to the first of them. */
+  const reportErrors = useCallback(
+    (errors: FieldErrors) => {
+      setFieldErrors(errors)
+      setError(summarise(errors))
+      setInvalidFocus({ fieldname: Object.keys(errors)[0], token: Date.now() })
+    },
+    [summarise],
   )
 
   /** The class's own age rule, checked while the family is still filling in. */
@@ -177,10 +261,10 @@ export function useAdmissionForm(contactPhone?: string) {
   )
 
   const goNext = useCallback(() => {
-    const missing = missingOn(stepIndex)
-    if (missing.length) {
-      setShowErrors(true)
-      setError(`Please answer: ${missing.slice(0, 4).join(', ')}${missing.length > 4 ? '…' : ''}`)
+    if (!steps.length) return
+    const errors = errorsOn(stepIndex)
+    if (Object.keys(errors).length) {
+      reportErrors(errors)
       return
     }
     if (eligibilityError) {
@@ -189,13 +273,13 @@ export function useAdmissionForm(contactPhone?: string) {
       return
     }
     setError(null)
-    setShowErrors(false)
+    setFieldErrors({})
     setStepIndex((current) => {
       const next = Math.min(current + 1, steps.length - 1)
       setMaxStepReached((furthest) => Math.max(furthest, next))
       return next
     })
-  }, [missingOn, stepIndex, steps.length, eligibilityError])
+  }, [errorsOn, stepIndex, steps.length, eligibilityError, reportErrors])
 
   const goBack = useCallback(() => {
     setError(null)
@@ -211,7 +295,6 @@ export function useAdmissionForm(contactPhone?: string) {
     (index: number) => {
       if (index < 0 || index > maxStepReached) return
       setError(null)
-      setShowErrors(false)
       setStepIndex(index)
     },
     [maxStepReached],
@@ -224,11 +307,16 @@ export function useAdmissionForm(contactPhone?: string) {
       event.preventDefault()
       if (submitting || !schema) return
 
-      const missing = missingOn()
-      if (missing.length) {
-        setShowErrors(true)
-        setError(`Please answer: ${missing.slice(0, 4).join(', ')}${missing.length > 4 ? '…' : ''}`)
-        return
+      // Each step in turn, so a problem is shown on the step that owns it
+      // rather than as a complaint about a question the family cannot see.
+      for (let index = 0; index < steps.length; index++) {
+        const errors = errorsOn(index)
+        if (Object.keys(errors).length) {
+          setStepIndex(index)
+          setMaxStepReached((furthest) => Math.max(furthest, index))
+          reportErrors(errors)
+          return
+        }
       }
       if (eligibilityError) {
         setError(eligibilityError)
@@ -241,11 +329,12 @@ export function useAdmissionForm(contactPhone?: string) {
       }
 
       setError(null)
+      setFieldErrors({})
       setSubmitting(true)
       const result = await submitAdmissionApplication({
         schema,
         values,
-        form: event.currentTarget,
+        files,
         termsAccepted,
         honeypot,
       })
@@ -262,7 +351,19 @@ export function useAdmissionForm(contactPhone?: string) {
       setApplicationNumber(result.applicant ?? null)
       setSubmitted(true)
     },
-    [submitting, schema, missingOn, eligibilityError, settings, termsAccepted, values, honeypot],
+    [
+      submitting,
+      schema,
+      steps.length,
+      errorsOn,
+      reportErrors,
+      eligibilityError,
+      settings,
+      termsAccepted,
+      values,
+      files,
+      honeypot,
+    ],
   )
 
   return {
@@ -277,6 +378,8 @@ export function useAdmissionForm(contactPhone?: string) {
     settings,
     values,
     setValue,
+    files,
+    setFile,
     // declaration + anti-spam
     termsAccepted,
     setTermsAccepted,
@@ -298,7 +401,8 @@ export function useAdmissionForm(contactPhone?: string) {
     applicationNumber,
     successMessage,
     error,
-    showErrors,
+    fieldErrors,
+    invalidFocus,
     eligibilityError,
     eligibilityDialogOpen,
     dismissEligibilityDialog: () => setEligibilityDialogOpen(false),

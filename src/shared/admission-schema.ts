@@ -466,8 +466,13 @@ export type SubmitResult =
 export interface SubmitArgs {
   schema: AdmissionSchema
   values: FormValues
-  /** The <form> element, read for its uncontrolled file inputs. */
-  form: HTMLFormElement
+  /**
+   * The files the family picked, by fieldname. Held in React state rather than
+   * read back off the <form>: only the active step is mounted, so a document
+   * attached on step two would otherwise vanish the moment they pressed
+   * Continue — and then be reported missing at submit.
+   */
+  files: Record<string, File>
   termsAccepted: boolean
   /** Honeypot input's value — non-empty means a bot filled a hidden field. */
   honeypot?: string
@@ -484,7 +489,7 @@ export interface SubmitArgs {
 export async function submitAdmissionApplication({
   schema,
   values,
-  form,
+  files,
   termsAccepted,
   honeypot,
 }: SubmitArgs): Promise<SubmitResult> {
@@ -512,12 +517,11 @@ export async function submitAdmissionApplication({
   if (schema.program) body.set('program', schema.program)
   if (schema.academic_year) body.set('academic_year', schema.academic_year)
 
-  const formData = new FormData(form)
   let totalBytes = body.get('data')?.toString().length ?? 0
   for (const field of schema.fields) {
     if (!isFileField(field) || !isFieldVisible(field, values)) continue
     const part = filePartName(field.fieldname)
-    const file = formData.get(part)
+    const file = files[field.fieldname]
     if (!(file instanceof File) || file.size === 0) continue
     // Caught on pick too, but re-checked here so a file that slipped past the
     // control never starts an upload the proxy will only reject.

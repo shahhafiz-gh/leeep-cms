@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { Icon } from '@iconify/react'
+import { cn } from './utils/cn'
 import {
   childRows,
   filePartName,
@@ -27,6 +28,10 @@ import {
  * it up. Nothing here knows what "Aadhaar Number" or "Father's Name" is: it just
  * renders whatever `Student Applicant` currently defines (see
  * `admission-schema.ts`).
+ *
+ * A field named in `errors` is drawn red and carries its own message, so the
+ * family fixes the answer where they gave it rather than hunting for it from a
+ * list at the bottom of the form.
  */
 
 export interface AdmissionFormStyles {
@@ -49,6 +54,14 @@ export interface AdmissionFormStyles {
   tick?: string
   /** Secondary button (add/remove a child-table row). */
   subtleButton?: string
+  /**
+   * A control holding an answer the form cannot accept. Optional: the default
+   * below is red in every template's palette, and `cn` drops whatever border
+   * the template's own `input` had.
+   */
+  inputInvalid?: string
+  /** The message printed under such a control. */
+  fieldError?: string
 }
 
 export interface AdmissionFieldsProps {
@@ -56,13 +69,25 @@ export interface AdmissionFieldsProps {
   values: FormValues
   onChange: (fieldname: string, value: FormValue) => void
   styles: AdmissionFormStyles
-  /** Turns empty required fields red — only after a failed submit attempt. */
-  showErrors?: boolean
+  /** What is wrong with each answer, by fieldname — these controls turn red. */
+  errors?: Record<string, string>
+  /** Attachments already picked, by fieldname (held by the form, not the input). */
+  files?: Record<string, File>
+  onFileChange?: (fieldname: string, file: File | null) => void
 }
 
 /** Red asterisk marking a required field. */
 function Req() {
   return <span className="text-red-500"> *</span>
+}
+
+const INVALID_CONTROL =
+  'border-red-500 ring-1 ring-red-500/30 focus:border-red-500 focus:ring-red-500'
+const FIELD_ERROR_TEXT = 'text-xs font-medium text-red-600'
+
+/** The DOM id its control points at with `aria-describedby`. */
+function errorId(fieldname: string) {
+  return `admission-error-${fieldname}`
 }
 
 /** Fieldtypes that want the full row rather than one grid cell. */
@@ -103,52 +128,62 @@ function isEmailField(field: SchemaField): boolean {
 }
 
 /**
- * One upload card. The whole card opens the picker; the chosen file stays in the
- * (hidden) input so the form's FormData carries it on submit.
+ * One upload card. The whole card opens the picker; the chosen file is handed
+ * to the form, which keeps it in state — this step is unmounted the moment the
+ * family presses Continue, and an uncontrolled input would take the file with
+ * it.
  */
 function UploadBox({
   field,
   required,
+  invalid,
+  file,
+  onFile,
   styles,
 }: {
   field: SchemaField
   required: boolean
+  invalid: boolean
+  file: File | null
+  onFile: (file: File | null) => void
   styles: AdmissionFormStyles
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [fileName, setFileName] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [sizeError, setSizeError] = useState<string | null>(null)
 
   const maxMB = MAX_UPLOAD_MB
   const accept = field.fieldtype === 'Attach Image' ? '.jpg,.jpeg,.png' : '.pdf,.jpg,.jpeg,.png'
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) {
-      setFileName(null)
+    const picked = event.target.files?.[0]
+    if (!picked) {
+      onFile(null)
       return
     }
-    if (file.size > maxMB * 1024 * 1024) {
+    if (picked.size > maxMB * 1024 * 1024) {
       event.target.value = ''
-      setFileName(null)
-      setError(`File is larger than ${maxMB}MB`)
+      onFile(null)
+      setSizeError(`File is larger than ${maxMB}MB`)
       return
     }
-    setError(null)
-    setFileName(file.name)
+    setSizeError(null)
+    onFile(picked)
   }
 
   const clear = (event: React.MouseEvent) => {
     event.stopPropagation()
     if (inputRef.current) inputRef.current.value = ''
-    setFileName(null)
-    setError(null)
+    setSizeError(null)
+    onFile(null)
   }
 
   return (
     <div
       onClick={() => inputRef.current?.click()}
-      className={fileName ? styles.uploadCardFilled : styles.uploadCard}
+      className={cn(
+        file ? styles.uploadCardFilled : styles.uploadCard,
+        invalid && (styles.inputInvalid ?? INVALID_CONTROL),
+      )}
     >
       <input
         ref={inputRef}
@@ -159,16 +194,16 @@ function UploadBox({
         onChange={onChange}
       />
       <Icon
-        icon={fileName ? 'lucide:check-circle-2' : field.fieldtype === 'Attach Image' ? 'lucide:camera' : 'lucide:file-up'}
+        icon={file ? 'lucide:check-circle-2' : field.fieldtype === 'Attach Image' ? 'lucide:camera' : 'lucide:file-up'}
         className="text-4xl mx-auto mb-2"
       />
       <p className={styles.label}>
         {field.label}
         {required && <Req />}
       </p>
-      {fileName ? (
+      {file ? (
         <div className="flex items-center justify-center gap-2">
-          <p className={`${styles.help} truncate max-w-[220px]`}>{fileName}</p>
+          <p className={`${styles.help} truncate max-w-[220px]`}>{file.name}</p>
           <button type="button" onClick={clear} aria-label={`Remove ${field.label}`} className="opacity-70 hover:opacity-100">
             <Icon icon="lucide:x" className="text-sm" />
           </button>
@@ -176,7 +211,7 @@ function UploadBox({
       ) : (
         <p className={styles.help}>{field.description || `PDF, JPG, PNG up to ${maxMB}MB`}</p>
       )}
-      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+      {sizeError && <p className="text-xs text-red-600 mt-1">{sizeError}</p>}
     </div>
   )
 }
@@ -297,48 +332,84 @@ export function AdmissionField({
   values,
   onChange,
   styles,
+  error,
+  file = null,
+  onFileChange,
 }: {
   field: SchemaField
   values: FormValues
   onChange: (fieldname: string, value: FormValue) => void
   styles: AdmissionFormStyles
+  error?: string
+  file?: File | null
+  onFileChange?: (fieldname: string, file: File | null) => void
 }) {
   const required = isFieldRequired(field, values)
   const locked = !!field.locked || !!field.read_only
   const raw = values[field.fieldname]
   const value = Array.isArray(raw) ? '' : (raw ?? '')
+  const invalid = !!error
+  // `cn` (tailwind-merge) resolves the clash: the red border replaces the
+  // template's own rather than fighting it for CSS precedence.
+  const controlClass = cn(styles.input, invalid && (styles.inputInvalid ?? INVALID_CONTROL))
+  // Every field is wrapped in a marker the form body can scroll to when a step
+  // fails, and every bad answer states its own problem underneath.
+  const wrap = (content: React.ReactNode, className?: string) => (
+    <div data-admission-field={field.fieldname} className={className}>
+      {content}
+      {error && (
+        <p id={errorId(field.fieldname)} role="alert" className={cn('mt-1.5', styles.fieldError ?? FIELD_ERROR_TEXT)}>
+          {error}
+        </p>
+      )}
+    </div>
+  )
+  const flags = {
+    'aria-invalid': invalid || undefined,
+    'aria-describedby': invalid ? errorId(field.fieldname) : undefined,
+  } as const
 
   if (isFileField(field)) {
-    return <UploadBox field={field} required={required} styles={styles} />
+    return wrap(
+      <UploadBox
+        field={field}
+        required={required}
+        invalid={invalid}
+        file={file}
+        onFile={(picked) => onFileChange?.(field.fieldname, picked)}
+        styles={styles}
+      />,
+    )
   }
 
   if (isChildTable(field)) {
-    return (
+    return wrap(
       <ChildTable
         field={field}
         rows={childRows(values, field.fieldname)}
         required={required}
         onChange={(rows) => onChange(field.fieldname, rows)}
         styles={styles}
-      />
+      />,
     )
   }
 
   if (field.fieldtype === 'Check') {
-    return (
+    return wrap(
       <label className="flex items-center gap-2 cursor-pointer">
         <input
           type="checkbox"
           className={styles.tick}
           checked={value === 1 || value === '1'}
           disabled={locked}
+          {...flags}
           onChange={(event) => onChange(field.fieldname, event.target.checked ? 1 : 0)}
         />
         <span className={styles.label}>
           {field.label}
           {required && <Req />}
         </span>
-      </label>
+      </label>,
     )
   }
 
@@ -346,11 +417,12 @@ export function AdmissionField({
     if (field.fieldtype === 'Select') {
       return (
         <select
-          className={styles.input}
+          className={controlClass}
           name={field.fieldname}
           required={required}
           disabled={locked}
           value={String(value)}
+          {...flags}
           onChange={(event) => onChange(field.fieldname, event.target.value)}
         >
           <option value="">Select {field.label.toLowerCase()}</option>
@@ -367,11 +439,12 @@ export function AdmissionField({
       const choices = linkChoices(field, values)
       return (
         <select
-          className={styles.input}
+          className={controlClass}
           name={field.fieldname}
           required={required}
           disabled={locked}
           value={String(value)}
+          {...flags}
           onChange={(event) => onChange(field.fieldname, event.target.value)}
         >
           <option value="">Select {field.label.toLowerCase()}</option>
@@ -387,12 +460,13 @@ export function AdmissionField({
     if (WIDE_TYPES.has(field.fieldtype)) {
       return (
         <textarea
-          className={styles.input}
+          className={controlClass}
           name={field.fieldname}
           rows={3}
           required={required}
           disabled={locked}
           value={String(value)}
+          {...flags}
           onChange={(event) => onChange(field.fieldname, event.target.value)}
         />
       )
@@ -400,26 +474,28 @@ export function AdmissionField({
 
     return (
       <input
-        className={styles.input}
+        className={controlClass}
         name={field.fieldname}
         type={isEmailField(field) ? 'email' : inputType(field.fieldtype)}
         required={required}
         disabled={locked}
         value={String(value)}
+        {...flags}
         onChange={(event) => onChange(field.fieldname, event.target.value)}
       />
     )
   })()
 
-  return (
-    <div className={styles.field ?? 'flex flex-col gap-1.5'}>
+  return wrap(
+    <>
       <label className={styles.label}>
         {field.label}
         {required && <Req />}
       </label>
       {control}
       {field.description && <p className={styles.help}>{field.description}</p>}
-    </div>
+    </>,
+    styles.field ?? 'flex flex-col gap-1.5',
   )
 }
 
@@ -429,6 +505,9 @@ export default function AdmissionFormFields({
   values,
   onChange,
   styles,
+  errors,
+  files,
+  onFileChange,
 }: AdmissionFieldsProps) {
   return (
     <div className="space-y-6">
@@ -444,7 +523,15 @@ export default function AdmissionFormFields({
                   key={field.fieldname}
                   className={WIDE_TYPES.has(field.fieldtype) || isFileField(field) ? 'md:col-span-2' : ''}
                 >
-                  <AdmissionField field={field} values={values} onChange={onChange} styles={styles} />
+                  <AdmissionField
+                    field={field}
+                    values={values}
+                    onChange={onChange}
+                    styles={styles}
+                    error={errors?.[field.fieldname]}
+                    file={files?.[field.fieldname] ?? null}
+                    onFileChange={onFileChange}
+                  />
                 </div>
               ))}
             </div>
