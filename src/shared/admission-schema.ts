@@ -131,7 +131,7 @@ export interface AdmissionOverview {
 /** A child-table answer: one object of column values per row. */
 export type ChildRows = Array<Record<string, string>>
 export type FormValue = string | number | ChildRows
-/** Values keyed by fieldname. Files live outside this (they are uncontrolled). */
+/** Values keyed by fieldname. Files are kept alongside, in their own map. */
 export type FormValues = Record<string, FormValue>
 
 export function isChildTable(field: SchemaField): boolean {
@@ -467,12 +467,15 @@ export interface SubmitArgs {
   schema: AdmissionSchema
   values: FormValues
   /**
-   * The files the family picked, by fieldname. Held in React state rather than
-   * read back off the <form>: only the active step is mounted, so a document
-   * attached on step two would otherwise vanish the moment they pressed
-   * Continue — and then be reported missing at submit.
+   * The chosen files, keyed by fieldname.
+   *
+   * Held in React state rather than read back out of the `<form>`: only the
+   * CURRENT step is mounted, so a file input from step two no longer exists in
+   * the DOM by the time the family reaches the last step. Reading the form here
+   * silently dropped every attachment the applicant had not picked on the step
+   * they happened to submit from.
    */
-  files: Record<string, File>
+  files: Record<string, File | undefined>
   termsAccepted: boolean
   /** Honeypot input's value — non-empty means a bot filled a hidden field. */
   honeypot?: string

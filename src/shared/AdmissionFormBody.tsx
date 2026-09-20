@@ -93,6 +93,9 @@ export default function AdmissionFormBody({
     setValue,
     files,
     setFile,
+    fieldErrors,
+    validateField,
+    focusField,
     termsAccepted,
     setTermsAccepted,
     honeypot,
@@ -110,8 +113,6 @@ export default function AdmissionFormBody({
     applicationNumber,
     successMessage,
     error,
-    fieldErrors,
-    invalidFocus,
     eligibilityError,
     eligibilityDialogOpen,
     dismissEligibilityDialog,
@@ -119,6 +120,14 @@ export default function AdmissionFormBody({
   } = form
   const activeStep = steps[stepIndex]
   const previousStepIndex = useRef(stepIndex)
+
+  // The questions on THIS step that were rejected, in the order they are asked.
+  // Only this step's: a shortcut to a field on another one would scroll to
+  // nothing, since a step that is not showing is not rendered.
+  const stepErrors: Array<[string, string]> = (activeStep?.sections ?? [])
+    .flatMap((section) => section.fields)
+    .filter((field) => fieldErrors[field.fieldname])
+    .map((field) => [field.fieldname, field.label || field.fieldname])
 
   useEffect(() => {
     const viewport = window.visualViewport
@@ -238,36 +247,6 @@ export default function AdmissionFormBody({
       if (secondFrame) window.cancelAnimationFrame(secondFrame)
     }
   }, [stepIndex])
-
-  useEffect(() => {
-    if (!invalidFocus) return
-
-    // A failed Continue paints the offending controls red; this puts the first
-    // of them on screen. Two frames: the step that owns the field may only be
-    // mounting now, because submit sends the family back to it.
-    let secondFrame = 0
-    const firstFrame = window.requestAnimationFrame(() => {
-      secondFrame = window.requestAnimationFrame(() => {
-        const wrapper = formRef.current?.querySelector(
-          `[data-admission-field="${invalidFocus.fieldname}"]`,
-        )
-        if (!(wrapper instanceof HTMLElement)) return
-        wrapper.scrollIntoView({
-          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-          block: 'center',
-        })
-        // Focus the control itself, not the wrapper, so the keyboard opens on
-        // the answer that has to change. A file input is hidden — leave it be.
-        const control = wrapper.querySelector('input:not([type="file"]), select, textarea')
-        if (control instanceof HTMLElement) control.focus({ preventScroll: true })
-      })
-    })
-
-    return () => {
-      window.cancelAnimationFrame(firstFrame)
-      if (secondFrame) window.cancelAnimationFrame(secondFrame)
-    }
-  }, [invalidFocus, formRef])
 
   // Final step. A confirmation that only says "thank you" leaves a family with
   // nothing to do and nothing to keep; the application number and where to use
@@ -455,10 +434,11 @@ export default function AdmissionFormBody({
               step={activeStep}
               values={values}
               onChange={setValue}
-              styles={chrome}
-              errors={fieldErrors}
               files={files}
-              onFileChange={setFile}
+              onFile={setFile}
+              onBlurField={validateField}
+              errors={fieldErrors}
+              styles={chrome}
             />
           </div>
         </>
@@ -482,9 +462,27 @@ export default function AdmissionFormBody({
 
           <div className="flex flex-col items-end gap-3">
             {(error || eligibilityError) && (
-              <p className={`self-stretch whitespace-pre-line text-left ${chrome.errorText}`} role="alert">
-                {error || eligibilityError}
-              </p>
+              <div className="self-stretch text-left" role="alert">
+                <p className={`whitespace-pre-line ${chrome.errorText}`}>{error || eligibilityError}</p>
+                {/* Each rejected question, as a shortcut back to it — the summary
+                    says how many, the list says which, and the field itself says
+                    why. */}
+                {stepErrors.length > 1 && (
+                  <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                    {stepErrors.map(([fieldname, label]) => (
+                      <li key={fieldname}>
+                        <button
+                          type="button"
+                          onClick={() => focusField(fieldname)}
+                          className={`${chrome.errorText} underline underline-offset-2`}
+                        >
+                          {label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
             <div className="flex items-center gap-3">
               {stepIndex > 0 && (
