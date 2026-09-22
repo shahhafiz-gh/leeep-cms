@@ -7,7 +7,6 @@ import AdmissionFormBody from '@/shared/AdmissionFormBody'
 import { chrome } from './chrome'
 import { useAdmissionForm } from '@/shared/useAdmissionForm'
 import AdmissionRulesStep from '@/shared/AdmissionRulesStep'
-import { contactEntryValue } from '@/lib/contact-entry'
 
 /**
  * Almanac's application form.
@@ -28,7 +27,7 @@ import { contactEntryValue } from '@/lib/contact-entry'
  * the shared body's own rules gate never fires a second time.
  */
 export default function ApplicationForm({ data }: { data: SchoolData }) {
-  const form = useAdmissionForm(contactEntryValue(data.contact?.phone?.[0]))
+  const form = useAdmissionForm()
   const [onRules, setOnRules] = useState(true)
 
   // The staged flow only makes sense while there is an application to make: a

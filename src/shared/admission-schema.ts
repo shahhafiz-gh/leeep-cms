@@ -23,16 +23,25 @@ export const STRUCTURAL_TYPES = new Set(['Tab Break', 'Section Break', 'Column B
  * POST, and — the one that actually protects the backend, since the first two
  * live in the browser — the `/api/admissions/*` proxy routes.
  */
-export const MAX_UPLOAD_MB = 5
+export const MAX_UPLOAD_MB = 4
 export const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
 
 /**
- * Ceiling for a whole submission (every document part plus the payload). A form
- * carries several base documents plus whatever Attach fields the school added,
- * so this is deliberately roomier than a single file — it exists to stop one
- * request from being unbounded, not to limit legitimate submissions.
+ * Ceiling for a whole submission (every document part plus the payload).
+ *
+ * This is NOT a policy number — it is the platform's. The renderer's API routes
+ * run as serverless functions with a hard 4.5MB request-body limit, and a body
+ * over it is rejected by the platform edge BEFORE our route runs, with a plain
+ * text `FUNCTION_PAYLOAD_TOO_LARGE` that no JSON error handler can read. So the
+ * budget has to be spent here, with ~450KB left for multipart boundaries and
+ * the answers themselves.
+ *
+ * Photographs are re-encoded on pick (see `admission-upload.ts`), so a family
+ * uploading phone photos never comes near this; what it really catches is a
+ * large scanned PDF, which is refused with an explanation rather than a blank
+ * failure at the very end of the form.
  */
-export const MAX_TOTAL_UPLOAD_BYTES = 25 * 1024 * 1024
+export const MAX_TOTAL_UPLOAD_BYTES = 4 * 1024 * 1024
 
 export interface LinkOption {
   value: string
@@ -75,6 +84,13 @@ export interface AdmissionCriteria {
   min_age: number | null
   max_age: number | null
   age_as_on: string | null
+  /**
+   * The school's own line for a family whose ward falls outside the age window
+   * (`Student Admission.age_ineligibility_note`) — typically whom to contact for
+   * an offline registration. Empty when the school has not written one, in which
+   * case the applicant is shown the age rule and nothing more.
+   */
+  age_note?: string
   application_fee: number
   description: string
   admission_start_date: string | null
@@ -405,11 +421,14 @@ export function initialValues(fields: SchemaField[]): FormValues {
  * question, not after twenty more of them.
  *
  * Returns null when eligible (or when the class sets no age window).
+ *
+ * What the family is told to DO about it is the school's own line, written on
+ * the Student Admission record and shipped with the criteria as `age_note` —
+ * this repo does not tell anyone to visit the office or ring a number.
  */
 export function ageEligibilityError(
   criteria: AdmissionCriteria | null,
   dateOfBirth: string | undefined,
-  contactPhone?: string,
 ): string | null {
   if (!criteria || !dateOfBirth) return null
   const asLocalDate = (value: string) => {
@@ -440,11 +459,11 @@ export function ageEligibilityError(
     month: 'short',
     year: 'numeric',
   })}`
-  const contact = contactPhone ? `at ${contactPhone}` : 'through the school office'
+  const note = (criteria.age_note ?? '').trim()
   const message = (ageRule: string) =>
     `Not eligible for ${criteria.label}.\n\n` +
-    `The Date of Birth entered by you is ${dobLabel}. The applicant must be ${ageRule} as on ${asOnLabel}.\n\n` +
-    `Please contact the Admission In-charge ${contact} to complete the offline registration of your ward`
+    `The Date of Birth entered by you is ${dobLabel}. The applicant must be ${ageRule} as on ${asOnLabel}.` +
+    (note ? `\n\n${note}` : '')
 
   if (criteria.min_age && asOn < onBirthday(criteria.min_age)) {
     return message(`at least ${criteria.min_age} years old`)
@@ -544,10 +563,33 @@ export async function submitAdmissionApplication({
       | { ok?: boolean; error?: string; applicant?: string | null; message?: string | null }
       | null
     if (!res.ok || !json?.ok) {
-      return { ok: false, error: json?.error ?? 'Something went wrong — please try again.' }
+      // A 413 here did not come from our route (that one answers JSON): it is
+      // the platform edge refusing the body outright. Saying "try again" to a
+      // family whose documents are simply too big sends them round the same
+      // loop forever, so name the real problem.
+      if (res.status === 413) {
+        return {
+          ok: false,
+          error:
+            'Your documents are too large to upload together. Please re-upload smaller files ' +
+            `(each under ${MAX_UPLOAD_MB}MB) — a phone photo works best, a full-page scan is often too big.`,
+        }
+      }
+      return { ok: false, error: json?.error ?? submitFailureMessage(res.status) }
     }
     return { ok: true, applicant: json.applicant ?? null, message: json.message ?? null }
   } catch {
     return { ok: false, error: 'Could not reach the server — please check your connection and try again.' }
   }
+}
+
+/**
+ * What to say when the response carried no message of its own — which means it
+ * was not produced by our own route. The status is the only thing left to go on,
+ * and a family can act on "too large" or "we are down" but not on "went wrong".
+ */
+function submitFailureMessage(status: number): string {
+  if (status === 429) return 'Too many attempts. Please wait a minute and try again.'
+  if (status >= 500) return 'The school’s server is not responding right now. Please try again in a few minutes.'
+  return `Your application could not be submitted (error ${status}). Please try again, or contact the school if it keeps happening.`
 }

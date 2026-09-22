@@ -19,6 +19,7 @@ import {
   type SchemaStep,
 } from './admission-schema'
 import { isEmailField } from './admission-validation'
+import { formatBytes, shrinkImageForUpload } from './admission-upload'
 
 /**
  * Renders the school's derived admission fields — shared by every template.
@@ -176,21 +177,36 @@ function UploadBox({
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [sizeError, setSizeError] = useState<string | null>(null)
+  const [preparing, setPreparing] = useState(false)
 
   const maxMB = MAX_UPLOAD_MB
   const accept = field.fieldtype === 'Attach Image' ? '.jpg,.jpeg,.png' : '.pdf,.jpg,.jpeg,.png'
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const picked = event.target.files?.[0]
+  const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.target
+    const picked = input.files?.[0]
     if (!picked) return
-    if (picked.size > maxMB * 1024 * 1024) {
-      event.target.value = ''
-      setSizeError(`File is larger than ${maxMB}MB`)
+
+    // Re-encode a photograph BEFORE the size check: a camera original is
+    // routinely several MB, and refusing it would send a family off to find a
+    // photo editor for a picture the form is perfectly happy to shrink itself.
+    setPreparing(true)
+    setSizeError(null)
+    let chosen = picked
+    try {
+      chosen = await shrinkImageForUpload(picked)
+    } finally {
+      setPreparing(false)
+    }
+
+    if (chosen.size > maxMB * 1024 * 1024) {
+      input.value = ''
+      setSizeError(`This file is ${formatBytes(chosen.size)} — please upload one under ${maxMB}MB.`)
       onFile(field.fieldname, null)
       return
     }
     setSizeError(null)
-    onFile(field.fieldname, picked)
+    onFile(field.fieldname, chosen)
   }
 
   const clear = (event: React.MouseEvent) => {
@@ -219,16 +235,28 @@ function UploadBox({
           onChange={onChange}
         />
         <Icon
-          icon={file ? 'lucide:check-circle-2' : field.fieldtype === 'Attach Image' ? 'lucide:camera' : 'lucide:file-up'}
-          className="text-4xl mx-auto mb-2"
+          icon={
+            preparing
+              ? 'lucide:loader-2'
+              : file
+                ? 'lucide:check-circle-2'
+                : field.fieldtype === 'Attach Image'
+                  ? 'lucide:camera'
+                  : 'lucide:file-up'
+          }
+          className={cn('text-4xl mx-auto mb-2', preparing && 'animate-spin')}
         />
         <p className={styles.label}>
           {field.label}
           {required && <Req />}
         </p>
-        {file ? (
+        {preparing ? (
+          <p className={styles.help}>Preparing…</p>
+        ) : file ? (
           <div className="flex items-center justify-center gap-2">
-            <p className={`${styles.help} truncate max-w-[220px]`}>{file.name}</p>
+            <p className={`${styles.help} truncate max-w-[220px]`}>
+              {file.name} · {formatBytes(file.size)}
+            </p>
             <button type="button" onClick={clear} aria-label={`Remove ${field.label}`} className="opacity-70 hover:opacity-100">
               <Icon icon="lucide:x" className="text-sm" />
             </button>

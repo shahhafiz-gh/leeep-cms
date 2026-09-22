@@ -45,7 +45,7 @@ import {
  * saved up for the server to refuse at the end (which is what the last screen
  * used to do, naming fields the family could no longer see).
  */
-export function useAdmissionForm(contactPhone?: string) {
+export function useAdmissionForm() {
   const formRef = useRef<HTMLFormElement>(null)
 
   // The admissions page hands over which intake (and often which class) the
@@ -317,8 +317,8 @@ export function useAdmissionForm(contactPhone?: string) {
 
   /** The class's own age rule, checked while the family is still filling in. */
   const eligibilityError = useMemo(
-    () => ageEligibilityError(criteria, values.date_of_birth as string | undefined, contactPhone),
-    [criteria, values.date_of_birth, contactPhone],
+    () => ageEligibilityError(criteria, values.date_of_birth as string | undefined),
+    [criteria, values.date_of_birth],
   )
   useEffect(() => {
     eligibilityRef.current = eligibilityError
