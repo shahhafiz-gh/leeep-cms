@@ -59,13 +59,13 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
                   width={80}
                   height={80}
                   alt={`${data.name} Logo`}
-                  className="w-16 h-16 max-h-16 max-w-16  rounded-full"
+                  className="w-16 h-16 max-h-16 max-w-16 rounded-full object-contain shrink-0"
                   data-edit-img="logo"
                 />
               ) : (
                 <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-16 h-16 rounded-full shrink-0 gap-0.5" editPath="logo" />
               )}
-              <h2 data-bind="name" data-style="name" style={styleObject(data, 'name')} className="text-2xl text-center font-bold leading-tight text-ta-inverse-on-surface">
+              <h2 data-bind="name" data-style="name" style={styleObject(data, 'name')} className="min-w-0 max-w-[220px] text-xl text-center font-bold leading-tight tracking-tight text-ta-inverse-on-surface">
                 {data.name}
               </h2>
             </div>

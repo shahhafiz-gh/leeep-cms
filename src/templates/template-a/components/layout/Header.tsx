@@ -40,7 +40,7 @@ export default function Header({ data }: { data: SchoolData }) {
           ) : (
             <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-14 h-14 rounded-full shrink-0 gap-0.5" editPath="logo" />
           )}
-          <span data-edit="name" data-style="name" style={styleObject(data, 'name')} className="hidden max-w-[200px] lg:block font-bold text-xl text-center tracking-tight text-ta-primary">
+          <span data-edit="name" data-style="name" style={styleObject(data, 'name')} className="hidden max-w-[200px] lg:block font-bold text-xl leading-tight text-center tracking-tight text-ta-primary">
             {data.name}
           </span>
         </Link>
