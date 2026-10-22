@@ -1001,6 +1001,11 @@ export interface SchoolData {
    */
   backendUrl?: string
   /**
+   * School-chosen destination for the "Login" button (Website Management →
+   * Settings). Absent → the school's own Leeep origin. Must be http(s).
+   */
+  loginUrl?: string
+  /**
    * Section ids the school has switched OFF (see shared/section-visibility.ts).
    * Absent or empty means everything is visible, so a site saved before this
    * existed is unaffected.
