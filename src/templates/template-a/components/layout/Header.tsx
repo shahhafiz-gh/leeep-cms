@@ -9,15 +9,18 @@ import type { SchoolData } from '@/types/school.types'
 import { useScrollHeader } from '@/templates/template-a/hooks/layout/useScrollHeader'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { styleObject } from '@/lib/component-styles'
+import { loginHref } from '@/shared/login-link'
+import { useAdmissionOverview } from '@/shared/useAdmissionOverview'
 
 export default function Header({ data }: { data: SchoolData }) {
   const pathname = usePathname()
   const { isScrolled: scrolled } = useScrollHeader(20)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isOpen: admissionsOpen } = useAdmissionOverview()
 
   return (
     <nav
-      className={`bg-ta-surface-bright/90 backdrop-blur-md text-ta-primary font-(family-name:--font-ta-label-md) overflow-hidden  text-(length:--text-ta-label-md) fixed top-0 w-full z-50 transition-shadow duration-300 ${scrolled ? 'shadow-md' : ''}`}
+      className={`bg-ta-surface-bright/90 backdrop-blur-md text-ta-primary font-(family-name:--font-ta-label-md) text-(length:--text-ta-label-md) fixed top-0 w-full z-50 transition-shadow duration-300 ${scrolled ? 'shadow-md' : ''}`}
     >
       <div className="flex justify-between container items-center mx-auto px-6 h-20">
         {/* Logo */}
@@ -85,7 +88,7 @@ export default function Header({ data }: { data: SchoolData }) {
         <div className="hidden md:flex items-center gap-2">
         
           <Link
-            href="/login"
+            href={loginHref(data)}
             className="inline-flex items-center justify-center gap-2 cursor-pointer bg-ta-primary-container text-ta-on-primary font-(family-name:--font-ta-label-md) text-(length:--text-ta-label-md) rounded-full shadow-[0_8px_16px_rgba(0,107,32,0.2)] hover:scale-105 active:scale-95 transition-all duration-200 px-6 py-3"
           >
             Login
@@ -140,6 +143,7 @@ export default function Header({ data }: { data: SchoolData }) {
                 </li>
               )
             })}
+            {admissionsOpen && (
             <li className="pt-2">
               <Link
                 href="/admissions"
@@ -149,9 +153,10 @@ export default function Header({ data }: { data: SchoolData }) {
                 Apply Now
               </Link>
             </li>
+            )}
             <li className="pt-1">
               <Link
-                href="/login"
+                href={loginHref(data)}
                 onClick={() => setMobileMenuOpen(false)}
                 className="block w-full text-center bg-ta-primary-container text-ta-on-primary rounded-full py-3 font-bold hover:scale-105 active:scale-95 transition-all"
               >

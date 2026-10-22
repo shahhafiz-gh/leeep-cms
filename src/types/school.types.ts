@@ -994,6 +994,13 @@ export interface SchoolData {
   /** Administrator / staff portal links shown on the login page. */
   portalLinks?: PortalLink[]
   /**
+   * The school's own Leeep/Frappe origin (`https://mmis.leeep.in`). Not stored
+   * in the blob — `getSiteData` stamps it from the resolved tenant, so "Login"
+   * can send a family to their school's app rather than a `/login` the CMS
+   * does not serve. Absent on mocks/demos.
+   */
+  backendUrl?: string
+  /**
    * Section ids the school has switched OFF (see shared/section-visibility.ts).
    * Absent or empty means everything is visible, so a site saved before this
    * existed is unaffected.

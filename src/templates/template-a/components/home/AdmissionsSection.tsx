@@ -6,16 +6,33 @@ import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
+import { useAdmissionOverview } from '@/shared/useAdmissionOverview'
+import { useApplyHref } from '@/shared/apply-link'
 
+function formatDate(value: string | null): string {
+  if (!value) return ''
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+}
 
-export default function AdmissionsSection({ data }: { data: SchoolData }) {
-  const currentYear = new Date().getFullYear()
-  const prevYear = currentYear - 1
-  const session = `${prevYear}–${currentYear.toString().slice(-2)}`
+/**
+ * Home "Admissions open" band. Driven by the school's live `Student Admission`
+ * windows: it only renders while one is open, and its session/closing date come
+ * from that window. In the editor it always renders so the copy stays editable.
+ */
+export default function AdmissionsSection({ data, editing }: { data: SchoolData; editing?: boolean }) {
+  const { loading, isOpen, active } = useAdmissionOverview()
+  const applyHref = useApplyHref({ admission: active?.name })
 
   // Real Frappe blobs may omit the whole `admissions` slice — guard it.
   const admissions = data.admissions ?? {}
   const highlights = admissions.highlights ?? []
+
+  if (!editing && (loading || !isOpen)) return null
+
+  const session = active?.academic_year || 'upcoming'
+  const closes = formatDate(active?.admission_end_date ?? null)
 
   return (
     <section
@@ -37,7 +54,7 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
               data-enter
               style={{ '--reveal-x': '-20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
             >
-              <span data-edit="admissions.subtitle">{admissions.subtitle || `${session} Admissions`}</span>
+              <span data-edit="admissions.subtitle">{admissions.subtitle || (active?.academic_year ? `${active.academic_year} Admissions` : 'Admissions Open')}</span>
             </span>
 
             <h2
@@ -55,6 +72,23 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
             >
               <span data-edit="admissions.description">{admissions.description || `Nurturing young minds with values and academic excellence. Admissions are now open for the ${session} session.`}</span>
             </p>
+
+            {(active?.programs?.length || closes) && (
+              <div className="flex flex-wrap gap-3 text-white/90 font-(family-name:--font-ta-label-md) text-ta-label-md">
+                {closes && (
+                  <span className="inline-flex items-center gap-2">
+                    <Icon icon="lucide:calendar-days" className="w-4 h-4 shrink-0" />
+                    Applications close {closes}
+                  </span>
+                )}
+                {!!active?.programs?.length && (
+                  <span className="inline-flex items-center gap-2">
+                    <Icon icon="lucide:graduation-cap" className="w-4 h-4 shrink-0" />
+                    {active.programs.length} {active.programs.length === 1 ? 'class' : 'classes'} open
+                  </span>
+                )}
+              </div>
+            )}
 
             {highlights.length > 0 && (
               <div
@@ -79,7 +113,7 @@ export default function AdmissionsSection({ data }: { data: SchoolData }) {
               data-enter
               style={{ '--reveal-y': '20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
             >
-              <Link href="/admissions" className="w-full sm:w-auto">
+              <Link href={isOpen ? applyHref : '/admissions'} className="w-full sm:w-auto">
                 <button className="bg-white text-ta-primary hover:bg-gray-50 transition-colors px-8 py-3 rounded-full font-bold text-[15px] shadow-sm flex items-center justify-center gap-2 border-none w-full sm:w-auto">
                   Apply Now
                   <Icon icon="lucide:arrow-right" className="text-ta-body-lg" />
