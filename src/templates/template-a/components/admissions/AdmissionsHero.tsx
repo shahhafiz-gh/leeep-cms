@@ -6,13 +6,16 @@ import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { useLiveList } from '@/shared/hooks/useLiveList'
 import StartApplicationLink from '@/shared/StartApplicationLink'
+import { useAdmissionOverview } from '@/shared/useAdmissionOverview'
+import { withLiveSession } from '@/shared/admission-session'
 
 const handleDownloadForm = () => {
   window.print()
 }
 
-export default function AdmissionsHero({ data }: { data: SchoolData }) {
+export default function AdmissionsHero({ data, editing }: { data: SchoolData; editing?: boolean }) {
   const { admissions } = data
+  const { active } = useAdmissionOverview()
   // Live list — highlights added/removed in the builder re-render immediately
   // (see AdmissionsFaqSection for why data-edit patching alone can't do this).
   const highlights = useLiveList('admissions.highlights', admissions.highlights ?? [])
@@ -27,7 +30,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
           <div data-enter style={{ '--reveal-scale': '0.9', '--reveal-from-opacity': '0', '--reveal-delay': '0.1s' } as CSSProperties}
             className="w-fit mb-4 px-4 py-2 bg-ta-secondary-container text-ta-on-secondary-container rounded-full font-(family-name:--font-ta-label-md) text-ta-label-md font-semibold inline-block"
           >
-            <span data-edit="admissions.subtitle">{admissions.subtitle ?? 'Join Us'}</span>
+            <span data-edit="admissions.subtitle">{editing ? (admissions.subtitle ?? 'Join Us') : withLiveSession(admissions.subtitle ?? 'Join Us', active?.academic_year)}</span>
           </div>
 
           <h1 data-enter style={{ '--reveal-y': '20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.2s' } as CSSProperties}

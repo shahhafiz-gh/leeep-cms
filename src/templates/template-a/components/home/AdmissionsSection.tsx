@@ -8,6 +8,7 @@ import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { useAdmissionOverview } from '@/shared/useAdmissionOverview'
 import { useApplyHref } from '@/shared/apply-link'
+import { withLiveSession } from '@/shared/admission-session'
 
 function formatDate(value: string | null): string {
   if (!value) return ''
@@ -54,7 +55,7 @@ export default function AdmissionsSection({ data, editing }: { data: SchoolData;
               data-enter
               style={{ '--reveal-x': '-20px', '--reveal-delay': 'var(--stagger-delay, 0s)' } as CSSProperties}
             >
-              <span data-edit="admissions.subtitle">{admissions.subtitle || (active?.academic_year ? `${active.academic_year} Admissions` : 'Admissions Open')}</span>
+              <span data-edit="admissions.subtitle">{admissions.subtitle ? (editing ? admissions.subtitle : withLiveSession(admissions.subtitle, active?.academic_year)) : (active?.academic_year ? `${active.academic_year} Admissions` : 'Admissions Open')}</span>
             </span>
 
             <h2
