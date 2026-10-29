@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import ScrollReveal from '@/shared/animations/scroll-reveal'

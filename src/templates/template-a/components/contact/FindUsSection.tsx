@@ -89,7 +89,7 @@ export default function FindUsSection({ data }: { data: SchoolData }) {
                     <div className="space-y-3">
                       {reachInfo.map((item, index) => (
                         <div key={index} className="flex items-center">
-                          <span data-edit={`contact.transport.${index}.type`} className="bg-ta-secondary-container text-ta-on-secondary-container px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider mr-3 min-w-[60px] text-center">
+                          <span data-edit={`contact.transport.${index}.type`} className="bg-ta-secondary-container text-ta-on-secondary-container px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mr-3 min-w-[60px] text-center">
                             {item.type}
                           </span>
                           <span data-edit={`contact.transport.${index}.detail`} className="text-ta-body-md text-ta-on-surface-variant">{item.detail}</span>

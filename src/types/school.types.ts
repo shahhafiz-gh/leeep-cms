@@ -67,6 +67,13 @@ export interface TemplateConfig {
    * one. Empty/absent → no analytics script is emitted at all.
    */
   analytics_id?: string
+  /**
+   * Resize/convert images through Vercel's image optimizer. Server-owned
+   * (School Website.vercel_image_optimization). `false` sends them through a
+   * free external image CDN instead (see `shared/SiteImage.tsx`); absent means
+   * on, which is what every site had before the switch existed.
+   */
+  vercel_image_optimization?: boolean
 }
 
 // ── Facilities ──
@@ -804,6 +811,8 @@ export interface MagazineData {
  */
 export interface SectionIntroData {
   title?: string
+  /** The line under the heading, where a template draws one. */
+  subtitle?: string
 }
 
 /** Heading + layout for the testimonials block (the quotes are `testimonials`). */
@@ -871,6 +880,8 @@ export interface SchoolData {
   programsIntro?: SectionIntroData
   /** Heading above the latest-news strip on the home page. */
   newsIntro?: SectionIntroData
+  /** Heading + intro line above the alumni cards on the home page. */
+  alumniIntro?: SectionIntroData
   stats: StatData[]
   /** Frame for the home "Latest notifications" band (items come from
    *  `updates.announcements`). Quill shows this where other templates show stats. */

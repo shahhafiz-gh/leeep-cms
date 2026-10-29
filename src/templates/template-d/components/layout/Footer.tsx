@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { styleObject } from '@/lib/component-styles'
@@ -116,7 +116,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
 
         {/* Navigation columns */}
         {columns.map((col) => (
-          <div key={col.title} className="flex flex-col gap-3">
+          <div key={col.title} className="flex flex-col lg:gap-3">
             <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-td-faint">
               {col.title}
             </div>
@@ -124,7 +124,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               <Link
                 key={`${link.href}-${link.label}`}
                 href={link.href}
-                className="text-[15px] text-td-body transition-colors hover:text-td-accent"
+                className="py-2.5 text-[15px] text-td-body transition-colors hover:text-td-accent lg:py-0"
               >
                 {link.label}
               </Link>
@@ -133,7 +133,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
         ))}
 
         {/* Reach us */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col lg:gap-3">
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-td-faint">
             Get in touch
           </div>
@@ -142,17 +142,17 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               key={`email-${i}`}
               href={contactEntryValue(e) ? `mailto:${contactEntryValue(e)}` : undefined}
               data-edit={`contact.email.${i}.value`}
-              className="text-[15px] break-words text-td-body transition-colors hover:text-td-accent"
+              className="py-2.5 text-[15px] break-words text-td-body transition-colors hover:text-td-accent lg:py-0"
             >
               {contactEntryValue(e)}
             </a>
           ))}
           {(contact.workingHours || editing) && (
-            <span data-edit="contact.workingHours" className="text-[15px] text-td-body">
+            <span data-edit="contact.workingHours" className="py-2.5 text-[15px] text-td-body lg:py-0">
               {contact.workingHours}
             </span>
           )}
-          <Link href="/admissions" className="mt-2 text-[15px] font-semibold text-td-accent">
+          <Link href="/admissions" className="py-2.5 text-[15px] font-semibold text-td-accent lg:mt-2 lg:py-0">
             Apply now →
           </Link>
         </div>

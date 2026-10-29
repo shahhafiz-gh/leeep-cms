@@ -87,13 +87,15 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
               </div>
 
               {/* Dots */}
-              <div className="flex gap-2">
+              {/* The dot stays 6px tall to look at, but its ::after is the tap
+                  target — about 24x38px, so a thumb can actually hit one. */}
+              <div className="flex gap-4">
                 {testimonials.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => scrollTo(idx)}
                     aria-label={`Go to testimonial ${idx + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIdx ? 'bg-white w-6' : 'bg-white/40 w-2'
+                    className={`relative h-1.5 rounded-full transition-all duration-300 after:absolute after:-inset-x-2 after:-inset-y-4 ${idx === currentIdx ? 'bg-white w-6' : 'bg-white/40 w-2'
                       }`}
                   />
                 ))}

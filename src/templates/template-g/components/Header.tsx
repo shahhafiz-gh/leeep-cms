@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react'
@@ -30,13 +30,13 @@ export default function Header({ data }: { data: SchoolData }) {
         <div className="mx-auto flex min-h-10 max-w-7xl items-center justify-between gap-4 px-4 py-2 text-xs lg:px-8">
           <div className="flex min-w-0 items-center gap-4 sm:gap-6">
             {email && (
-              <a href={`mailto:${contactEntryValue(email)}`} className="flex min-w-0 items-center gap-2 hover:text-white/75">
+              <a href={`mailto:${contactEntryValue(email)}`} className="-m-2.5 flex min-w-0 items-center gap-2 p-2.5 hover:text-white/75 sm:m-0 sm:p-0">
                 <Icon icon="lucide:mail" className="h-3.5 w-3.5 shrink-0" />
                 <span className="hidden truncate sm:inline">{contactEntryValue(email)}</span>
               </a>
             )}
             {phone && (
-              <a href={contactPhoneHref(phone)} className="flex items-center gap-2 hover:text-white/75">
+              <a href={contactPhoneHref(phone)} className="-my-2.5 flex items-center gap-2 py-2.5 hover:text-white/75 sm:my-0 sm:py-0">
                 <Icon icon="lucide:phone" className="h-3.5 w-3.5" />
                 <span>{contactPhoneDisplay(phone)}</span>
               </a>
@@ -52,7 +52,7 @@ export default function Header({ data }: { data: SchoolData }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.platform}
-                  className="grid h-6 w-6 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/25"
+                  className="grid h-8 w-8 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/25 sm:h-6 sm:w-6"
                 >
                   <Icon icon={social.icon || `ri:${social.platform}-fill`} className="h-3.5 w-3.5" />
                 </a>
@@ -88,7 +88,7 @@ export default function Header({ data }: { data: SchoolData }) {
               {data.name}
             </span>
             {data.tagline && (
-              <span data-edit="tagline" className="mt-1 block truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-tb-primary-400">
+              <span data-edit="tagline" className="mt-1 block truncate text-[11px] font-semibold uppercase tracking-[0.2em] text-tb-primary-400">
                 {data.tagline}
               </span>
             )}

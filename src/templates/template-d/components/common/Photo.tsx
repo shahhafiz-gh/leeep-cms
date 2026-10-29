@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { Icon } from '@iconify/react'
 
 /**

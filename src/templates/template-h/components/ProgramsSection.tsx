@@ -21,11 +21,11 @@ export default function ProgramsSection({ data }: { data: SchoolData }) {
     <section className="bg-white py-14 md:py-20">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-th-primary">
+          <p data-edit="programsIntro.title" className="text-xs font-semibold uppercase tracking-[0.2em] text-th-primary">
             {data.programsIntro?.title || 'Our Departments'}
           </p>
-          <h2 className="mt-3 text-2xl font-bold text-th-heading md:text-3xl">
-            A programme for every stage of learning
+          <h2 data-edit="programsIntro.subtitle" className="mt-3 text-2xl font-bold text-th-heading md:text-3xl">
+            {data.programsIntro?.subtitle || 'A programme for every stage of learning'}
           </h2>
           <span className="mx-auto mt-4 block h-[3px] w-14 bg-th-primary" />
         </div>

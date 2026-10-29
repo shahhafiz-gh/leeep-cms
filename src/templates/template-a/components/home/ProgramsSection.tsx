@@ -41,7 +41,7 @@ export function ProgramCard({ title, description, icon, subjects, bgColor, iconC
   )
 }
 
-export function ProgramHeader() {
+export function ProgramHeader({ title }: { title?: string }) {
   return (
     <div className="text-center mb-16 flex flex-col items-center">
       <ScrollReveal>
@@ -50,8 +50,8 @@ export function ProgramHeader() {
         </div>
       </ScrollReveal>
       <ScrollReveal delay={0.1}>
-        <h2 className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
-          A Program For Every Stage Of Learning
+        <h2 data-edit="programsIntro.title" className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-4 leading-tight tracking-tight">
+          {title || 'A Program For Every Stage Of Learning'}
         </h2>
       </ScrollReveal>
       <ScrollReveal delay={0.2}>
@@ -83,7 +83,7 @@ export default function ProgramsSection({ data }: { data: SchoolData }) {
   return (
     <section className="py-20 md:py-24 bg-ta-surface relative">
       <div className="container mx-auto px-4 md:px-6">
-        <ProgramHeader />
+        <ProgramHeader title={data.programsIntro?.title} />
         <StaggerChildren stagger={0.1} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
           {programs.map((program, index) => {
             const style = styleFor(program.id ?? String(index))

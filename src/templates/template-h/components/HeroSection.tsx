@@ -165,7 +165,8 @@ export default function HeroSection({ data }: { data: SchoolData }) {
       </div>
 
       {slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2.5">
+        // The dot is 10px to look at; its ::after is the ~26x42px tap target.
+        <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-4">
           {slides.map((slide, i) => (
             <button
               key={`dot-${slide.image}-${i}`}
@@ -173,7 +174,7 @@ export default function HeroSection({ data }: { data: SchoolData }) {
               onClick={() => setIndex(i)}
               aria-label={`Go to slide ${i + 1}`}
               aria-current={i === active}
-              className={`h-2.5 rounded-full transition-all ${
+              className={`relative h-2.5 rounded-full transition-all after:absolute after:-inset-x-2 after:-inset-y-4 ${
                 i === active ? 'w-7 bg-th-primary' : 'w-2.5 bg-white/60 hover:bg-white'
               }`}
             />

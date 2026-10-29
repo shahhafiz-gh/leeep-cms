@@ -10,6 +10,7 @@ import TemplateF from '@/templates/template-f/TemplateF'
 import TemplateG from '@/templates/template-g/TemplateG'
 import TemplateH from '@/templates/template-h/TemplateH'
 import { styleObject } from '@/lib/component-styles'
+import { ImageOptimizationProvider } from '@/shared/SiteImage'
 
 function styleSelector(path: string) {
   const escaped = path.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
@@ -52,6 +53,16 @@ function withSavedStyles(node: React.ReactNode, data: SchoolData) {
  * The same template components render preview and live output.
  */
 export function renderTemplate(data: SchoolData, page: PageType, school: string, editing = false) {
+  // Absent means on: the switch is newer than most sites (see SiteImage).
+  const vercelImages = data.config?.vercel_image_optimization !== false
+  return (
+    <ImageOptimizationProvider vercel={vercelImages}>
+      {pickTemplate(data, page, school, editing)}
+    </ImageOptimizationProvider>
+  )
+}
+
+function pickTemplate(data: SchoolData, page: PageType, school: string, editing: boolean) {
   const templateId = data.config?.template_id
   const renderData = editing ? withEditorNavigation(data) : data
 

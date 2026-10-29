@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
@@ -49,7 +49,7 @@ export default function Header({ data }: { data: SchoolData }) {
             {login && (
               <Link
                 href={login.href}
-                className="border border-te-ink-rule px-3 py-0.5 text-te-on-ink hover:border-te-on-ink-body"
+                className="-my-1.5 border border-te-ink-rule px-4 py-2 text-te-on-ink hover:border-te-on-ink-body sm:my-0 sm:px-3 sm:py-0.5"
               >
                 {login.label}
               </Link>

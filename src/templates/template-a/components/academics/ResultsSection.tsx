@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import type { SchoolData } from '@/types/school.types'
 import ScrollReveal from '@/shared/animations/scroll-reveal'
 import StaggerChildren from '@/shared/animations/stagger-children'

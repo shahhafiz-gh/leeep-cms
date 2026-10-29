@@ -40,7 +40,7 @@ export default function EventsList({ data }: { data: SchoolData }) {
                 <div className="flex gap-4 mb-6">
                   {/* Date box */}
                   <div className="bg-slate-100 rounded-lg p-3 flex flex-col items-center justify-center min-w-[70px] h-[70px] shrink-0">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{month}</span>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{month}</span>
                     <span className="text-2xl font-bold text-tb-secondary leading-none">{day}</span>
                   </div>
                   {/* Title */}

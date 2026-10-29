@@ -16,7 +16,9 @@ export default function AchievementsSection({ data }: { data: SchoolData }) {
     <section className="bg-th-paper py-14 md:py-20">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-th-heading md:text-3xl">Our Achievements</h2>
+          <h2 data-edit="about.achievementsTitle" className="text-2xl font-bold text-th-heading md:text-3xl">
+            {data.about?.achievementsTitle || 'Our Achievements'}
+          </h2>
           <span className="mx-auto mt-4 block h-[3px] w-14 bg-th-primary" />
         </div>
 

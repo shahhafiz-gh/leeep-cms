@@ -56,7 +56,7 @@ export default function Noticeboard({ data }: { data: SchoolData }) {
                 return (
                   <Link key={event.id} href={`/updates/${event.id}`} className="group flex items-start gap-4 border-b border-white/20 pb-5 last:border-0 last:pb-0">
                     <span className="grid h-14 w-14 shrink-0 place-items-center bg-white text-center text-tb-secondary">
-                      <span><b className="block text-xl leading-5">{valid ? date.getDate() : '--'}</b><small className="text-[10px] font-bold uppercase">{valid ? date.toLocaleDateString('en-IN', { month: 'short' }) : 'TBD'}</small></span>
+                      <span><b className="block text-xl leading-5">{valid ? date.getDate() : '--'}</b><small className="text-xs font-bold uppercase">{valid ? date.toLocaleDateString('en-IN', { month: 'short' }) : 'TBD'}</small></span>
                     </span>
                     <span>
                       <span className="block font-bold leading-snug text-white group-hover:text-white/75">{event.title}</span>

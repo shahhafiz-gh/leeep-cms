@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
@@ -53,7 +53,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
                 {data.name}
               </div>
               {data.tagline && (
-                <div data-edit="tagline" className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/55">
+                <div data-edit="tagline" className="mt-1 text-[11px] uppercase tracking-[0.18em] text-white/55">
                   {data.tagline}
                 </div>
               )}
@@ -84,12 +84,12 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
           <div key={`${column.title}-${i}`}>
             <h2 className="mb-5 text-base font-semibold text-white">{column.title}</h2>
             <span className="mb-5 -mt-3 block h-0.5 w-9 bg-th-primary" />
-            <div className="space-y-3">
+            <div className="lg:space-y-3">
               {(column.links ?? []).map((link) => (
                 <Link
                   key={`${link.href}-${link.label}`}
                   href={link.href}
-                  className="block text-sm text-white/60 transition-colors hover:text-th-primary-200"
+                  className="block py-2.5 text-sm text-white/60 transition-colors hover:text-th-primary-200 lg:py-0"
                 >
                   {link.label}
                 </Link>
@@ -112,7 +112,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               key={`email-${index}`}
               href={contactEntryValue(email) ? `mailto:${contactEntryValue(email)}` : undefined}
               data-edit={`contact.email.${index}.value`}
-              className="mb-2 flex items-center gap-2 break-all text-sm text-white/60 transition-colors hover:text-white"
+              className="flex items-center gap-2 break-all py-2.5 text-sm text-white/60 transition-colors hover:text-white lg:mb-2 lg:py-0"
             >
               <Icon icon="lucide:mail" className="h-4 w-4 shrink-0 text-th-primary" />
               {contactEntryValue(email)}
@@ -123,7 +123,7 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
               key={`phone-${index}`}
               href={contactPhoneHref(phone)}
               data-edit={`contact.phone.${index}.value`}
-              className="mb-2 flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+              className="flex items-center gap-2 py-2.5 text-sm text-white/60 transition-colors hover:text-white lg:mb-2 lg:py-0"
             >
               <Icon icon="lucide:phone" className="h-4 w-4 shrink-0 text-th-primary" />
               {contactPhoneDisplay(phone)}

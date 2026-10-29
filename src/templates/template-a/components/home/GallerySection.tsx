@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import type { SchoolData } from '@/types/school.types'
 import ScrollReveal from '@/shared/animations/scroll-reveal'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
@@ -28,8 +28,8 @@ export default function GallerySection({ data }: { data: SchoolData }) {
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
-            <p className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-2xl mx-auto">
-              A glimpse into our vibrant campus, where learning meets inspiration every day.
+            <p data-edit="gallery.subtitle" className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-2xl mx-auto">
+              {data.gallery?.subtitle || 'A glimpse into our vibrant campus, where learning meets inspiration every day.'}
             </p>
           </ScrollReveal>
         </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import type { SchoolData } from '@/types/school.types'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { Icon } from '@iconify/react'
 import ScrollReveal from '@/shared/animations/scroll-reveal'
 import StaggerChildren from '@/shared/animations/stagger-children'
@@ -123,7 +123,7 @@ export default function AboutSection({ data }: { data: SchoolData }) {
                   <span className="text-5xl md:text-[3.5rem] font-serif text-gray-900 tracking-tight mb-4 leading-none">
                     <span data-edit={`stats.${idx}.value`}>{stat.value}</span>{stat.suffix || ''}
                   </span>
-                  <span data-edit={`stats.${idx}.label`} className="text-[10px] md:text-xs text-gray-400 font-semibold uppercase tracking-[0.2em] leading-relaxed max-w-[140px]">
+                  <span data-edit={`stats.${idx}.label`} className="text-xs text-gray-400 font-semibold uppercase tracking-[0.2em] leading-relaxed max-w-[140px]">
                     {stat.label}
                   </span>
                 </div>
