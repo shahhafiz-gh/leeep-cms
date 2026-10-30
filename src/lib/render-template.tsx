@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { PageType, SchoolData } from '@/types/school.types'
+import type { SchoolData, SitePage } from '@/types/school.types'
 import { withEditorNavigation } from '@/lib/cms'
 import TemplateA from '@/templates/template-a/TemplateA'
 import TemplateB from '@/templates/template-b/TemplateB'
@@ -9,6 +9,7 @@ import TemplateE from '@/templates/template-e/TemplateE'
 import TemplateF from '@/templates/template-f/TemplateF'
 import TemplateG from '@/templates/template-g/TemplateG'
 import TemplateH from '@/templates/template-h/TemplateH'
+import TemplateI from '@/templates/template-i/TemplateI'
 import { styleObject } from '@/lib/component-styles'
 import { ImageOptimizationProvider } from '@/shared/SiteImage'
 
@@ -51,20 +52,52 @@ function withSavedStyles(node: React.ReactNode, data: SchoolData) {
  *
  * Editor previews use the school's draft data and add editor-only navigation.
  * The same template components render preview and live output.
+ *
+ * `page: 'custom'` (a school-authored page, named by `pageSlug`) only reaches
+ * templates in CUSTOM_PAGE_TEMPLATES — the routes 404 it for every other one.
  */
-export function renderTemplate(data: SchoolData, page: PageType, school: string, editing = false) {
-  // Absent means on: the switch is newer than most sites (see SiteImage).
+
+export function renderTemplate(
+  data: SchoolData,
+  page: SitePage,
+  school: string,
+  editing = false,
+  pageSlug?: string,
+) {
+  // Image optimization is enabled by default.
   const vercelImages = data.config?.vercel_image_optimization !== false
+
   return (
     <ImageOptimizationProvider vercel={vercelImages}>
-      {pickTemplate(data, page, school, editing)}
+      {pickTemplate(data, page, school, editing, pageSlug)}
     </ImageOptimizationProvider>
   )
 }
 
-function pickTemplate(data: SchoolData, page: PageType, school: string, editing: boolean) {
+function pickTemplate(
+  data: SchoolData,
+  page: SitePage,
+  school: string,
+  editing: boolean,
+  pageSlug?: string,
+) {
   const templateId = data.config?.template_id
   const renderData = editing ? withEditorNavigation(data) : data
+
+  if (templateId === 'template-i') {
+    return withSavedStyles(
+      <TemplateI
+        data={renderData}
+        page={page}
+        pageSlug={pageSlug}
+        editing={editing}
+      />,
+      renderData,
+    )
+  }
+
+  // Past this point only the fixed page set exists.
+  if (page === 'custom') return null
 
   if (templateId === 'template-b') return withSavedStyles(<TemplateB data={renderData} page={page} editing={editing} />, renderData)
   if (templateId === 'template-c') return withSavedStyles(<TemplateC data={renderData} page={page} editing={editing} />, renderData)
@@ -80,5 +113,10 @@ function pickTemplate(data: SchoolData, page: PageType, school: string, editing:
         `school="${school}"; defaulting to template-a.`,
     )
   }
-  return withSavedStyles(<TemplateA data={renderData} page={page} editing={editing} />, renderData)
+
+  return withSavedStyles(
+    <TemplateA data={renderData} page={page} editing={editing} />,
+    renderData,
+  )
 }
+

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
-import type { PageType, SchoolData } from '@/types/school.types'
+import type { SchoolData, SitePage } from '@/types/school.types'
 import { getSiteData, SiteNotFoundError } from './cms'
 import { tenantFromParams, type Tenant } from './tenant'
 import { renderTemplate } from './render-template'
@@ -90,9 +90,10 @@ export async function buildSiteMetadata(
  */
 export async function renderSitePage(
   params: TenantParams,
-  page: PageType,
+  page: SitePage,
   pathname: string,
   guard?: (data: SchoolData) => boolean,
+  pageSlug?: string,
 ) {
   const { tenant, data } = await loadSite(params)
   if (guard && !guard(data)) notFound()
@@ -113,7 +114,7 @@ export async function renderSitePage(
   return (
     <>
       <SiteHead data={data} origin={origin} />
-      {renderTemplate(data, page, tenant.slug || tenant.host, false)}
+      {renderTemplate(data, page, tenant.slug || tenant.host, false, pageSlug)}
     </>
   )
 }

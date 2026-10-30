@@ -233,6 +233,31 @@
   --color-th-paper: #f7f7f7;
   --color-th-footer: #1d1d1d;
 
+  /* ── Template I Colors (Scholars — royal blue and navy, amber accents) ──
+   * Private to Scholars' School, Srinagar. The four brand colours are the
+   * school's own (#4267b2 royal blue, #2f4a82 / #243e60 navy, #1a5f7a teal,
+   * #ffc107 amber); the tints and neutrals are derived from them. Declared in
+   * @theme for the same reason as Template H's: Tailwind only makes a utility
+   * for a token it sees here. */
+  --color-ts-primary-50: #eef2fa;
+  --color-ts-primary-100: #dce4f4;
+  --color-ts-primary-200: #b7c7e8;
+  --color-ts-primary-300: #8aa3d6;
+  --color-ts-primary: #4267b2;
+  --color-ts-primary-600: #34549a;
+  --color-ts-primary-700: #2f4a82;
+  --color-ts-navy: #243e60;
+  --color-ts-navy-900: #172a44;
+  --color-ts-teal: #1a5f7a;
+  --color-ts-accent: #ffc107;
+  --color-ts-accent-600: #e0a800;
+  --color-ts-accent-50: #fff8e1;
+  --color-ts-heading: #1c2b45;
+  --color-ts-body: #4a5468;
+  --color-ts-muted: #6b7690;
+  --color-ts-line: #e3e8f3;
+  --color-ts-paper: #f5f7fc;
+
   /* ── Template B Typography ── */
 }
 
@@ -354,6 +379,86 @@
   --color-tf-on-ink-body: #e3e3e3;
   --color-tf-on-ink-muted: #bdbdbd;
   --color-tf-on-ink-faint: #949494;
+}
+
+.template-i {
+  /* Scholars reuses Heritage's Updates/Privacy/Team views and Almanac's
+   * admissions flow, so — like Template H — it re-points the tb-* and tf-*
+   * token contracts those views read instead of restyling them. */
+  --font-tb-heading: var(--font-ts-serif), serif;
+  --font-tb-display: var(--font-ts-serif), serif;
+  --font-tb-body: var(--font-ts-sans), sans-serif;
+  --font-tb-hind: var(--font-ts-sans), sans-serif;
+  --font-hind: var(--font-ts-sans);
+  --font-inter: var(--font-ts-sans);
+  --font-playfair: var(--font-ts-serif);
+
+  --color-tb-primary-50: #eef2fa;
+  --color-tb-primary-100: #dce4f4;
+  --color-tb-primary-200: #b7c7e8;
+  --color-tb-primary-300: #8aa3d6;
+  --color-tb-primary: #4267b2;
+  --color-tb-primary-400: #4267b2;
+  --color-tb-primary-500: #34549a;
+  --color-tb-primary-600: #2f4a82;
+  --color-tb-primary-700: #243e60;
+  --color-tb-primary-800: #172a44;
+  --color-tb-secondary: #243e60;
+  --color-tb-accent: #4267b2;
+  --color-tb-hover: #34549a;
+  --color-tb-heading: #1c2b45;
+  --color-tb-body: #4a5468;
+  --color-tb-border: #d8dfee;
+  --color-tb-line: #e3e8f3;
+  --color-tb-light-white: #f5f7fc;
+  --color-tb-footer: #172a44;
+  --color-tb-background: #ffffff;
+  --color-tb-foreground: #1c2b45;
+
+  --color-tf-paper: #f5f7fc;
+  --color-tf-card: #ffffff;
+  --color-tf-panel: #eef2fa;
+  --color-tf-rail: #f1f4fb;
+  --color-tf-border: #d8dfee;
+  --color-tf-border-strong: #b7c7e8;
+  --color-tf-ink: #243e60;
+  --color-tf-ink-soft: #172a44;
+  --color-tf-ink-line: #3a5479;
+  --color-tf-ink-border: #56709a;
+  --color-tf-accent: #4267b2;
+  --color-tf-accent-soft: #8aa3d6;
+  --color-tf-accent-wash: #eef2fa;
+  --color-tf-body: #4a5468;
+  --color-tf-muted: #6b7690;
+  --color-tf-faint: #8b94ab;
+  --color-tf-on-ink: #f7f9fe;
+  --color-tf-on-ink-body: #dce4f4;
+  --color-tf-on-ink-muted: #b7c7e8;
+  --color-tf-on-ink-faint: #8aa3d6;
+}
+
+.template-i h1,
+.template-i h2,
+.template-i h3,
+.template-i h4 {
+  font-family: var(--font-ts-serif), serif;
+}
+
+/* The notice ribbon under the Scholars header: one seamless loop of the items,
+ * paused while a visitor reads it. */
+@keyframes ts-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ts-ticker-track {
+  animation: ts-ticker var(--ts-ticker-duration, 40s) linear infinite;
+}
+.ts-ticker:hover .ts-ticker-track,
+.ts-ticker:focus-within .ts-ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ts-ticker-track { animation: none; }
 }
 
 /* Template H sets its own chrome in Poppins; the reused Heritage views inherit

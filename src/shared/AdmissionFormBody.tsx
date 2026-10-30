@@ -4,10 +4,10 @@ import { useEffect, useRef, useState, type CSSProperties, type FocusEvent, type 
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import AdmissionFormFields, { type AdmissionFormStyles } from './AdmissionFormFields'
+import AdmissionRulesStep from './AdmissionRulesStep'
 import AdmissionStepper from './AdmissionStepper'
 import type { AdmissionInfoChrome } from './AdmissionInfoBody'
 import type { useAdmissionForm } from './useAdmissionForm'
-import RichText from './RichText'
 
 /**
  * The whole public application form, minus the template's outer shell.
@@ -34,14 +34,15 @@ export interface AdmissionFormBodyProps {
   successTitle?: string
   successText?: string
   /**
-   * Does this template already show the school's introduction elsewhere?
+   * Open with the shared rules step (`AdmissionRulesStep`)?
    *
-   * A school writes the same instructions twice — `Student Admission`'s
-   * `introduction` and the profile's `intro_message` — and templates that open
-   * with a rules stage print the first one there. Without this the family reads
-   * the identical block again the moment they reach the questions.
+   * Every template shows the same rules screen before the application. Almanac
+   * and the templates built on its views stage it themselves (with their own
+   * two-step header) and pass `false`; everyone else gets it from here.
    */
-  showIntro?: boolean
+  showRules?: boolean
+  /** Website copy for the rules heading (`admissions.rulesTitle`). */
+  rulesTitle?: string
 }
 
 /** Keep the focused form control inside the part of the page left visible by
@@ -71,8 +72,10 @@ export default function AdmissionFormBody({
   schoolName,
   successTitle = 'Application Submitted',
   successText,
-  showIntro = true,
+  showRules = true,
+  rulesTitle,
 }: AdmissionFormBodyProps): ReactNode {
+  const [onRules, setOnRules] = useState(showRules)
   const successRef = useRef<HTMLDivElement>(null)
   const activeStepRef = useRef<HTMLDivElement>(null)
   const classSelectorRef = useRef<HTMLDivElement>(null)
@@ -88,12 +91,16 @@ export default function AdmissionFormBody({
     settings,
     values,
     setValue,
+    files,
+    setFile,
+    fieldErrors,
+    validateField,
+    focusField,
     termsAccepted,
     setTermsAccepted,
     honeypot,
     setHoneypot,
     stepIndex,
-    setStepIndex,
     maxStepReached,
     goToStep,
     goNext,
@@ -113,6 +120,14 @@ export default function AdmissionFormBody({
   } = form
   const activeStep = steps[stepIndex]
   const previousStepIndex = useRef(stepIndex)
+
+  // The questions on THIS step that were rejected, in the order they are asked.
+  // Only this step's: a shortcut to a field on another one would scroll to
+  // nothing, since a step that is not showing is not rendered.
+  const stepErrors: Array<[string, string]> = (activeStep?.sections ?? [])
+    .flatMap((section) => section.fields)
+    .filter((field) => fieldErrors[field.fieldname])
+    .map((field) => [field.fieldname, field.label || field.fieldname])
 
   useEffect(() => {
     const viewport = window.visualViewport
@@ -165,7 +180,7 @@ export default function AdmissionFormBody({
       })
     })
     return () => window.cancelAnimationFrame(frame)
-  }, [loadingPrograms, programs.length, termsAccepted])
+  }, [loadingPrograms, programs.length, onRules])
 
   useEffect(() => {
     if (!submitted) return
@@ -316,56 +331,20 @@ export default function AdmissionFormBody({
     )
   }
 
-  const requiresTerms = Boolean(settings?.require_terms_acceptance)
-  // The gate only stands while there is something to agree TO and it has not
-  // been agreed yet; once accepted it never reappears, including on Back.
-  const showRulesGate = requiresTerms && !termsAccepted && Boolean(program)
-
-  if (showRulesGate) {
+  // Rules first, before the class: the family reads what they are agreeing to
+  // before answering anything, the same screen in every template. Accepting it
+  // is the `termsAccepted` the submission carries, so it is never asked again.
+  if (onRules) {
     return (
-      <div className="flex flex-col gap-6">
-        <div>
-          <h3 className={chrome.heading}>Admission rules</h3>
-          {settings?.terms_and_conditions ? (
-            <RichText html={settings.terms_and_conditions} className={chrome.bodyText} />
-          ) : (
-            <p className={chrome.bodyText}>
-              Please read these before you begin. By continuing you confirm that the information you
-              provide will be true and correct to the best of your knowledge, and you understand that
-              incorrect information may lead to the cancellation of admission.
-            </p>
-          )}
-        </div>
-
-        <div className={chrome.panel}>
-          <label className={`flex cursor-pointer items-start gap-2 ${chrome.label}`}>
-            <input
-              className={`mt-1 ${chrome.tick ?? ''}`}
-              type="checkbox"
-              checked={termsAccepted}
-              onChange={(event) => setTermsAccepted(event.target.checked)}
-            />
-            <span>
-              I have read and agree to abide by the rules and regulations of {schoolName}.
-              <span className="text-red-500"> *</span>
-            </span>
-          </label>
-
-          <div className="mt-6 flex justify-end">
-            {/* Disabled rather than hidden: the applicant can see what unlocks
-                the form, instead of a button appearing out of nowhere. */}
-            <button
-              type="button"
-              disabled={!termsAccepted}
-              onClick={() => setStepIndex(0)}
-              className={`${chrome.primaryButton} disabled:cursor-not-allowed disabled:opacity-50`}
-            >
-              Next
-              <Icon icon="lucide:arrow-right" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <AdmissionRulesStep
+        title={rulesTitle}
+        chrome={chrome}
+        schoolName={schoolName}
+        terms={settings ? settings.terms_and_conditions : undefined}
+        accepted={termsAccepted}
+        onAcceptedChange={setTermsAccepted}
+        onContinue={() => setOnRules(false)}
+      />
     )
   }
 
@@ -429,14 +408,6 @@ export default function AdmissionFormBody({
         {criteria?.description && <p className={`${chrome.help} mt-3`}>{criteria.description}</p>}
       </div>
 
-      {/* The school's introduction belongs to the form as a whole, so it is said
-          once, on the first step — repeating it above every step buried the
-          questions under instructions the family had already read. A template
-          whose rules stage already said it passes `showIntro={false}`. */}
-      {showIntro && settings?.intro_message && stepIndex === 0 && (
-        <RichText html={settings.intro_message} className={chrome.bodyText} />
-      )}
-
       {loading && program && (
         <div className={`flex items-center gap-3 ${chrome.bodyText}`}>
           <Icon icon="lucide:loader-2" className="animate-spin text-xl" />
@@ -459,7 +430,16 @@ export default function AdmissionFormBody({
           />
           <div ref={activeStepRef} tabIndex={-1} className="scroll-mt-28 outline-none">
             <h3 className={chrome.heading}>{activeStep.label || 'Application details'}</h3>
-            <AdmissionFormFields step={activeStep} values={values} onChange={setValue} styles={chrome} />
+            <AdmissionFormFields
+              step={activeStep}
+              values={values}
+              onChange={setValue}
+              files={files}
+              onFile={setFile}
+              onBlurField={validateField}
+              errors={fieldErrors}
+              styles={chrome}
+            />
           </div>
         </>
       )}
@@ -482,9 +462,27 @@ export default function AdmissionFormBody({
 
           <div className="flex flex-col items-end gap-3">
             {(error || eligibilityError) && (
-              <p className={`self-stretch whitespace-pre-line text-left ${chrome.errorText}`} role="alert">
-                {error || eligibilityError}
-              </p>
+              <div className="self-stretch text-left" role="alert">
+                <p className={`whitespace-pre-line ${chrome.errorText}`}>{error || eligibilityError}</p>
+                {/* Each rejected question, as a shortcut back to it — the summary
+                    says how many, the list says which, and the field itself says
+                    why. */}
+                {stepErrors.length > 1 && (
+                  <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                    {stepErrors.map(([fieldname, label]) => (
+                      <li key={fieldname}>
+                        <button
+                          type="button"
+                          onClick={() => focusField(fieldname)}
+                          className={`${chrome.errorText} underline underline-offset-2`}
+                        >
+                          {label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
             <div className="flex items-center gap-3">
               {stepIndex > 0 && (

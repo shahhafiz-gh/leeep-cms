@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import dynamicImport from 'next/dynamic'
 import { notFound } from 'next/navigation'
-import type { PageType } from '@/types/school.types'
+import type { SitePage } from '@/types/school.types'
 import {
   getSiteData,
   isEditPreview,
@@ -12,6 +12,7 @@ import {
 import { isAllowedBackend, tenantFromParams, type Tenant } from '@/lib/tenant'
 import { renderTemplate } from '@/lib/render-template'
 import { buildMetadata } from '@/lib/metadata'
+import { findCustomPage, findGroup, supportsCustomPages } from '@/lib/custom-pages'
 
 /**
  * The BUILDER's live preview — every public page, rendered from draft content
@@ -39,7 +40,7 @@ type Props = {
 }
 
 /** Map the previewed path back to the page type its route would render. */
-function pageTypeFor(segments: string[]): PageType | null {
+function pageTypeFor(segments: string[]): SitePage | null {
   const path = `/${segments.join('/')}`.replace(/\/+$/, '') || '/'
   switch (path) {
     case '/':
@@ -67,7 +68,10 @@ function pageTypeFor(segments: string[]): PageType | null {
     default:
       // Announcement detail pages render the updates view, which picks the
       // announcement out of the payload client-side.
-      return path === '/updates' || path.startsWith('/updates/') ? 'updates' : null
+      if (path === '/updates' || path.startsWith('/updates/')) return 'updates'
+      // Any other single segment is a school-authored page (`/<slug>`); whether
+      // it exists is checked against the draft below.
+      return segments.length === 1 ? 'custom' : null
   }
 }
 
@@ -125,11 +129,18 @@ export default async function PreviewPage({ params, searchParams }: Props) {
   // than erroring: the editor sees the live site and knows to reopen the builder.
   const editing = isEditPreview(sp)
   const data = await getSiteData(tenant, resolvePreviewMode(sp), resolvePreviewToken(sp))
+  const pageSlug = page === 'custom' ? path?.[0] : undefined
+  if (
+    pageSlug &&
+    (!supportsCustomPages(data) || !(findCustomPage(data, pageSlug) || findGroup(data, pageSlug)))
+  ) {
+    notFound()
+  }
 
   // `renderTemplate` folds in the editor-only navigation itself when editing.
   return (
     <>
-      {renderTemplate(data, page, tenant.slug || tenant.host, editing)}
+      {renderTemplate(data, page, tenant.slug || tenant.host, editing, pageSlug)}
       {editing && <InlineEditLayer />}
     </>
   )

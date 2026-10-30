@@ -12,6 +12,8 @@ interface StatusResult {
   program?: string
   academic_year?: string
   applied_on?: string
+  /** Present only when the school lets families download their own form. */
+  download_token?: string | null
 }
 
 /**
@@ -39,6 +41,43 @@ export default function AdmissionStatusBody({
   const [result, setResult] = useState<StatusResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [checking, setChecking] = useState(false)
+  const [downloading, setDownloading] = useState(false)
+  const [downloadError, setDownloadError] = useState<string | null>(null)
+
+  /**
+   * Fetched rather than linked so a failure (expired token, school switched
+   * downloads off) lands as a message here instead of a raw JSON page.
+   */
+  async function onDownload() {
+    if (!result?.download_token || downloading) return
+    setDownloading(true)
+    setDownloadError(null)
+    try {
+      const res = await fetch(
+        `/api/admissions/download?token=${encodeURIComponent(result.download_token)}`,
+        { cache: 'no-store' },
+      )
+      if (!res.ok) {
+        const json = await res.json().catch(() => null)
+        setDownloadError(json?.error || 'Could not download the application form. Please try again later.')
+        return
+      }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `Application ${result.application}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      // Give the browser a moment to start the save before the URL goes away.
+      setTimeout(() => URL.revokeObjectURL(url), 10_000)
+    } catch {
+      setDownloadError('Could not reach the school right now. Please check your connection and try again.')
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault()
@@ -47,6 +86,7 @@ export default function AdmissionStatusBody({
     setChecking(true)
     setError(null)
     setResult(null)
+    setDownloadError(null)
 
     try {
       const res = await fetch('/api/admissions/status', {
@@ -102,10 +142,31 @@ export default function AdmissionStatusBody({
           )}
         </div>
 
+        {downloadError && (
+          <p className={chrome.errorText} role="alert">
+            {downloadError}
+          </p>
+        )}
+
         <div className="flex flex-wrap items-center gap-3">
+          {result.download_token && (
+            <button
+              type="button"
+              onClick={onDownload}
+              disabled={downloading}
+              className={`${chrome.primaryButton} disabled:cursor-not-allowed disabled:opacity-50`}
+            >
+              <Icon
+                icon={downloading ? 'lucide:loader-2' : 'lucide:download'}
+                className={`text-lg ${downloading ? 'animate-spin' : ''}`}
+              />
+              {downloading ? 'Preparing…' : 'Download application form'}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => {
+              setDownloadError(null)
               setResult(null)
               setApplication('')
               setDateOfBirth('')
