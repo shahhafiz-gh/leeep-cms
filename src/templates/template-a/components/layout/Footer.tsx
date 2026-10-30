@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { usePathname } from 'next/navigation'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
@@ -35,9 +35,14 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
     <footer
       className={`relative bg-[#0f1f13] ${isHomeRoute ? 'mt-20' : 'mt-12'} text-ta-inverse-on-surface overflow-visible font-(family-name:--font-ta-nunito)`}
     >
-      {/* Wave Divider */}
+      {/* Wave Divider. Its 220px box rises over the bottom of the page content,
+          and the outer <svg> takes taps across its WHOLE box, not just the
+          painted wave — on a phone that swallowed the last button above the
+          footer (e.g. the application form's submit). Decoration only, so it
+          must never take a pointer. */}
       <svg
-        className="absolute top-0 left-0 w-full h-[220px] -translate-y-[calc(100%-1px)]"
+        aria-hidden
+        className="pointer-events-none absolute top-0 left-0 w-full h-[220px] -translate-y-[calc(100%-1px)]"
         viewBox="0 0 1440 120"
         preserveAspectRatio="none"
       >

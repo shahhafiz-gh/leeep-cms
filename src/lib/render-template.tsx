@@ -11,6 +11,7 @@ import TemplateG from '@/templates/template-g/TemplateG'
 import TemplateH from '@/templates/template-h/TemplateH'
 import TemplateI from '@/templates/template-i/TemplateI'
 import { styleObject } from '@/lib/component-styles'
+import { ImageOptimizationProvider } from '@/shared/SiteImage'
 
 function styleSelector(path: string) {
   const escaped = path.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
@@ -55,6 +56,7 @@ function withSavedStyles(node: React.ReactNode, data: SchoolData) {
  * `page: 'custom'` (a school-authored page, named by `pageSlug`) only reaches
  * templates in CUSTOM_PAGE_TEMPLATES — the routes 404 it for every other one.
  */
+
 export function renderTemplate(
   data: SchoolData,
   page: SitePage,
@@ -62,15 +64,38 @@ export function renderTemplate(
   editing = false,
   pageSlug?: string,
 ) {
+  // Image optimization is enabled by default.
+  const vercelImages = data.config?.vercel_image_optimization !== false
+
+  return (
+    <ImageOptimizationProvider vercel={vercelImages}>
+      {pickTemplate(data, page, school, editing, pageSlug)}
+    </ImageOptimizationProvider>
+  )
+}
+
+function pickTemplate(
+  data: SchoolData,
+  page: SitePage,
+  school: string,
+  editing: boolean,
+  pageSlug?: string,
+) {
   const templateId = data.config?.template_id
   const renderData = editing ? withEditorNavigation(data) : data
 
   if (templateId === 'template-i') {
     return withSavedStyles(
-      <TemplateI data={renderData} page={page} pageSlug={pageSlug} editing={editing} />,
+      <TemplateI
+        data={renderData}
+        page={page}
+        pageSlug={pageSlug}
+        editing={editing}
+      />,
       renderData,
     )
   }
+
   // Past this point only the fixed page set exists.
   if (page === 'custom') return null
 
@@ -88,5 +113,10 @@ export function renderTemplate(
         `school="${school}"; defaulting to template-a.`,
     )
   }
-  return withSavedStyles(<TemplateA data={renderData} page={page} editing={editing} />, renderData)
+
+  return withSavedStyles(
+    <TemplateA data={renderData} page={page} editing={editing} />,
+    renderData,
+  )
 }
+

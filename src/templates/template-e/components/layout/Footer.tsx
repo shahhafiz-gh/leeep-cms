@@ -105,16 +105,18 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
             </div>
           </div>
 
+          {/* Phone first: each link is a 44px-tall target in a larger face;
+              from lg it returns to the compact 13.5px ledger column. */}
           {columns.map((col) => (
-            <div key={col.title} className="flex flex-col gap-2.5">
-              <div className="text-[11.5px] uppercase tracking-[0.14em] text-te-on-ink-faint">
+            <div key={col.title} className="flex flex-col lg:gap-2.5">
+              <div className="text-xs uppercase tracking-[0.14em] text-te-on-ink-faint lg:text-[11.5px]">
                 {col.title}
               </div>
               {col.links.map((link) => (
                 <Link
                   key={`${link.href}-${link.label}`}
                   href={link.href}
-                  className="text-[13.5px] transition-colors hover:text-white"
+                  className="py-2.5 text-[15px] transition-colors hover:text-white lg:py-0 lg:text-[13.5px]"
                 >
                   {link.label}
                 </Link>

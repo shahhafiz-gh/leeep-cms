@@ -70,8 +70,9 @@ export default function ContactForm({ data }: { data: SchoolData }) {
                   )
                 })}
                 <InfoRow icon="lucide:clock" label="Office Hours">
+                  {/* The school's own hours say which days it is closed; a fixed
+                      "Sunday: Closed" here contradicted schools open on Sunday. */}
                   <span data-edit="contact.workingHours">{contact.workingHours ?? 'Mon – Sat: 9 AM – 5 PM'}</span>
-                  <span className="block text-white/55 text-[13px]">Sunday: Closed</span>
                 </InfoRow>
               </div>
 

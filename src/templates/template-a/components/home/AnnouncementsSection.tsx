@@ -64,7 +64,7 @@ export default function AnnouncementsSection({ data }: { data: SchoolData }) {
             )}
 
             <div className="flex items-center gap-3 mb-4">
-              <span className="bg-ta-surface-container-high/60 text-ta-on-surface-variant text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+              <span className="bg-ta-surface-container-high/60 text-ta-on-surface-variant text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
                 {featured.category || 'Announcement'}
               </span>
               <span className="text-xs text-ta-outline flex items-center gap-1.5 font-medium">
@@ -112,7 +112,7 @@ export default function AnnouncementsSection({ data }: { data: SchoolData }) {
 
                   <div className="flex flex-col justify-center flex-1">
                     <div className="flex flex-wrap items-center gap-3 mb-1.5">
-                      <span className="text-[10px] sm:text-xs text-ta-outline font-medium">
+                      <span className="text-xs text-ta-outline font-medium">
                         {formatDate(item.published_date)}
                       </span>
                     </div>

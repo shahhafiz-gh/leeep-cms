@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
 import { useScrollHeader } from '@/templates/template-a/hooks/layout/useScrollHeader'
@@ -34,13 +34,16 @@ export default function Header({ data }: { data: SchoolData }) {
               alt={`${data.name} Logo`}
               width={60}
               height={60}
-              className="w-14 h-14 max-w-14 rounded-full object-contain shrink-0"
+              className="w-11 h-11 max-w-11 sm:w-14 sm:h-14 sm:max-w-14 rounded-full object-contain shrink-0"
               data-edit-img="logo"
             />
           ) : (
             <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-14 h-14 rounded-full shrink-0 gap-0.5" editPath="logo" />
           )}
-          <span data-edit="name" data-style="name" style={styleObject(data, 'name')} className="hidden max-w-[200px] lg:block font-bold text-xl leading-tight text-center tracking-tight text-ta-primary">
+          {/* Shown on phones too — most visitors arrive on one, and a bare logo
+              does not tell them whose site this is. Smaller and left-aligned
+              there, wrapping to two lines; the centred desktop name from lg. */}
+          <span data-edit="name" data-style="name" style={styleObject(data, 'name')} className="md:hidden lg:block max-w-[11rem] line-clamp-2 font-bold text-base leading-tight text-left tracking-tight text-ta-primary sm:max-w-[200px] lg:text-xl lg:text-center">
             {data.name}
           </span>
         </Link>

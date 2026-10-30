@@ -65,7 +65,7 @@ export default function EventsSection({ data }: { data: SchoolData }) {
                 <div className="flex gap-5 mb-6">
                   {/* Date box */}
                   <div className="bg-ta-primary/10 rounded-xl p-3 flex flex-col items-center justify-center min-w-[72px] h-[72px] shrink-0 border border-ta-primary/20 group-hover:bg-ta-primary group-hover:border-ta-primary transition-colors duration-300">
-                    <span className="text-[10px] font-bold text-ta-primary group-hover:text-ta-on-primary uppercase tracking-wider transition-colors duration-300">
+                    <span className="text-xs font-bold text-ta-primary group-hover:text-ta-on-primary uppercase tracking-wider transition-colors duration-300">
                       {month}
                     </span>
                     <span className="text-2xl font-bold text-ta-on-surface group-hover:text-ta-on-primary leading-none transition-colors duration-300">

@@ -18,8 +18,10 @@ export default function MapSection({ data }: { data: SchoolData }) {
         {/* Header */}
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-tb-heading mb-2.5">Find Us Here</h2>
+          {/* Generic on purpose: this line used to name one school's town, and
+              every school on Heritage, Summit or Grand printed it. */}
           <p className="text-tb-body max-w-[480px] mx-auto text-[15px]">
-            Visit us at our main campus in Shopian, Kashmir. We&apos;d love to welcome you in person.
+            Visit our campus — we&apos;d love to welcome you in person.
           </p>
         </div>
 

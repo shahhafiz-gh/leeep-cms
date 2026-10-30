@@ -2,7 +2,7 @@
 
 import type { SchoolData, PageType } from '@/types/school.types'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { Icon } from '@iconify/react'
 import { usePathname } from 'next/navigation'
 import { useHeader } from '@/shared/hooks/useHeader'
@@ -69,11 +69,11 @@ export default function Header({ data, page }: { data: SchoolData; page: PageTyp
                        old fixed 56x56 frame shrank a wordmark to an illegible
                        smudge. The max-width keeps a very wide mark from pushing
                        the nav off the row. */
-                    className="h-14 w-auto max-w-40 object-contain shrink-0"
+                    className="h-11 sm:h-14 w-auto max-w-32 sm:max-w-40 object-contain shrink-0"
                     data-edit-img="logo"
                   />
                 ) : (
-                  <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-14 h-14 rounded-full shrink-0 gap-0.5" editPath="logo" />
+                  <ImagePlaceholder label="Logo" icon="lucide:image-plus" className="w-11 h-11 sm:w-14 sm:h-14 rounded-full shrink-0 gap-0.5" editPath="logo" />
                 )}
                 <div className="flex flex-col ml-1 min-w-0 font-(family-name:--font-inter)">
                   {/* Sized by the school, not the template: alignment, wrap,
@@ -85,7 +85,9 @@ export default function Header({ data, page }: { data: SchoolData; page: PageTyp
                     data-edit="name"
                     data-style="name"
                     style={styleObject(data, 'name')}
-                    className={`block font-bold text-[19px] max-w-52 leading-tight uppercase tracking-normal overflow-hidden text-ellipsis ${isDark ? 'text-tb-heading' : 'text-tb-background'}`}
+                    /* Phone first: a smaller face that wraps to two whole lines,
+                       instead of a 19px name cut off mid-word beside the menu. */
+                    className={`font-bold text-base sm:text-[19px] max-w-52 leading-tight uppercase tracking-normal line-clamp-2 lg:line-clamp-none ${isDark ? 'text-tb-heading' : 'text-tb-background'}`}
                   >
                     {data.name}
                   </span>
@@ -199,9 +201,12 @@ export default function Header({ data, page }: { data: SchoolData; page: PageTyp
 
             {/* Mobile Controls */}
             <div className="lg:hidden flex items-center gap-3 shrink-0">
+              {/* On a phone the bar is the brand and the menu button only — the
+                  pill moves into the menu (below), where it gets a full-width
+                  button instead of squeezing the school's name. */}
               <Link
                 href={portalLinks[0]?.url ?? '/login'}
-                className={`inline-flex max-w-32 truncate px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${isDark
+                className={`hidden sm:inline-flex max-w-32 truncate px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${isDark
                   ? 'bg-tb-primary-400 text-tb-background hover:bg-tb-primary-500'
                   : 'bg-tb-background text-tb-primary-400 hover:bg-tb-light-white'
                   }`}
@@ -210,8 +215,9 @@ export default function Header({ data, page }: { data: SchoolData; page: PageTyp
               </Link>
               <button
                 onClick={toggleMobileMenu}
-                className="p-1.5 focus:outline-none"
+                className="p-2 -mr-2 focus:outline-none"
                 aria-label="Toggle Menu"
+                aria-expanded={isMobileMenuOpen}
               >
                 <Icon
                   icon={isMobileMenuOpen ? 'lucide:x' : 'lucide:menu'}
@@ -274,24 +280,23 @@ export default function Header({ data, page }: { data: SchoolData; page: PageTyp
                 ))}
               </ul>
 
-              {portalLinks.length > 1 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {portalLinks.slice(1).map((link, li) => (
-                    <a
-                      key={`m-portal-${li}`}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex px-5 py-2 rounded-full text-sm font-semibold ${link.variant === 'dark'
-                        ? 'bg-tb-secondary text-tb-background'
-                        : 'bg-tb-primary-400 text-tb-background'
-                        }`}
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              )}
+              {/* Every portal button, full width. The first one is also in the
+                  bar from `sm` up, so it is only repeated here on phones. (With
+                  none configured, Login is already a menu item above.) */}
+              {portalLinks.map((link, li) => (
+                <a
+                  key={`m-portal-${li}`}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${li === 0 ? 'flex sm:hidden' : 'flex'} mt-3 min-h-12 items-center justify-center px-5 rounded-full text-sm font-semibold ${link.variant === 'dark'
+                    ? 'bg-tb-secondary text-tb-background'
+                    : 'bg-tb-primary-400 text-tb-background'
+                    }`}
+                >
+                  {link.label}
+                </a>
+              ))}
             </nav>
           </div>
         )}

@@ -58,7 +58,7 @@ export default function EventsSection({ data }: { data: SchoolData }) {
                 <div className="flex gap-4 mb-5">
                   {/* Date box */}
                   <div className="bg-tb-primary-50 rounded-xl p-3 flex flex-col items-center justify-center min-w-[68px] h-[68px] shrink-0 border border-tb-primary-100">
-                    <span className="text-[10px] font-bold text-tb-primary-500 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-tb-primary-500 uppercase tracking-wider">
                       {month}
                     </span>
                     <span className="text-2xl font-bold text-tb-secondary leading-none">{day}</span>

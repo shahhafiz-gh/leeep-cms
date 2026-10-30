@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 /**
  * Filled slots render through `next/image`, which serves AVIF/WebP at the size
  * the viewport actually needs instead of the original upload. Only the `fill`

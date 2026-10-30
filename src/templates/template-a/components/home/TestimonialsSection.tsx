@@ -43,7 +43,7 @@ export function TestimonialCard({ name, role, content, rating = 5, path }: Testi
   )
 }
 
-export function TestimonialHeader() {
+export function TestimonialHeader({ title, subtitle }: { title?: string; subtitle?: string }) {
   return (
     <div className="text-center mb-16 flex flex-col items-center">
       <ScrollReveal>
@@ -52,13 +52,13 @@ export function TestimonialHeader() {
         </div>
       </ScrollReveal>
       <ScrollReveal delay={0.1}>
-        <h2 className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-2 leading-tight">
-          Hear From Our Families
+        <h2 data-edit="testimonialsIntro.title" className="font-(family-name:--font-ta-h2) text-3xl md:text-[40px] text-ta-on-surface mb-2 leading-tight">
+          {title || 'Hear From Our Families'}
         </h2>
       </ScrollReveal>
       <ScrollReveal delay={0.2}>
-        <p className="font-(family-name:--font-ta-body-md) text-ta-on-surface-variant max-w-[460px] mx-auto text-lg">
-          Discover why families choose us for a balanced, rigorous, and supportive educational environment.
+        <p data-edit="testimonialsIntro.subtitle" className="font-(family-name:--font-ta-body-md) text-ta-on-surface-variant max-w-[460px] mx-auto text-lg">
+          {subtitle || 'Discover why families choose us for a balanced, rigorous, and supportive educational environment.'}
         </p>
       </ScrollReveal>
     </div>
@@ -84,7 +84,7 @@ export default function TestimonialsSection({ data }: { data: SchoolData }) {
       </div>
 
       <div className="container mx-auto px-4 md:px-8 lg:px-12 pb-24">
-        <TestimonialHeader />
+        <TestimonialHeader title={data.testimonialsIntro?.title} subtitle={data.testimonialsIntro?.subtitle} />
 
         <div className="relative w-full mx-auto">
           <div className="hidden md:block absolute top-1/2 -translate-y-1/2 -left-4 lg:-left-16 z-10">

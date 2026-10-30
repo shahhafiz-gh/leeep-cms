@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'

@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import type { SchoolData } from '@/types/school.types'
@@ -35,21 +35,21 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
 
         <div>
           <h2 className="mb-5 text-base font-extrabold text-white">Useful Links</h2>
-          <div className="space-y-3">
-            {links.slice(0, Math.ceil(links.length / 2)).map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className="block text-sm text-white/65 hover:text-white">{link.label}</Link>)}
+          <div className="lg:space-y-3">
+            {links.slice(0, Math.ceil(links.length / 2)).map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className="block py-2.5 text-sm text-white/65 hover:text-white lg:py-0">{link.label}</Link>)}
           </div>
         </div>
         <div>
           <h2 className="mb-5 text-base font-extrabold text-white">Explore</h2>
-          <div className="space-y-3">
-            {links.slice(Math.ceil(links.length / 2)).map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className="block text-sm text-white/65 hover:text-white">{link.label}</Link>)}
+          <div className="lg:space-y-3">
+            {links.slice(Math.ceil(links.length / 2)).map((link) => <Link key={`${link.href}-${link.label}`} href={link.href} className="block py-2.5 text-sm text-white/65 hover:text-white lg:py-0">{link.label}</Link>)}
           </div>
         </div>
         <div>
           <h2 className="mb-5 text-base font-extrabold text-white">Address</h2>
           {(contact.address || editing) && <p data-edit="contact.address" className="mb-4 text-sm leading-6 text-white/65">{contact.address}</p>}
-          {phones.map((phone, index) => <a key={`phone-${index}`} href={contactPhoneHref(phone)} data-edit={`contact.phone.${index}.value`} className="mb-2 flex items-center gap-2 text-sm text-white/65 hover:text-white"><Icon icon="lucide:phone" className="h-4 w-4" />{contactPhoneDisplay(phone)}</a>)}
-          {emails.map((email, index) => <a key={`email-${index}`} href={contactEntryValue(email) ? `mailto:${contactEntryValue(email)}` : undefined} data-edit={`contact.email.${index}.value`} className="flex items-center gap-2 break-all text-sm text-white/65 hover:text-white"><Icon icon="lucide:mail" className="h-4 w-4 shrink-0" />{contactEntryValue(email)}</a>)}
+          {phones.map((phone, index) => <a key={`phone-${index}`} href={contactPhoneHref(phone)} data-edit={`contact.phone.${index}.value`} className="flex items-center gap-2 py-2.5 text-sm text-white/65 hover:text-white lg:mb-2 lg:py-0"><Icon icon="lucide:phone" className="h-4 w-4" />{contactPhoneDisplay(phone)}</a>)}
+          {emails.map((email, index) => <a key={`email-${index}`} href={contactEntryValue(email) ? `mailto:${contactEntryValue(email)}` : undefined} data-edit={`contact.email.${index}.value`} className="flex items-center gap-2 break-all py-2.5 text-sm text-white/65 hover:text-white lg:py-0"><Icon icon="lucide:mail" className="h-4 w-4 shrink-0" />{contactEntryValue(email)}</a>)}
         </div>
       </div>
       <div className="border-t border-white/10">

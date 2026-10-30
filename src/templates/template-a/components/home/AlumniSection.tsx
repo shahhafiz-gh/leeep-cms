@@ -36,13 +36,13 @@ export default function AlumniSection({ data }: { data: SchoolData }) {
             </div>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <h2 className="font-(family-name:--font-ta-h2) text-(length:--text-ta-h2) text-ta-on-surface mb-4">
-              Where Our Alumni Are Today
+            <h2 data-edit="alumniIntro.title" className="font-(family-name:--font-ta-h2) text-(length:--text-ta-h2) text-ta-on-surface mb-4">
+              {data.alumniIntro?.title || 'Where Our Alumni Are Today'}
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
-            <p className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-2xl mx-auto">
-              From medical colleges to engineering institutions, our graduates continue to make us proud across diverse fields.
+            <p data-edit="alumniIntro.subtitle" className="font-(family-name:--font-ta-body-lg) text-ta-on-surface-variant max-w-2xl mx-auto">
+              {data.alumniIntro?.subtitle || 'From medical colleges to engineering institutions, our graduates continue to make us proud across diverse fields.'}
             </p>
           </ScrollReveal>
         </div>

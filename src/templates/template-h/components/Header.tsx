@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import Image from '@/shared/SiteImage'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react'
@@ -58,7 +58,7 @@ export default function Header({ data }: { data: SchoolData }) {
             {email && (
               <a
                 href={`mailto:${contactEntryValue(email)}`}
-                className="flex min-w-0 items-center gap-2 text-th-body transition-colors hover:text-th-primary"
+                className="-my-2.5 flex min-w-0 items-center gap-2 py-2.5 text-th-body transition-colors hover:text-th-primary sm:my-0 sm:py-0"
               >
                 <Icon icon="lucide:mail" className="h-3.5 w-3.5 shrink-0 text-th-primary" />
                 <span className="truncate">{contactEntryValue(email)}</span>
@@ -86,7 +86,7 @@ export default function Header({ data }: { data: SchoolData }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.platform}
-                  className="text-th-primary transition-opacity hover:opacity-70"
+                  className="-m-2 p-2 text-th-primary transition-opacity hover:opacity-70 sm:m-0 sm:p-0"
                 >
                   <Icon icon={social.icon || `ri:${social.platform}-fill`} className="h-3.5 w-3.5" />
                 </a>
@@ -132,7 +132,7 @@ export default function Header({ data }: { data: SchoolData }) {
               {data.tagline && (
                 <span
                   data-edit="tagline"
-                  className="mt-1 block truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-th-primary"
+                  className="mt-1 block truncate text-[11px] font-semibold uppercase tracking-[0.18em] text-th-primary"
                 >
                   {data.tagline}
                 </span>
