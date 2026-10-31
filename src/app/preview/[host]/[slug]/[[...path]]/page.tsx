@@ -63,6 +63,8 @@ function pageTypeFor(segments: string[]): SitePage | null {
       return 'facilities'
     case '/gallery':
       return 'gallery'
+    case '/request-mobile-change':
+      return 'request-mobile-change'
     case '/privacy':
       return 'privacy'
     default:

@@ -52,6 +52,7 @@ const SLUG_TO_PAGE: Record<string, PageType> = {
   // previewed at all.
   gallery: 'gallery',
   privacy: 'privacy',
+  'request-mobile-change': 'request-mobile-change',
 }
 
 function resolvePage(slug?: string[]): PageType | null {

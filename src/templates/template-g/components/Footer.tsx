@@ -58,6 +58,9 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
             <span data-edit="footer.copyright">{data.footer.copyright}</span>
             {/* Every template's footer carries this link: the site takes admission
                 enquiries, so the notice has to be reachable from every page. */}
+            <Link href="/request-mobile-change" className="transition-colors hover:text-white">
+              Request mobile number change
+            </Link>
             <Link href="/privacy" className="transition-colors hover:text-white">Privacy Policy</Link>
           </div>
           <span>Powered by <a href="https://leeep.in" className="font-bold text-white/70 hover:text-white">Leeep</a></span>
