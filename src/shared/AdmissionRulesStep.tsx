@@ -2,20 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
-import { fetchAdmissionSchema } from '@/shared/admission-schema'
-import { useAdmissionOverview } from '@/shared/useAdmissionOverview'
-import type { AdmissionChrome } from '@/shared/AdmissionFormBody'
-import type { SchoolData } from '@/types/school.types'
-import RichText from '@/shared/RichText'
+import { fetchAdmissionSchema } from './admission-schema'
+import { useAdmissionOverview } from './useAdmissionOverview'
+import type { AdmissionChrome } from './AdmissionFormBody'
+import RichText, { hasRichText } from './RichText'
 
 /**
- * Step one of Almanac's application: what the school is admitting into this
- * session, and the rules the family accepts before answering anything.
+ * Step one of every template's application: what the school is admitting into
+ * this session, and the rules the family accepts before answering anything.
  *
- * This is the block that used to sit on the admissions page as "This session's
- * admissions". It reads better here: a family met it there, scrolled past it,
- * and then agreed to a separate declaration on the form. Now the rules they
- * read are the rules they tick — one screen, one decision.
+ * Almanac introduced it; it lives here so every template shows the same rules
+ * screen. Themes that stage it themselves (Almanac and the templates built on
+ * its views) render it directly; the rest get it from `AdmissionFormBody`.
  *
  * Everything shown comes from the school's own `Student Admission` record (the
  * window, the age windows and fees, the introduction it publishes), so the
@@ -23,8 +21,8 @@ import RichText from '@/shared/RichText'
  * HEADING is website copy (`admissions.rulesTitle`), so a school can rename it
  * inline like any other title on the site.
  */
-export default function RulesStep({
-  data,
+export default function AdmissionRulesStep({
+  title,
   chrome,
   schoolName,
   /** The chosen class's terms, when a class is already known from the URL. */
@@ -33,7 +31,8 @@ export default function RulesStep({
   onAcceptedChange,
   onContinue,
 }: {
-  data: SchoolData
+  /** Website copy for the heading (`admissions.rulesTitle`). */
+  title?: string
   chrome: AdmissionChrome
   schoolName: string
   terms?: string
@@ -44,13 +43,14 @@ export default function RulesStep({
   const { loading, active } = useAdmissionOverview()
   // The school writes its instructions in two places that hold the same text:
   // `Student Admission.introduction` and the profile's `intro_message`. This
-  // stage is the only place Almanac prints them (the form body is told not to
+  // stage is the only place the application prints them (the form body does not
   // repeat them), so fall back to the profile copy when the admission record
   // has none — otherwise a school that filled only the profile loses them.
-  const profile = useProfileSettings(terms === undefined || !active?.introduction)
-  const rules = terms || profile.terms
-  const introduction = active?.introduction || profile.intro
-  const title = data.admissions?.rulesTitle || 'Admission rules'
+  // An emptied editor field still holds markup (`<p><br></p>`), so "has the
+  // school written anything" is a content check, not a truthiness one.
+  const profile = useProfileSettings(!hasRichText(terms) || !hasRichText(active?.introduction))
+  const rules = [terms, profile.terms].find((html) => hasRichText(html)) ?? ''
+  const introduction = [active?.introduction, profile.intro].find((html) => hasRichText(html)) ?? ''
 
   if (loading) {
     return (
@@ -65,7 +65,7 @@ export default function RulesStep({
     <div className="flex flex-col gap-8">
       <div>
         <h3 data-edit="admissions.rulesTitle" className={chrome.heading}>
-          {title}
+          {title || 'Admission rules'}
         </h3>
         {active && (
           <div className="flex flex-wrap items-center gap-2.5">

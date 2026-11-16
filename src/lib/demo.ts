@@ -14,7 +14,7 @@ import type { SchoolData, TemplateId } from '@/types/school.types'
  *  prospective schools, so nothing may resemble an existing client.
  * ──────────────────────────────────────────────────────────── */
 
-export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H'
+export type DemoTemplate = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I'
 
 /** Build a sized Unsplash stock-photo URL from a (verified) photo id. */
 const img = (id: string, w = 1200) =>
@@ -65,6 +65,7 @@ export function resolveDemoTemplate(raw?: string | string[]): DemoTemplate {
   if (value === 'f' || value === 'template-f') return 'F'
   if (value === 'g' || value === 'template-g') return 'G'
   if (value === 'h' || value === 'template-h') return 'H'
+  if (value === 'i' || value === 'template-i') return 'I'
   return 'A'
 }
 
@@ -133,7 +134,9 @@ export function getDemoData(template: DemoTemplate, paletteOverride?: string): S
                 ? 'template-g'
                 : template === 'H'
                   ? 'template-h'
-              : 'template-a'
+                  : template === 'I'
+                    ? 'template-i'
+                    : 'template-a'
   // Horizon defaults to its warm palette so the demo card shows its true look; an
   // explicit override (from ?palette=) lets the gallery preview any curated preset.
   // Quill's built-in terracotta and Almanac's walnut ARE their defaults, so

@@ -283,7 +283,7 @@ export async function getSiteData(
     }
     // Frappe stores asset paths root-relative; resolve them against its own
     // origin so they don't 404 against the renderer's origin.
-    return absolutizeAssetUrls(json.message, backend)
+    return { ...absolutizeAssetUrls(json.message, backend), backendUrl: backend }
   } catch (err) {
     if (err instanceof SiteNotFoundError) throw err
     if (isDnsFailure(err)) {
