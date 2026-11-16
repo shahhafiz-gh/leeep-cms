@@ -20,23 +20,8 @@ function formatEventDate(dateString: string) {
 export default function EventsSection({ data }: { data: SchoolData }) {
   const events = data.updates.events
 
-  if (!events || events.length === 0) {
-    return (
-      <section className="py-12 bg-ta-surface relative overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center text-center py-16 bg-ta-surface-container-lowest rounded-[32px] border border-ta-outline-variant/30 shadow-[0_20px_40px_rgba(0,0,0,0.04)]">
-            <div className="w-16 h-16 bg-ta-primary/10 rounded-full flex items-center justify-center mb-4">
-              <Icon icon="lucide:calendar-x" className="text-3xl text-ta-primary" />
-            </div>
-            <h3 className="font-(family-name:--font-ta-h3) text-xl text-ta-on-surface mb-2">No Upcoming Events</h3>
-            <p className="font-(family-name:--font-ta-body-md) text-ta-on-surface-variant mx-auto">
-              Check back later for exciting new events and activities.
-            </p>
-          </div>
-        </div>
-      </section>
-    )
-  }
+  // Nothing scheduled: drop the block rather than show an empty placeholder.
+  if (!events || events.length === 0) return null
 
   return (
     <section className="py-12 md:py-20 bg-ta-surface relative overflow-hidden">

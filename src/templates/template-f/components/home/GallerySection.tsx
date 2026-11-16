@@ -5,7 +5,8 @@ import type { SchoolData, GalleryImage } from '@/types/school.types'
 import { useGalleryImages } from '@/shared/hooks/useGalleryImages'
 import Photo from '../common/Photo'
 import { SectionHead } from '../common/Bits'
-import { gridCols } from '@/shared/utils/grid'
+import GalleryCarousel from '@/shared/GalleryCarousel'
+import { galleryTitle } from '@/shared/gallery-title'
 
 const SPEEDS: Record<string, string> = { slow: '90s', medium: '60s', fast: '38s' }
 
@@ -24,10 +25,10 @@ const SPEEDS: Record<string, string> = { slow: '90s', medium: '60s', fast: '38s'
  * link to that event on /updates, which is what ties an album to the thing it
  * documents.
  *
- * `motion: 'static grid'` falls back to a plain grid, and reduced-motion users
+ * `motion: 'static grid'` (or fewer than six photos) falls back to a carousel, and reduced-motion users
  * get the animation disabled in CSS regardless.
  */
-export default function GallerySection({ data }: { data: SchoolData }) {
+export default function GallerySection({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
   const images = useGalleryImages(data.gallery?.images ?? [])
   if (images.length === 0) return null
 
@@ -93,25 +94,25 @@ export default function GallerySection({ data }: { data: SchoolData }) {
 
   const head = (
     <SectionHead
-      title={data.gallery?.title || 'Life on campus'}
+      title={galleryTitle(data)}
       editPath="gallery.title"
       href="/updates"
       linkLabel="See what's on"
     />
   )
 
-  /* ── Static grid ───────────────────────────────────────────────────────── */
+  /* ── Carousel (static mode, or too few photos for a marquee) ───────────────────────────────────────────────────────── */
   if (!marquee) {
     return (
       <section className="mx-auto max-w-[1400px] px-5 pb-16 md:px-8 lg:px-12 lg:pb-20">
         {head}
-        <div
-          className={`grid auto-rows-[180px] gap-5 lg:auto-rows-[260px] ${gridCols(images.length, 3)}`}
-        >
-          {images.map((image, i) => (
-            <div key={`${image.src}-${i}`}>{tile(image, i)}</div>
-          ))}
-        </div>
+        <GalleryCarousel
+          images={images}
+          autoplay={!editing}
+          buttonClassName="border border-tf-ink/15 bg-white text-tf-ink hover:border-tf-accent hover:text-tf-accent"
+          slideClassName="h-[220px] lg:h-[280px] rounded-[20px]"
+          renderSlide={(image, i) => tile(image, i)}
+        />
       </section>
     )
   }

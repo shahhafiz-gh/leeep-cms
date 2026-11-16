@@ -10,8 +10,14 @@ function displayDate(value?: string) {
 }
 
 export default function Noticeboard({ data }: { data: SchoolData }) {
-  const announcements = data.updates.announcements.slice(0, 4)
-  const events = data.updates.events.slice(0, 3)
+  const announcements = (data.updates?.announcements ?? []).slice(0, 4)
+  const events = (data.updates?.events ?? []).slice(0, 3)
+  const hasNotices = announcements.length > 0
+  const hasEvents = events.length > 0
+
+  // Nothing published at all: drop the whole band. With only one side populated
+  // the other panel is skipped and the remaining one takes the full width.
+  if (!hasNotices && !hasEvents) return null
 
   return (
     <section className="bg-[#f6f7fb] py-16 md:py-20">
@@ -22,7 +28,8 @@ export default function Noticeboard({ data }: { data: SchoolData }) {
           <span className="mx-auto mt-4 block h-1 w-16 bg-tb-primary-400" />
         </div>
 
-        <div className="grid gap-7 lg:grid-cols-[1.25fr_0.75fr]">
+        <div className={`grid gap-7 ${hasNotices && hasEvents ? 'lg:grid-cols-[1.25fr_0.75fr]' : ''}`}>
+          {hasNotices && (
           <div className="border-t-4 border-tb-secondary bg-white p-6 shadow-[0_12px_35px_rgba(30,48,107,0.08)] md:p-8">
             <div className="mb-5 flex items-center justify-between gap-4">
               <h3 className="flex items-center gap-3 text-xl font-extrabold text-tb-secondary">
@@ -32,7 +39,7 @@ export default function Noticeboard({ data }: { data: SchoolData }) {
               <Link href="/updates" className="text-xs font-extrabold uppercase tracking-wider text-tb-primary-400">View all</Link>
             </div>
             <div className="divide-y divide-tb-line">
-              {announcements.length ? announcements.map((item) => (
+              {announcements.map((item) => (
                 <Link key={item.id} href={`/updates/${item.id}`} className="group flex gap-4 py-4 first:pt-0 last:pb-0">
                   <span className="mt-1 h-2.5 w-2.5 shrink-0 rotate-45 bg-tb-primary-400" />
                   <span className="min-w-0">
@@ -40,17 +47,19 @@ export default function Noticeboard({ data }: { data: SchoolData }) {
                     {item.published_date && <span className="mt-1 block text-xs text-tb-body">{displayDate(item.published_date)}</span>}
                   </span>
                 </Link>
-              )) : <p className="py-8 text-sm text-tb-body">No notices at the moment. Check back soon.</p>}
+              ))}
             </div>
           </div>
+          )}
 
+          {hasEvents && (
           <div className="bg-[linear-gradient(145deg,#21347a,#6b31a1)] p-6 text-white shadow-[0_12px_35px_rgba(30,48,107,0.18)] md:p-8">
             <div className="mb-6 flex items-center justify-between gap-4">
               <h3 className="text-xl font-extrabold text-white">Upcoming events</h3>
               <Icon icon="lucide:calendar-days" className="h-6 w-6 text-white/70" />
             </div>
             <div className="space-y-5">
-              {events.length ? events.map((event) => {
+              {events.map((event) => {
                 const date = new Date(event.date)
                 const valid = !Number.isNaN(date.getTime())
                 return (
@@ -64,9 +73,10 @@ export default function Noticeboard({ data }: { data: SchoolData }) {
                     </span>
                   </Link>
                 )
-              }) : <p className="py-8 text-sm text-white/70">No upcoming events at the moment.</p>}
+              })}
             </div>
           </div>
+          )}
         </div>
       </div>
     </section>

@@ -19,7 +19,10 @@ export default function HeroSection({ data }: { data: SchoolData }) {
   if (!slide) return null
 
   return (
-    <section className="py-10 md:pt-20 bg-ta-surface overflow-hidden">
+    // The header is `fixed` and 80px tall (h-20), so the top padding must clear
+    // it AND leave a visible gap; pt-24/md:pt-28 + the container's my-10 gives
+    // ~56px on phones and ~72px on desktop between header and hero.
+    <section className="pt-24 pb-10 md:pt-28 bg-ta-surface overflow-hidden">
       <div className="container my-10 mx-auto px-4 md:px-6">
         <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-ta-gutter items-center relative z-10">
           {/* Left Content */}

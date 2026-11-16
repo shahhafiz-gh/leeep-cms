@@ -26,7 +26,7 @@ export default function AlumniSection({ data }: { data: SchoolData }) {
   if (alumni.length === 0) return null
 
   return (
-    <section className="py-(--spacing-ta-xxl)] bg-ta-surface-container-lowest overflow-hidden">
+    <section className="bg-ta-surface-container-lowest overflow-hidden">
       <div className="container my-10 mx-auto px-4 md:px-6">
         {/* Header */}
         <div className="text-center mb-16">

@@ -27,7 +27,7 @@ export default function AcademicsHero({ data }: { data: SchoolData }) {
       </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+        <div className="flex flex-col md:flex-row items-center gap-10 md:gap-12 lg:gap-20">
           {/* Content */}
           <div className="w-full md:w-[55%] flex flex-col items-start gap-6">
             <div data-enter style={{ '--reveal-scale': '0.9', '--reveal-from-opacity': '0', '--reveal-duration': '0.5s' } as CSSProperties}
@@ -58,7 +58,7 @@ export default function AcademicsHero({ data }: { data: SchoolData }) {
           <div data-enter style={{ '--reveal-scale': '0.95', '--reveal-from-opacity': '0', '--reveal-delay': '0.2s', '--reveal-duration': '0.6s' } as CSSProperties}
             className="w-full md:w-[45%] relative flex justify-center items-center min-h-[300px]"
           >
-            <div className="absolute w-full h-[420px] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-40 z-0" />
+            <div className="absolute w-full h-[300px] md:h-[420px] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-40 z-0" />
             {academics.image ? (
               <div className="relative border-8 border-white w-[75%] aspect-[4/3] rounded-3xl overflow-hidden z-10 shadow-lg">
                 <Image src={academics.image} alt={`${data.name} academics`} fill className="object-cover" data-edit-img="academics.image" />

@@ -77,7 +77,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
         {/* Hero image */}
         <div className="relative flex items-center justify-center">
           <div data-enter style={{ '--reveal-scale': '0.8', '--reveal-from-opacity': '0', '--reveal-to-opacity': '0.3', '--reveal-duration': '1s' } as CSSProperties}
-            className="absolute w-[110%] h-[110%] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] z-0"
+            className="absolute w-full h-full md:w-[110%] md:h-[110%] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] z-0"
           />
           <div className="relative h-[300px] w-full max-w-[500px] lg:h-[400px] rounded-xl border border-ta-outline-variant bg-ta-surface-container-highest z-10">
             <div className="w-full h-full rounded-xl overflow-hidden">
@@ -90,7 +90,7 @@ export default function AdmissionsHero({ data }: { data: SchoolData }) {
 
             {admissions.callout && (
               <div data-enter style={{ '--reveal-x': '-20px', '--reveal-from-opacity': '0', '--reveal-delay': '0.6s' } as CSSProperties}
-                className="absolute bottom-8 -left-6 md:-left-12 bg-ta-surface-container-lowest border border-ta-outline-variant rounded-lg p-4 shadow-sm max-w-[200px] flex items-center gap-3 z-20"
+                className="absolute bottom-4 left-3 md:bottom-8 md:-left-12 bg-ta-surface-container-lowest border border-ta-outline-variant rounded-lg p-4 shadow-sm max-w-[200px] flex items-center gap-3 z-20"
               >
                 <Icon icon={admissions.callout.icon ?? 'lucide:users'} className="text-ta-secondary-container bg-ta-secondary-container/20 p-2 rounded-full text-4xl" />
                 <div>

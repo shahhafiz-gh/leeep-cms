@@ -19,21 +19,27 @@ function displayDate(value?: string) {
  * server — so a notice is written once and appears in both places.
  *
  * The quote panel is skipped entirely when no quote is authored, which leaves
- * the notices full-width rather than a hole in the layout.
+ * the notices full-width rather than a hole in the layout. Likewise the notices
+ * panel is skipped when nothing is published, and the band disappears when
+ * neither side has content.
  */
 export default function QuoteAndNotices({ data }: { data: SchoolData }) {
   const quote = data.quote
-  const hasQuote = Boolean(quote?.text || quote?.scriptText)
+  const hasQuote = Boolean(quote?.text || quote?.scriptText) && isSectionVisible(data, 'quote')
   const limit = Number(data.notifications?.limit) || 5
   const announcements = (data.updates?.announcements ?? []).slice(0, limit)
 
-  if (!hasQuote && !announcements.length && !data.notifications?.emptyText) return null
+  const hasNotices = announcements.length > 0
+
+  // No quote and no notices: drop the band. With only one of them the other
+  // panel is skipped and the remaining one takes the full width.
+  if (!hasQuote && !hasNotices) return null
 
   return (
     <section className="bg-th-paper py-14 md:py-16">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className={`grid gap-7 ${hasQuote ? 'lg:grid-cols-2' : ''}`}>
-          {hasQuote && isSectionVisible(data, 'quote') && (
+        <div className={`grid gap-7 ${hasQuote && hasNotices ? 'lg:grid-cols-2' : ''}`}>
+          {hasQuote && (
             <article className="border-t-[3px] border-th-primary bg-white p-6 shadow-[0_10px_30px_rgba(34,34,34,0.06)] md:p-8">
               <h2 className="flex items-center gap-3 text-lg font-semibold uppercase tracking-wide text-th-heading">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-th-primary-50 text-th-primary">
@@ -83,6 +89,7 @@ export default function QuoteAndNotices({ data }: { data: SchoolData }) {
             </article>
           )}
 
+          {hasNotices && (
           <article className="border-t-[3px] border-th-heading bg-white p-6 shadow-[0_10px_30px_rgba(34,34,34,0.06)] md:p-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="flex items-center gap-3 text-lg font-semibold uppercase tracking-wide text-th-heading">
@@ -100,8 +107,7 @@ export default function QuoteAndNotices({ data }: { data: SchoolData }) {
             </div>
 
             <div className="mt-5 max-h-[340px] divide-y divide-th-line overflow-y-auto pr-1">
-              {announcements.length ? (
-                announcements.map((item) => (
+              {announcements.map((item) => (
                   <Link
                     key={item.id}
                     href={`/updates/${item.id}`}
@@ -119,14 +125,10 @@ export default function QuoteAndNotices({ data }: { data: SchoolData }) {
                       )}
                     </span>
                   </Link>
-                ))
-              ) : (
-                <p className="py-10 text-sm text-th-body">
-                  {data.notifications?.emptyText || 'No notices at the moment. Please check back soon.'}
-                </p>
-              )}
+              ))}
             </div>
           </article>
+          )}
         </div>
       </div>
     </section>

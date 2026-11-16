@@ -36,7 +36,7 @@ export default function OurStory({ data }: { data: SchoolData }) {
 
             {/* Floating badge */}
             {data.about.badges?.[0] && (
-              <ScrollReveal direction="left" delay={0.3} className="absolute top-4 -left-2 md:top-8 md:-left-8 z-20">
+              <ScrollReveal direction="left" delay={0.3} className="absolute top-3 left-3 md:top-8 md:-left-8 z-20 max-w-[calc(100%-1.5rem)]">
                 <div className="bg-ta-tertiary-container text-ta-on-tertiary-container px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-ta-on-tertiary-container/10 flex items-center justify-center">
                     <Icon icon={data.about.badges[0].icon ?? 'lucide:landmark'} className="w-5 h-5" />

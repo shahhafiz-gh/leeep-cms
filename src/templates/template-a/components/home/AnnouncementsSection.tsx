@@ -18,23 +18,8 @@ function formatDate(dateString?: string) {
 export default function AnnouncementsSection({ data }: { data: SchoolData }) {
   const announcements = data.updates.announcements
 
-  if (announcements.length === 0) {
-    return (
-      <section className="py-12 bg-ta-surface relative overflow-hidden">
-        <div className="container my-10 mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center text-center py-16 bg-ta-surface-container-lowest rounded-[32px] border border-ta-outline-variant/30 shadow-[0_20px_40px_rgba(0,0,0,0.04)]">
-            <div className="w-16 h-16 bg-ta-primary/10 rounded-full flex items-center justify-center mb-4">
-              <Icon icon="lucide:inbox" className="text-3xl text-ta-primary" />
-            </div>
-            <h3 className="font-(family-name:--font-ta-h3) text-xl text-ta-on-surface mb-2">No Announcements</h3>
-            <p className="font-(family-name:--font-ta-body-md) text-ta-on-surface-variant mx-auto">
-              We&apos;ll post new announcements and updates here soon.
-            </p>
-          </div>
-        </div>
-      </section>
-    )
-  }
+  // Nothing published: drop the block rather than show an empty placeholder.
+  if (!announcements || announcements.length === 0) return null
 
   const featured = announcements[0]
   const listItems = announcements.slice(1, 5)

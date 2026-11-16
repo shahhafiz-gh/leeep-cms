@@ -61,9 +61,9 @@ export default function ContactHero({ data }: { data: SchoolData }) {
         {/* Image */}
         <div className="relative flex items-center justify-center">
           <div data-enter style={{ '--reveal-scale': '0.8', '--reveal-from-opacity': '0', '--reveal-to-opacity': '0.3', '--reveal-duration': '1s' } as CSSProperties}
-            className="absolute w-[110%] h-[110%] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] z-0"
+            className="absolute w-full h-full md:w-[110%] md:h-[110%] bg-ta-secondary-container rounded-[40%_60%_70%_30%/40%_50%_60%_50%] z-0"
           />
-          <div className="relative z-10 w-full max-w-[550px] h-[360px] md:h-[400px] rounded-[40px] border-8 border-ta-surface shadow-2xl">
+          <div className="relative z-10 w-full max-w-[550px] h-[300px] sm:h-[360px] md:h-[400px] mb-6 md:mb-0 rounded-[40px] border-8 border-ta-surface shadow-2xl">
             <div className="relative w-full h-full rounded-[32px] overflow-hidden bg-ta-surface-container">
               {data.contact.image ? (
                 <img loading="lazy" decoding="async" src={data.contact.image} alt={`${data.name} campus`} className="w-full h-full object-cover" data-edit-img="contact.image" />
@@ -74,7 +74,7 @@ export default function ContactHero({ data }: { data: SchoolData }) {
 
             {highlights[0] && (
               <div data-enter style={{ '--reveal-x': '-30px', '--reveal-from-opacity': '0', '--reveal-delay': '0.5s' } as CSSProperties}
-                className="absolute -bottom-6 -left-4 md:-left-12 bg-ta-surface-container-lowest p-4 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
+                className="absolute -bottom-6 left-3 md:-left-12 max-w-[calc(100%-1.5rem)] bg-ta-surface-container-lowest p-3 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
               >
                 <div className="bg-ta-primary-container text-ta-on-primary-container p-3 rounded-full flex">
                   <Icon icon={highlights[0].icon ?? 'lucide:check-circle'} className="text-2xl" />
@@ -90,7 +90,7 @@ export default function ContactHero({ data }: { data: SchoolData }) {
 
             {highlights[1] && (
               <div data-enter style={{ '--reveal-x': '30px', '--reveal-from-opacity': '0', '--reveal-delay': '0.6s' } as CSSProperties}
-                className="absolute top-10 -right-4 md:-right-8 bg-ta-surface-container-lowest p-4 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
+                className="absolute top-4 right-3 md:top-10 md:-right-8 max-w-[calc(100%-1.5rem)] bg-ta-surface-container-lowest p-3 md:p-5 rounded-2xl shadow-xl border border-ta-outline-variant flex items-center gap-4 z-20"
               >
                 <div className="bg-ta-secondary-container text-ta-on-secondary-container p-3 rounded-full flex">
                   <Icon icon={highlights[1].icon ?? 'lucide:star'} className="text-2xl" />
