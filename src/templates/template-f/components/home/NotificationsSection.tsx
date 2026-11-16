@@ -47,21 +47,8 @@ export default function NotificationsSection({ data }: { data: SchoolData }) {
       : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
   }
 
-  // Nothing published yet. Say so if the school wrote a fallback line; otherwise
-  // drop the band rather than leaving a heading over emptiness.
-  if (items.length === 0) {
-    if (!cfg?.emptyText) return null
-    return (
-      <section className="mx-auto max-w-[1400px] px-5 py-10 md:px-8 lg:px-12">
-        <p
-          data-edit="notifications.emptyText"
-          className="m-0 rounded-[18px] bg-tf-panel px-7 py-6 text-[15px] text-tf-muted"
-        >
-          {cfg.emptyText}
-        </p>
-      </section>
-    )
-  }
+  // Nothing published yet: drop the band rather than leave a heading over emptiness.
+  if (items.length === 0) return null
 
   /* ── Ticker ────────────────────────────────────────────────────────────────
      The track is duplicated and translated exactly -50%, so the loop is seamless.

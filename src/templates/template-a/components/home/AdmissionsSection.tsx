@@ -38,14 +38,14 @@ export default function AdmissionsSection({ data, editing }: { data: SchoolData;
   return (
     <section
       id="admissions"
-      className="relative w-full py-20 bg-ta-primary overflow-hidden mt-(--spacing-ta-xl)] pb-20"
+      className="relative w-full py-20 bg-ta-primary overflow-hidden pb-20"
     >
-      <div className="max-w-[1280px] mx-auto px-(--spacing-ta-margin)] relative z-20 pt-(--spacing-ta-xxl)] pb-(--spacing-ta-xxl)]">
-        <div className="absolute top-20 right-1/4 w-4 h-4 bg-white rounded-full opacity-60" />
-        <Icon icon="lucide:star" className="absolute top-1/4 left-1/3 w-12 h-12 opacity-50 text-white" />
-        <Icon icon="lucide:star" className="absolute bottom-1/4 right-1/3 w-8 h-8 opacity-40 text-white" />
+      <div className="max-w-[1280px] mx-auto px-5 md:px-8 relative z-20">
+        <div className="absolute top-20 right-1/4 w-4 h-4 bg-white rounded-full opacity-60 hidden md:block" />
+        <Icon icon="lucide:star" className="absolute top-1/4 left-1/3 w-12 h-12 opacity-50 text-white hidden md:block" />
+        <Icon icon="lucide:star" className="absolute bottom-1/4 right-1/3 w-8 h-8 opacity-40 text-white hidden md:block" />
 
-        <div className="flex flex-col md:flex-row items-center gap-(--spacing-ta-xxl)]">
+        <div className="flex flex-col md:flex-row items-center gap-0 md:gap-12">
           {/* Content */}
           <div
             className="w-full md:w-[60%] flex flex-col items-start space-y-6"
@@ -124,7 +124,7 @@ export default function AdmissionsSection({ data, editing }: { data: SchoolData;
           </div>
 
           {/* Image */}
-          <div className="w-full md:w-[40%] pr-4 md:pr-0 relative mt-12 md:mt-0 flex justify-center">
+          <div className="w-full md:w-[40%] relative mt-12 md:mt-0 flex justify-center">
             <div data-enter style={{ '--reveal-scale': '0.8', '--reveal-from-opacity': '0', '--reveal-duration': '0.5s' } as CSSProperties}
               className="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px] rounded-full bg-white/20 border-4 border-white/30 backdrop-blur-sm p-4 overflow-visible flex items-center justify-center mx-auto"
             >
@@ -138,14 +138,14 @@ export default function AdmissionsSection({ data, editing }: { data: SchoolData;
 
               {/* Floating card */}
               {admissions.callout && (
-                <div className="absolute -left-6 top-12 bg-white rounded-lg p-3 shadow-lg z-20 flex items-center gap-2 -rotate-3">
+                <div className="absolute left-0 md:-left-6 top-8 md:top-12 bg-white rounded-lg p-3 shadow-lg z-20 flex items-center gap-2 -rotate-3">
                   <Icon icon={admissions.callout.icon ?? 'lucide:star'} className="text-amber-400 fill-amber-400 w-5 h-5" />
                   <span className="font-bold text-ta-label-md text-ta-on-surface whitespace-nowrap" data-edit="admissions.callout.label">{admissions.callout.label}</span>
                 </div>
               )}
 
               {/* Rainbow arc */}
-              <div className="absolute -right-4 top-10 w-24 h-12 overflow-hidden z-20 transform rotate-12">
+              <div className="absolute right-0 md:-right-4 top-6 md:top-10 w-24 h-12 overflow-hidden z-20 transform rotate-12">
                 <div className="w-24 h-24 rounded-full border-[6px] border-red-500/80" />
                 <div className="absolute top-[6px] left-[6px] w-[84px] h-[84px] rounded-full border-[6px] border-yellow-400/80" />
                 <div className="absolute top-[12px] left-[12px] w-[72px] h-[72px] rounded-full border-[6px] border-blue-400/80" />

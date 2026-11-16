@@ -2,9 +2,10 @@
 
 import type { GalleryImage } from '@/types/school.types'
 import { useGalleryImages } from '@/shared/hooks/useGalleryImages'
+import GalleryCarousel from '@/shared/GalleryCarousel'
 
 /**
- * Template B — gallery grid (client).
+ * Template B — gallery carousel (client).
  *
  * A thin layout over the shared {@link useGalleryImages} hook, which owns the
  * image list so the Vue admin's Gallery panel can add (one OR many at once),
@@ -12,7 +13,13 @@ import { useGalleryImages } from '@/shared/hooks/useGalleryImages'
  * a Vue-form-only action by design — there is intentionally no drag affordance in
  * the preview. Template A's gallery uses the same hook, so both behave identically.
  */
-export default function GalleryGrid({ initialImages }: { initialImages: GalleryImage[] }) {
+export default function GalleryGrid({
+  initialImages,
+  autoplay = true,
+}: {
+  initialImages: GalleryImage[]
+  autoplay?: boolean
+}) {
   const images = useGalleryImages(initialImages)
 
   // Empty during editing (admin deleted every image) → keep the section visible
@@ -27,31 +34,26 @@ export default function GalleryGrid({ initialImages }: { initialImages: GalleryI
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-      {images.map((image, i) => (
-        <div
-          // Index key intentionally: paths are index-based, so after a reorder
-          // each slot's data-edit-img stays consistent with its position.
-          key={i}
-          className={`relative overflow-hidden rounded-2xl group ${
-            i === 0 ? 'col-span-2 row-span-2 aspect-square' : 'aspect-[4/3]'
-          }`}
-        >
-          {image.src ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img loading="lazy" decoding="async"
-              src={image.src}
-              alt={image.alt}
-              data-edit-img={`gallery.images.${i}.src`}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-300 text-xs">
-              No image
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+    <GalleryCarousel
+      images={images}
+      autoplay={autoplay}
+      buttonClassName="border border-slate-200 bg-white text-tb-heading shadow-sm hover:border-tb-primary-400 hover:text-tb-primary-400"
+      slideClassName="aspect-[4/3] rounded-2xl"
+      renderSlide={(image, i) =>
+        image.src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img loading="lazy" decoding="async"
+            src={image.src}
+            alt={image.alt}
+            data-edit-img={`gallery.images.${i}.src`}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-xs text-gray-300">
+            No image
+          </div>
+        )
+      }
+    />
   )
 }

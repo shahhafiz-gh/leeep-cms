@@ -20,18 +20,8 @@ export default function EventsSection({ data }: { data: SchoolData }) {
     }
   }
 
-  if (events.length === 0) {
-    return (
-      <section id="events" className="py-16 md:py-24 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <div className="flex items-baseline justify-between mb-10 border-b border-slate-200 pb-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-tb-secondary">Events</h2>
-          </div>
-          <p className="text-tb-body">No upcoming events at the moment.</p>
-        </div>
-      </section>
-    )
-  }
+  // Nothing scheduled: drop the block rather than show an empty placeholder.
+  if (!events || events.length === 0) return null
 
   return (
     <section id="events" className="py-16 md:py-24 bg-slate-50/50">

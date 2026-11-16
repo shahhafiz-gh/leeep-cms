@@ -44,7 +44,7 @@ export default function MissionSection({ data }: { data: SchoolData }) {
         <Icon icon="lucide:rainbow" className="text-[120px]" />
       </div>
       <div
-        className="absolute top-1/4 left-[5%] opacity-30 pointer-events-none text-ta-secondary"
+        className="absolute top-1/4 left-[5%] opacity-30 pointer-events-none text-ta-secondary hidden md:block"
         data-loop="pulse"
         style={{ '--loop-scale': '1.2', '--loop-duration': '5s' } as CSSProperties}
       >

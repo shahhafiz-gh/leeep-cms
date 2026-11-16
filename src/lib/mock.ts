@@ -232,7 +232,7 @@ export const placeholderTemplateAData: SchoolData = {
   ],
 
   gallery: {
-    title: 'Life at Our Campus',
+    title: 'School Gallery',
     images: [
       { src: '', alt: 'Add a caption' },
       { src: '', alt: 'Add a caption' },

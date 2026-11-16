@@ -3,14 +3,12 @@
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import Image from '@/shared/SiteImage'
-import { usePathname } from 'next/navigation'
 import type { SchoolData } from '@/types/school.types'
 import ImagePlaceholder from '@/templates/template-a/components/common/ImagePlaceholder'
 import { styleObject } from '@/lib/component-styles'
 import { contactEntryLabel, contactEntryValue, contactPhoneDisplay, contactPhoneHref } from '@/lib/contact-entry'
 
 export default function Footer({ data, editing = false }: { data: SchoolData; editing?: boolean }) {
-  const isHomeRoute = usePathname() === '/'
 
   // Real Frappe blobs may omit whole slices — guard them.
   const contact = data.contact ?? { address: '', phone: [], email: [] }
@@ -33,7 +31,9 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
 
   return (
     <footer
-      className={`relative bg-[#0f1f13] ${isHomeRoute ? 'mt-20' : 'mt-12'} text-ta-inverse-on-surface overflow-visible font-(family-name:--font-ta-nunito)`}
+      // mt-40 (160px) clears the wave's painted crest (~147px of its 220px box,
+      // see the path's y=40/120 start), so the last section above is never covered.
+      className={`relative bg-[#0f1f13] mt-40 text-ta-inverse-on-surface overflow-visible font-(family-name:--font-ta-nunito)`}
     >
       {/* Wave Divider. Its 220px box rises over the bottom of the page content,
           and the outer <svg> takes taps across its WHOLE box, not just the

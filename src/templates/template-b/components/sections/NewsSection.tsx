@@ -10,18 +10,8 @@ export default function NewsSection({ data }: { data: SchoolData }) {
   // a school that changed it saw its home page keep the template's wording.
   const heading = data.newsIntro?.title || 'News & Announcements'
 
-  if (announcements.length === 0) {
-    return (
-      <section id="news" className="py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <h2 data-edit="newsIntro.title" className="text-2xl md:text-3xl font-bold text-tb-heading mb-6">
-            {heading}
-          </h2>
-          <p className="text-tb-body">No announcements at the moment. Check back soon.</p>
-        </div>
-      </section>
-    )
-  }
+  // Nothing published: drop the block rather than show an empty placeholder.
+  if (!announcements || announcements.length === 0) return null
 
   const featured = announcements[0]
   const rest = announcements.slice(1)
