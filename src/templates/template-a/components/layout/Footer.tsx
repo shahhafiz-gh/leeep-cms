@@ -199,6 +199,9 @@ export default function Footer({ data, editing = false }: { data: SchoolData; ed
             <span data-edit="footer.copyright" className="text-ta-outline-variant text-sm">{data.footer?.copyright}</span>
             {/* Every template's footer carries this link: the site takes admission
                 enquiries, so the notice has to be reachable from every page. */}
+            <Link href="/request-mobile-change" className="text-ta-outline-variant hover:text-ta-inverse-primary text-sm transition-colors">
+              Request mobile number change
+            </Link>
             <Link href="/privacy" className="text-ta-outline-variant hover:text-ta-inverse-primary text-sm transition-colors">
               Privacy Policy
             </Link>

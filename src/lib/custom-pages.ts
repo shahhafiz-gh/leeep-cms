@@ -14,7 +14,7 @@ export const CUSTOM_PAGE_TEMPLATES: readonly TemplateId[] = ['template-i']
 
 const RESERVED = new Set([
   'about', 'academics', 'admissions', 'contact', 'updates', 'facilities', 'gallery',
-  'privacy', 'api', 'demo', 'preview', 'site', 'assets', '_next', 'robots.txt', 'sitemap.xml',
+  'request-mobile-change', 'privacy', 'api', 'demo', 'preview', 'site', 'assets', '_next', 'robots.txt', 'sitemap.xml',
 ])
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,79}$/

@@ -31,7 +31,7 @@ test('only templates that draw custom pages serve them', () => {
 })
 
 test('a page can never take a fixed route', () => {
-  for (const reserved of ['about', 'contact', 'admissions', 'updates', 'gallery', 'privacy', 'api']) {
+  for (const reserved of ['about', 'contact', 'admissions', 'updates', 'gallery', 'privacy', 'request-mobile-change', 'api']) {
     assert.equal(validPageSlug(reserved), '', reserved)
   }
   assert.equal(validPageSlug('school-history'), 'school-history')

@@ -16,6 +16,7 @@ export type PageType =
   | 'admissions'
   | 'admissions-apply'
   | 'admissions-status'
+  | 'request-mobile-change'
   | 'contact'
   | 'updates'
   | 'facilities'

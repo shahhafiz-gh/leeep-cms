@@ -1,3 +1,4 @@
+import MobileNumberChangePage from '@/shared/MobileNumberChangePage'
 import type { SchoolData, PageType } from '@/types/school.types'
 // Template C ("Horizon") reuses Template A's proven page layout, re-themed via a
 // distinct `.template-c` root: a warm editorial default palette (see globals.css)
@@ -34,6 +35,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData }>> = {
   admissions: AdmissionsView,
   'admissions-apply': AdmissionsApplyView,
   'admissions-status': AdmissionsStatusView,
+  'request-mobile-change': MobileNumberChangePage,
   contact: ContactView,
   updates: UpdatesView,
   facilities: FacilitiesView,

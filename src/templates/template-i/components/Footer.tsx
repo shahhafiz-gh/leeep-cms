@@ -115,6 +115,9 @@ export default function Footer({ data }: { data: SchoolData; editing?: boolean }
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-[13px] text-white/55 lg:px-8">
           <span data-edit="footer.copyright">{data.footer?.copyright}</span>
           <span className="flex items-center gap-5">
+            <Link href="/request-mobile-change" className="transition-colors hover:text-white">
+              Request mobile number change
+            </Link>
             <Link href="/privacy" className="transition-colors hover:text-white">
               Privacy Policy
             </Link>

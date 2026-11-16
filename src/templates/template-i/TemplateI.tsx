@@ -1,3 +1,4 @@
+import MobileNumberChangePage from '@/shared/MobileNumberChangePage'
 import type { PageType, SchoolData, SitePage } from '@/types/school.types'
 import AdmissionsView from '@/templates/template-f/views/AdmissionsView'
 import AdmissionsApplyView from '@/templates/template-f/views/AdmissionsApplyView'
@@ -31,6 +32,7 @@ const pageMap: Record<PageType, React.ComponentType<{ data: SchoolData; editing?
   admissions: AdmissionsView,
   'admissions-apply': AdmissionsApplyView,
   'admissions-status': AdmissionsStatusView,
+  'request-mobile-change': MobileNumberChangePage,
   contact: ContactView,
   updates: UpdatesView,
   facilities: FacilitiesView,
